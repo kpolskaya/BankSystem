@@ -1,6 +1,7 @@
 ﻿namespace BankSystem.Model
 {
-    public class BankBalance : Customer
+    public class BankBalance /*: Customer*/
     {
+        
     }
 }

@@ -2,8 +2,11 @@
 
 namespace BankSystem.Model
 {
-    public class Customer
+    public abstract class Customer
     {
+        public static decimal fee;
+        public static decimal rate;
+
         public static Random random;
         static uint lastId;
         static Customer()

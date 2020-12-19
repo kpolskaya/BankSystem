@@ -5,8 +5,12 @@ namespace BankSystem.Model
 {
     public class Entity : Customer 
     {
-        // Что-то у нас нет никакого функционала для клиентов. Вообще, непонятно, чем  они отличаются
-        // персональные ставки по кредитам/депозитам сделать?
+        static Entity()
+        {
+            fee = 30; // 40 30
+            rate = 0.1m; // 24 10
+        }
+        
 
         public Entity(string Name, string OtherName, string LegalId, string Phone)
             : base(Name, OtherName, LegalId, Phone)

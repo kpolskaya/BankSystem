@@ -14,7 +14,19 @@ namespace BankSystem.Model
     }
     public class Transaction
     {
-        public string Id { get; }
+        static uint lastId;
+        static Transaction()
+        {
+            lastId = 0;
+ 
+        }
+
+        static uint NextId()
+        {
+            return ++lastId;
+        }
+
+        public uint Id { get; }
 
         public string Sender { get; }
 
@@ -24,9 +36,17 @@ namespace BankSystem.Model
 
         public TransactionStatus Status { get; set; }
 
-        public Transaction(string Id, string Sender, string Beneficiary, decimal Sum)
+        public Transaction(uint Id, string Sender, string Beneficiary, decimal Sum)
         {
-            this.Id = Id;
+            this.Id = NextId();
+            this.Sender = Sender;
+            this.Beneficiary = Beneficiary;
+            this.Sum = Sum;
+            this.Status = TransactionStatus.Demanded;
+        }
+        public Transaction(string Sender, string Beneficiary, decimal Sum)
+        {
+            this.Id = NextId();
             this.Sender = Sender;
             this.Beneficiary = Beneficiary;
             this.Sum = Sum;

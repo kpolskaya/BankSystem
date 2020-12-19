@@ -9,6 +9,7 @@ namespace BankSystem.Model
 {
     public class Bank
     {
+        public decimal BankBalance { get; private set; }
         public ObservableCollection<IDivision> Departments { get; private set; }
         public string Name { get; }
 
@@ -23,8 +24,8 @@ namespace BankSystem.Model
             this.Departments.Add (new Department<Entity>());
             this.Departments.Add(new Department<Person>());
             this.Departments.Add(new Department<Vip>());
-            this.Departments.Add(new Department<BankBalance>());
-
+            //this.Departments.Add(new Department<BankBalance>());
+            this.BankBalance = 0;
             foreach (var item in this.Departments)
             {
                 item.TransactionRaised += ProcessPayment;
@@ -32,9 +33,10 @@ namespace BankSystem.Model
 
         }
 
-        private void ProcessPayment(Transaction t)
+        private void ProcessPayment(Object sender, Transaction t)
         {
-            //if (DetailesIsOk())
+           Type type = sender.GetType();
+           (sender as type) 
 
         }
 
@@ -46,6 +48,11 @@ namespace BankSystem.Model
         public void Load(string path)
         {
             throw new NotImplementedException();
+        }
+
+        public void MonthlyCharge()
+        {
+
         }
     }
 }

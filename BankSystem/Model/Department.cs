@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace BankSystem.Model
 {
-    public delegate void TransactionHandler(Transaction t);
+    public delegate void TransactionHandler(Object sender, Transaction t);
 
     public class Department<TCustomer> : IDivision
     {
@@ -25,6 +25,13 @@ namespace BankSystem.Model
             }
         }
 
+        public Account GetAccountByBic(string Bic)
+        {
+            Account account = accounts.FirstOrDefault(x => x.Bic == Bic);
+
+            return account;
+        }
+
         public bool Debit(string bic, decimal sum)
         {
             bool executed = false;
@@ -38,13 +45,19 @@ namespace BankSystem.Model
             ///
         }
 
-
+        public void OpenAccount(AccountType Type, string DepartmentId, string CustomerId)
+        {
+            accounts.Add(new Account(Type, DepartmentId, CustomerId));
+        }
 
         public event TransactionHandler TransactionRaised;
 
-        protected virtual void OnTransactionRaised(Transaction t)
+        protected virtual void OnTransactionRaised(Object sender, Transaction t)
         {
-            TransactionRaised?.Invoke(t);
+            //Type type = sender.GetType();
+            
+            sender = this;
+            TransactionRaised?.Invoke(sender, t);
         }
 
 
