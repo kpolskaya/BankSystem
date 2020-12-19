@@ -28,9 +28,9 @@ namespace BankSystem.Model
 
         public uint Id { get; }
 
-        public string Sender { get; }
+        public string SenderBic { get; }
 
-        public string Beneficiary { get; }
+        public string BeneficiaryBic { get; }
 
         public decimal Sum { get; }
 
@@ -39,16 +39,16 @@ namespace BankSystem.Model
         public Transaction(uint Id, string Sender, string Beneficiary, decimal Sum)
         {
             this.Id = NextId();
-            this.Sender = Sender;
-            this.Beneficiary = Beneficiary;
+            this.SenderBic = Sender;
+            this.BeneficiaryBic = Beneficiary;
             this.Sum = Sum;
             this.Status = TransactionStatus.Demanded;
         }
         public Transaction(string Sender, string Beneficiary, decimal Sum)
         {
             this.Id = NextId();
-            this.Sender = Sender;
-            this.Beneficiary = Beneficiary;
+            this.SenderBic = Sender;
+            this.BeneficiaryBic = Beneficiary;
             this.Sum = Sum;
             this.Status = TransactionStatus.Demanded;
         }
