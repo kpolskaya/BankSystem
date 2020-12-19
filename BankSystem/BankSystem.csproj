@@ -67,7 +67,10 @@
     <Compile Include="Model\Bank.cs" />
     <Compile Include="Model\BankBalance.cs" />
     <Compile Include="Model\Customer.cs" />
+    <Compile Include="Model\DebitAccount.cs" />
     <Compile Include="Model\Department.cs" />
+    <Compile Include="Model\DepositAccount.cs" />
+    <Compile Include="Model\DepositAccountСapitalized.cs" />
     <Compile Include="Model\IDivision.cs" />
     <Compile Include="Model\Entity.cs" />
     <Compile Include="Model\Person.cs" />

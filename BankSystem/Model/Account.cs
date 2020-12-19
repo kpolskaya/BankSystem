@@ -7,8 +7,8 @@ namespace BankSystem.Model
         public string Bic { get;}
         public decimal Balance { get; private set; }
 
-        readonly decimal fee; //месячная плата за обслуживание
-        readonly decimal rate; //процент на остаток
+        protected decimal fee; //месячная плата за обслуживание
+        protected decimal rate; //процент на остаток
 
         public Account(string DepartmentId, string CustomerId)
         {
