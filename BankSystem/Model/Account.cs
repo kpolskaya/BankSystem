@@ -10,10 +10,12 @@ namespace BankSystem.Model
         protected decimal fee; //месячная плата за обслуживание
         protected decimal rate; //процент на остаток
 
-        public Account(string DepartmentId, string CustomerId)
+        public Account(string DepartmentId, string CustomerId, decimal Fee, decimal Rate)
         {
             this.Bic = DepartmentId + CustomerId + Guid.NewGuid().ToString().Remove(8);
             this.Balance = 0;
+            this.fee = Fee;
+            this.rate = Rate;
         }
 
         public virtual bool Debit(decimal sum)
