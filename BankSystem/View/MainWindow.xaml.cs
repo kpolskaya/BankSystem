@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BankSystem.Model;
 
 namespace BankSystem.View
 {
@@ -20,9 +21,23 @@ namespace BankSystem.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        Bank bank ;
         public MainWindow()
         {
             InitializeComponent();
+            try
+            {
+               bank = new Bank("BANK");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + " Аварийное завершение.");
+                Environment.Exit(911);
+            }
+
+            bank.ExampleCustomers();
+
+            bank.MonthlyCharge();
         }
     }
 }

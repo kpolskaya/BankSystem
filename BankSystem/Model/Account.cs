@@ -10,15 +10,15 @@ namespace BankSystem.Model
 
     }
 
-    public class Account
+    public abstract class Account
     {
        
         public string Bic { get;}
         public decimal Balance { get; private set; }
         public AccountType Type { get; }
 
-        //protected decimal fee; //месячная плата за обслуживание
-        //protected decimal rate; //процент на остаток
+        public decimal Fee { get; set; } //месячная плата за обслуживание
+        public decimal Rate { get; set; } //процент на остаток
 
         public Account(AccountType Type, string DepartmentId, string CustomerId)
         {
@@ -27,6 +27,12 @@ namespace BankSystem.Model
             this.Balance = 0;
             
         }
+        public Account( string DepartmentId, string CustomerId)
+        {
+            this.Bic = DepartmentId + CustomerId + Guid.NewGuid().ToString().Remove(8);
+            this.Balance = 0;
+
+        }
 
         public virtual bool Debit(decimal sum)
         {
@@ -34,14 +40,18 @@ namespace BankSystem.Model
                 return false;
             Balance -= sum;
             return true;
+                       
         }
+
+       
 
         public void Credit(decimal sum)
         {
             Balance += sum;
         }
 
-        //public decimal GetInterest();
+        public abstract decimal GetInterest();
+        
 
     }
 }

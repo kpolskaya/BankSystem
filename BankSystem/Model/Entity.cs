@@ -11,7 +11,7 @@ namespace BankSystem.Model
             rate = 0.1m; // 24 10
         }
         
-
+        public Entity() : base() { }
         public Entity(string Name, string OtherName, string LegalId, string Phone)
             : base(Name, OtherName, LegalId, Phone)
         {

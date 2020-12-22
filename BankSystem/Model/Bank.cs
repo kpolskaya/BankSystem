@@ -21,10 +21,13 @@ namespace BankSystem.Model
         public Bank(string Name)
         {
             this.Name = Name;
-            this.Departments.Add (new Department<Entity>());
-            this.Departments.Add(new Department<Person>());
-            this.Departments.Add(new Department<Vip>());
-            //this.Departments.Add(new Department<BankBalance>());
+            this.Departments = new ObservableCollection<Division>
+            {
+                new Department<Entity>("01", "Отдел по работе с юридическими лицами"),
+                new Department<Person>("02", "Отдел по работе с физическими лицами"),
+                new Department<Vip>("03", "Отдел по работе с VIP клиентами")
+            };
+            
             this.BankBalance = 0;
             
             foreach (var item in this.Departments) //подписка на эвенты каждого департамента
@@ -34,8 +37,14 @@ namespace BankSystem.Model
 
         }
 
-        private void ProcessPayment(Department<Customer> sender, Transaction t)
+        private void ProcessPayment(Division sender, Transaction t)
         {
+            if (t.BeneficiaryBic == "00")
+                BankBalance += t.Sum;
+
+            if (t.SenderBic == "00")
+                BankBalance -= t.Sum;
+
             // давай 2 символа на Id Департамента оставим!
             //логика, если получатель - сам банк ( t.SenderBic.Substring(2) = "00" ) ... return;
 
@@ -64,7 +73,24 @@ namespace BankSystem.Model
 
         public void MonthlyCharge()
         {
-
+            foreach (var department in Departments)
+            {
+                department.CalculationCharge();
+            }
         }
+
+        public void ExampleCustomers()
+        {
+            foreach (var department in Departments)
+            {
+                //var dType = department.GetType();
+                //Type[] dTypeParameters = dType.GetGenericArguments();
+                                                                            
+                department.CustomersForExample();
+               
+            }
+        }
+
+       
     }
 }
