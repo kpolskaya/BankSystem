@@ -19,7 +19,7 @@ namespace BankSystem.Model
         {
             this.Rate = 0;
 
-            this.Fee = Customer.fee;
+            //this.Fee = Customer.Fee;
 
         }
 
@@ -27,8 +27,7 @@ namespace BankSystem.Model
         {
             decimal interest = Balance * Rate / 12 * 100;
             return interest;
-
-            throw new NotImplementedException();
+          
         }
     }
 }

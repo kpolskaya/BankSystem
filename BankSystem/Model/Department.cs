@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+
 
 namespace BankSystem.Model
 {
@@ -14,15 +17,31 @@ namespace BankSystem.Model
     {
         public ObservableCollection<TCustomer> Customers { get; private set; }
 
+        //decimal rate;
+        //decimal fee;
+
         public Department(string Id, string Name) : base(Id, Name)
         {
             this.Customers = new ObservableCollection<TCustomer>();
+
+            
+            Type cType = typeof(TCustomer);
+
+            //var rateMethod = cType.GetMethod("Rate", BindingFlags.Static | BindingFlags.Public);
+            //this.rate = (decimal)rateMethod.Invoke(null, null);
+          
+            this.rate = (decimal)cType.GetField("Rate", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+            this.fee = (decimal)cType.GetField("Fee", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+
+            Debug.WriteLine("For type {0} Rate is {1}, Fee is {2}", cType.Name, rate, fee); //  вывод для отладки
         }
+
+
             
         // логика, которая зависит от типа клиента...
 
-        public void CreateCustomer(string name, string otherName, string legalId, string phone)
-        {
+        public void CreateCustomer(string name, string otherName, string legalId, string phone) // почему у нас нет абстракции этого метода в базовом классе Division? Как потом будем вызывать?
+        { //пока это единственный метод, который должен быть явно реализован тут!
             TCustomer customer = new TCustomer();
             
             customer.Name = name;
@@ -60,15 +79,30 @@ namespace BankSystem.Model
                 OpenAccount(AccountType.DepositAccountCapitalized, this.Id, customer.Id);
             }
         }
-      
 
-        public override void RefillAccounts()
+        public override void CalculateCharge() // нужно наверное сделать универсальный метод, который в зависимости от типа счета считает fee | interest
+                                                // и может лучше его реализовать прямо в классе Division без абстракции?
         {
-            foreach (var account in Accounts)
+            foreach (var account in accounts)
             {
-                ExternalOperation(, 1000);
+                //Type myType = Type.GetType(Customer, false, true);
+                //var myType = GetType();
+                //myType.GetFields();
+
+                // Console.WriteLine($"{field.FieldType} {field.Name}");
+                decimal Interest = account.GetInterest(); // нужно убрать из Account этот метод
+                account.Credit(Interest);
+                OnTransactionRaised(this, new Transaction("00", account.Bic, Interest));
+
+                decimal Fee = account.Fee; // fee и rate брать прямо из this.rate | this.fee
+                if (account.Debit(Fee))
+                    OnTransactionRaised(this, new Transaction(account.Bic, "00", Fee));
+
             }
+
+
         }
+
 
     }
 }

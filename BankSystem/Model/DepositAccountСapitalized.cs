@@ -11,7 +11,7 @@ namespace BankSystem.Model
         public DepositAccountСapitalized(string DepartmentId, string CustomerId)
            : base(DepartmentId, CustomerId)
         {
-            this.Rate = Customer.rate;
+            //this.Rate = Customer.Rate;
 
             this.Fee = 0;
 

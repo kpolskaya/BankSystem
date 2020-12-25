@@ -4,8 +4,8 @@ namespace BankSystem.Model
 {
     public abstract class Customer
     {
-        public static decimal fee;
-        public static decimal rate;
+        //public static decimal Fee;
+        //public static decimal Rate;
 
         public static Random random;
         static uint lastId;
@@ -37,7 +37,10 @@ namespace BankSystem.Model
             this.Id = NextId().ToString("00000000");
         }
 
+        private void SendMessage()
+        {
 
+        }
 
     }
 }

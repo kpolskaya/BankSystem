@@ -2,18 +2,22 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BankSystem.Model
 {
     public delegate void TransactionHandler(Division sender, Transaction t);
-    public abstract class Division // добавить конструктор
+    public abstract class Division 
     {
         public string Id { get; }
         public string Name { get; }
         
-        List<Account> accounts = new List<Account>();
+        protected decimal fee;
+        protected decimal rate;
+        
+        protected List<Account> accounts = new List<Account>();
 
         public Division(string Id, string Name)
         {
@@ -55,18 +59,18 @@ namespace BankSystem.Model
 
 
 
-        public void OpenAccount(AccountType Type, string DepartmentId, string CustomerId, decimal DepositAmount = 0)
+        public void OpenAccount(AccountType type, string departmentId, string customerId, decimal depositAmount = 0)
         {
-            switch (Type)
+            switch (type)
             {
                 case AccountType.DebitAccount:
-                    accounts.Add(new DebitAccount( DepartmentId, CustomerId));
+                    accounts.Add(new DebitAccount( departmentId, customerId));
                     break;
                 case AccountType.DepositAccount:
-                    accounts.Add(new DepositAccount(DepartmentId, CustomerId, DepositAmount));
+                    accounts.Add(new DepositAccount(departmentId, customerId, depositAmount));
                     break;
                 case AccountType.DepositAccountCapitalized:
-                    accounts.Add(new DepositAccountСapitalized (DepartmentId, CustomerId));
+                    accounts.Add(new DepositAccountСapitalized (departmentId, customerId));
                     break;
                 default:
                     break;
@@ -84,28 +88,13 @@ namespace BankSystem.Model
             TransactionRaised?.Invoke(sender, t);
         }
 
-       
-        public void CalculationCharge()
-        {
-            foreach (var account in accounts)
-            {
-                decimal Interest = account.GetInterest();
-                account.Credit(Interest);
-                OnTransactionRaised(this, new Transaction("00", account.Bic, Interest));
-                
-                decimal Fee = account.Fee;
-                if (account.Debit(Fee))
-                    OnTransactionRaised(this, new Transaction(account.Bic, "00", Fee));
-               
-            }
-
-            throw new NotImplementedException();
-        }
+        public abstract void CalculateCharge();
+      
 
         public abstract void CustomersForExample();
 
         public abstract void AccountsForExample();
 
-        public abstract void RefillAccounts();
+        //public abstract void RefillAccounts();
     }
 }

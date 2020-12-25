@@ -2,13 +2,17 @@
 
 namespace BankSystem.Model
 {
+
     public class Person : Customer
     {
-       
+        //public static decimal Fee() { return fee; }
+        //public static decimal Rate() { return rate; }
+        public static decimal Fee;
+        public static decimal Rate;
         static Person()
         {
-            fee = 10; // 40 30
-            rate = 0.12m; // 24 10
+            Fee = 10; // 40 30
+            Rate = 0.12m; // 24 10
         }
         public bool IsReliable { get; set; } // надежный ли заемщик - опция для физлиц
 

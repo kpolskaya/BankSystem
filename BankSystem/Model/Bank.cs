@@ -40,10 +40,17 @@ namespace BankSystem.Model
         private void ProcessPayment(Division sender, Transaction t)
         {
             if (t.BeneficiaryBic == "00")
+            {
                 BankBalance += t.Sum;
-
+                return;
+            }
+ 
             if (t.SenderBic == "00")
+            {
                 BankBalance -= t.Sum;
+                return;
+
+            }
 
             // давай 2 символа на Id Департамента оставим!
             //логика, если получатель - сам банк ( t.SenderBic.Substring(2) = "00" ) ... return;
@@ -75,7 +82,7 @@ namespace BankSystem.Model
         {
             foreach (var department in Departments)
             {
-                department.CalculationCharge();
+                department.CalculateCharge();
             }
         }
 

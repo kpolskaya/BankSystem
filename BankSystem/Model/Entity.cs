@@ -5,10 +5,14 @@ namespace BankSystem.Model
 {
     public class Entity : Customer 
     {
+        //public static decimal Fee() { return fee; }
+        //public static decimal Rate() { return rate; }
+        public static decimal Fee;
+        public static decimal Rate;
         static Entity()
         {
-            fee = 30; // 40 30
-            rate = 0.1m; // 24 10
+            Fee = 30; // 40 30
+            Rate = 0.1m; // 24 10
         }
         
         public Entity() : base() { }

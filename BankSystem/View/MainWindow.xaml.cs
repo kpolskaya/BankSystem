@@ -38,6 +38,8 @@ namespace BankSystem.View
             bank.ExampleCustomers();
 
             bank.MonthlyCharge();
+
+           // Accounts.ItemsSource = Accounts;
         }
     }
 }

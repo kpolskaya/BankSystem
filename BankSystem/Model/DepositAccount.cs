@@ -20,10 +20,11 @@ namespace BankSystem.Model
 
             this.DepositAmount = DepositAmount;
 
-            this.Rate = Customer.rate;
+            //this.Rate = Customer.Rate;
 
             this.Fee = 0;
         }
+
 
         public override decimal GetInterest()
         {
