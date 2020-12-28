@@ -13,17 +13,21 @@ namespace BankSystem.Model
     {
         public string Id { get; }
         public string Name { get; }
+
+        public ObservableCollection<Customer> Customers;
         
         protected decimal fee;
         protected decimal rate;
         
-        protected List<Account> accounts = new List<Account>();
+        protected ObservableCollection<Account> accounts = new ObservableCollection<Account>();
+
 
         public Division(string Id, string Name)
         {
             this.Id = Id;
             this.Name = Name;
-            this.accounts = new List<Account>();
+            this.accounts = new ObservableCollection<Account>();
+           
         }
        
         public ReadOnlyObservableCollection<string> Accounts
@@ -67,7 +71,7 @@ namespace BankSystem.Model
                     accounts.Add(new DebitAccount( departmentId, customerId));
                     break;
                 case AccountType.DepositAccount:
-                    accounts.Add(new DepositAccount(departmentId, customerId, depositAmount));
+                    accounts.Add(new DepositAccount(departmentId, customerId));
                     break;
                 case AccountType.DepositAccountCapitalized:
                     accounts.Add(new DepositAccountСapitalized (departmentId, customerId));
@@ -76,7 +80,36 @@ namespace BankSystem.Model
                     break;
             }
 
-         }
+        }
+
+        public decimal GetInterest(Account account)
+        {             
+            decimal interest = account.Balance * rate / 12 * 100;
+            return  interest;
+        }
+
+        public void CalculateCharge() // нужно наверное сделать универсальный метод, который в зависимости от типа счета считает fee | interest
+                                               // и может лучше его реализовать прямо в классе Division без абстракции?
+        {
+            foreach (var account in accounts)
+            {
+                //Type myType = Type.GetType(Customer, false, true);
+                //var myType = GetType();
+                //myType.GetFields();
+
+                // Console.WriteLine($"{field.FieldType} {field.Name}");
+                decimal Interest = GetInterest(account); // нужно убрать из Account этот метод
+                account.Credit(Interest);
+                OnTransactionRaised(this, new Transaction("00", account.Bic, Interest));
+
+                decimal Fee = fee; // fee и rate брать прямо из this.rate | this.fee
+                if (account.Debit(Fee))
+                    OnTransactionRaised(this, new Transaction(account.Bic, "00", Fee));
+
+            }
+
+
+        }
 
 
         public event TransactionHandler TransactionRaised;
@@ -88,8 +121,8 @@ namespace BankSystem.Model
             TransactionRaised?.Invoke(sender, t);
         }
 
-        public abstract void CalculateCharge();
-      
+       
+        public abstract void CreateCustomer(string name, string otherName, string legalId, string phone);
 
         public abstract void CustomersForExample();
 

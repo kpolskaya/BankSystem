@@ -8,21 +8,23 @@ namespace BankSystem.Model
 {
     class DepositAccountСapitalized : Account
     {
+       // public decimal Interest { get; private set; }
+
         public DepositAccountСapitalized(string DepartmentId, string CustomerId)
            : base(DepartmentId, CustomerId)
         {
             //this.Rate = Customer.Rate;
-
-            this.Fee = 0;
+           
+            // this.Fee = 0;
 
 
         }
 
-        public override decimal GetInterest()
-        {
-            decimal interest = Balance * Rate / 12 * 100;
-            return interest;
-            throw new NotImplementedException();
-        }
+        //public override decimal GetInterest()
+        //{
+        //    decimal interest = Balance * Rate / 12 * 100;
+        //    return interest;
+        //    throw new NotImplementedException();
+        //}
     }
 }

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BankSystem.Model;
+using BankSystem.ViewModel;
 
 namespace BankSystem.View
 {
@@ -35,11 +36,17 @@ namespace BankSystem.View
                 Environment.Exit(911);
             }
 
+           
+
             bank.ExampleCustomers();
 
-            bank.MonthlyCharge();
+            //bank.MonthlyCharge();
 
-           // Accounts.ItemsSource = Accounts;
+           // Accounts.ItemsSource = Accounts; 
+            
+            BankVM bankVM = new BankVM(bank);
+
+
         }
     }
 }

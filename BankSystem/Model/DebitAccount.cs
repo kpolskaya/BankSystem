@@ -8,7 +8,9 @@ namespace BankSystem.Model
 {
     class DebitAccount: Account
     {
-        public decimal DepositAmount { get; private set; }
+        //public decimal DepositAmount { get; private set; }
+
+       // public decimal Interest { get; private set; }
 
         //public new decimal Rate { get; }
 
@@ -17,17 +19,17 @@ namespace BankSystem.Model
         public DebitAccount(string DepartmentId, string CustomerId)
         : base(DepartmentId, CustomerId)
         {
-            this.Rate = 0;
-
+            //this.Rate = 0;
+           
             //this.Fee = Customer.Fee;
 
         }
 
-        public override decimal GetInterest()
-        {
-            decimal interest = Balance * Rate / 12 * 100;
-            return interest;
+        //public override decimal GetInterest()
+        //{
+        //    decimal interest = Balance * Rate / 12 * 100;
+        //    return interest;
           
-        }
+        //}
     }
 }

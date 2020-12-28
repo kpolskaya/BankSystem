@@ -17,15 +17,17 @@ namespace BankSystem.Model
         public decimal Balance { get; private set; }
         public AccountType Type { get; }
 
-        public decimal Fee { get; set; } //месячная плата за обслуживание
-        public decimal Rate { get; set; } //процент на остаток
+        public decimal Interest { get; private set; }
+
+        //public decimal Fee { get; set; } //месячная плата за обслуживание
+        //public decimal Rate { get; set; } //процент на остаток
 
         public Account(AccountType Type, string DepartmentId, string CustomerId)
         {
             this.Type = Type;
             this.Bic =  DepartmentId + CustomerId + Guid.NewGuid().ToString().Remove(8);
             this.Balance = 0;
-            
+            this.Interest = 0;
         }
         public Account( string DepartmentId, string CustomerId)
         {
@@ -50,7 +52,7 @@ namespace BankSystem.Model
             Balance += sum;
         }
 
-        public abstract decimal GetInterest();
+       
         
 
     }
