@@ -9,27 +9,31 @@ using BankSystem.Model;
 
 namespace BankSystem.ViewModel
 {
-    class BankVM : INotifyPropertyChanged
+    public class BankVM : INotifyPropertyChanged
     {
-        public ObservableCollection<DivisionVM> Departments { get;  set; }
+        public ObservableCollection<DivisionVM> Departments { get; set; }
 
-        private Bank bank;
+        private readonly Bank bank;
+                  
 
-        public BankVM(Bank Bank)
+        public BankVM()
         {
+            bank = new Bank("BANK");
+            bank.ExampleCustomers();
             this.Departments = new ObservableCollection<DivisionVM>();
-            this.bank = Bank;
-            foreach (var item in this.bank.Departments)
+            foreach (var item in bank.Departments)
             {
                 this.Departments.Add(new DivisionVM(item));
             }
-                
         }
 
-
-        public DivisionVM SelectedItem()
+        public DivisionVM SelectedItem
         {
-            return this.Departments.FirstOrDefault(d => d.IsSelected);
+            get
+            {
+                return this.Departments.FirstOrDefault(d => d.IsSelected);
+
+            }
         }
 
 
@@ -38,8 +42,7 @@ namespace BankSystem.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

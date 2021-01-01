@@ -14,27 +14,22 @@ namespace BankSystem.Model
     {
        
         public string Bic { get;}
-        public decimal Balance { get; private set; }
+        public decimal Balance { get; protected set; }
         public AccountType Type { get; }
 
-        public decimal Interest { get; private set; }
+        public decimal AccruedInterest { get; protected set; }
 
-        //public decimal Fee { get; set; } //месячная плата за обслуживание
-        //public decimal Rate { get; set; } //процент на остаток
-
-        public Account(AccountType Type, string DepartmentId, string CustomerId)
+        //protected Func<decimal, decimal> interest;
+      
+        public Account(AccountType Type, string DepartmentId, string CustomerId) 
         {
             this.Type = Type;
             this.Bic =  DepartmentId + CustomerId + Guid.NewGuid().ToString().Remove(8);
             this.Balance = 0;
-            this.Interest = 0;
+            this.AccruedInterest = 0;
+            //this.interest = InterestFunc;
         }
-        public Account( string DepartmentId, string CustomerId)
-        {
-            this.Bic = DepartmentId + CustomerId + Guid.NewGuid().ToString().Remove(8);
-            this.Balance = 0;
-
-        }
+       
 
         public virtual bool Debit(decimal sum)
         {
@@ -45,14 +40,25 @@ namespace BankSystem.Model
                        
         }
 
-       
 
         public void Credit(decimal sum)
         {
             Balance += sum;
         }
 
-       
+        /// <summary>
+        /// Начисляет и проводит проценты по счету за месяц
+        /// </summary>
+        /// <param name="rate">процентная ставка</param>
+        /// <returns>Начисленные за месяц проценты</returns>
+        public abstract decimal ChargeInterest(decimal rate);
+        
+        public decimal FullBalance()
+        {
+            return this.Balance + this.AccruedInterest;
+        }
+        //protected abstract decimal InterestFunc(decimal rate);
+        
         
 
     }

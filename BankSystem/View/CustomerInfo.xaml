@@ -1,0 +1,61 @@
+﻿<Window x:Class="BankSystem.View.CustomerInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BankSystem.View" xmlns:viewmodel="clr-namespace:BankSystem.ViewModel" 
+        mc:Ignorable="d"
+        Title="CustomerInfo" Height="450" Width="800">
+     <!--d:DataContext="{d:DesignInstance Type=viewmodel:CustomerVM}"-->
+    <Window.Resources>
+        <!--<VM:ViewModel x:Key="SharedViewModel" />-->
+        
+    </Window.Resources>
+   
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.4*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <GroupBox Header="Информация о клиенте" Grid.Row="0" Width="Auto" Padding="5">
+            <StackPanel Orientation="Vertical" Width="Auto" >
+
+                <StackPanel Orientation="Vertical" Width="Auto" Height="Auto" VerticalAlignment="Bottom">
+
+                    <StackPanel Orientation="Horizontal" Width="Auto">
+
+
+                        <TextBox Text="Наименование" Width="200" TextAlignment="Center" Height="20" />
+                        <TextBox Text="клиента" Width="200" TextAlignment="Center" Height="20"/>
+                        <TextBox Text="Рег. номер" Width="200" TextAlignment="Center" Height="20"/>
+                        <TextBox Text="Телефон" Width="160" TextAlignment="Center"  Height="20"/> 
+                        
+                    </StackPanel>
+
+
+                    <StackPanel Orientation="Horizontal" Width="Auto" Height="20" DataContext="{Binding SelectedCustomer}" >
+
+
+
+                        <TextBox Text="{Binding Name,  Mode=TwoWay}" Width="200" HorizontalAlignment="Left"></TextBox>
+
+                        <TextBox Text="{Binding Path=OtherName,  Mode=TwoWay}" Width="200" HorizontalAlignment="Left"></TextBox>
+
+                        <TextBox Text="{Binding Path=LegalId, Mode=TwoWay}" Width="200"  HorizontalAlignment="Left"></TextBox>
+
+                        <TextBox Text="{Binding Path=Phone, Mode=TwoWay}" Width="160" HorizontalAlignment="Right"></TextBox>
+                                       
+                        
+                    </StackPanel>
+                    
+
+                </StackPanel>
+               
+              
+            </StackPanel >
+
+
+
+        </GroupBox >
+    </Grid>
+</Window>

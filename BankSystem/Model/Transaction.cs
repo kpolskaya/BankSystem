@@ -12,21 +12,15 @@ namespace BankSystem.Model
         Done,
         Failed
     }
+
+    public enum TransactionType
+    {
+        Internal,
+        Transfer
+    }
     public class Transaction
     {
-        static uint lastId;
-        static Transaction()
-        {
-            lastId = 0;
- 
-        }
-
-        static uint NextId()
-        {
-            return ++lastId;
-        }
-
-        public uint Id { get; }
+        public string Id { get; }
 
         public string SenderBic { get; }
 
@@ -34,23 +28,26 @@ namespace BankSystem.Model
 
         public decimal Sum { get; }
 
+        public string Detailes { get; }
+
+        public TransactionType Type { get; }
+
         public TransactionStatus Status { get; set; }
 
-        public Transaction(uint Id, string Sender, string Beneficiary, decimal Sum)
+        public Transaction(string Id, string Sender, string Beneficiary, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
         {
-            this.Id = NextId();
+            this.Id = Id;
             this.SenderBic = Sender;
             this.BeneficiaryBic = Beneficiary;
             this.Sum = Sum;
+            this.Detailes = Detailes;
             this.Status = TransactionStatus.Demanded;
+            this.Type = Type;
         }
-        public Transaction(string Sender, string Beneficiary, decimal Sum)
+        public Transaction(string Sender, string Beneficiary, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
+            : this (Guid.NewGuid().ToString(), Sender, Beneficiary, Sum, Detailes, Type)
         {
-            this.Id = NextId();
-            this.SenderBic = Sender;
-            this.BeneficiaryBic = Beneficiary;
-            this.Sum = Sum;
-            this.Status = TransactionStatus.Demanded;
+            
         }
     }
 }

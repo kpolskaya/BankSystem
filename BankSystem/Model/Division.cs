@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BankSystem.Model
 {
     public delegate void TransactionHandler(Division sender, Transaction t);
-    public abstract class Division 
+    public abstract class Division //TODO  везде проверки на null (GetAccountByBic) и расставить Exeptions
     {
         public string Id { get; }
         public string Name { get; }
@@ -19,51 +19,34 @@ namespace BankSystem.Model
         protected decimal fee;
         protected decimal rate;
         
-        protected ObservableCollection<Account> accounts = new ObservableCollection<Account>();
-
+        protected ObservableCollection<Account> accounts;
+        public ReadOnlyObservableCollection<Account> Accounts { get; protected set; }
 
         public Division(string Id, string Name)
         {
             this.Id = Id;
             this.Name = Name;
             this.accounts = new ObservableCollection<Account>();
-           
+            this.Accounts = new ReadOnlyObservableCollection<Account>(this.accounts);
+        
         }
-       
-        public ReadOnlyObservableCollection<string> Accounts
+ 
+        public Account GetAccountByBic(string Bic) //приватная?
         {
-            get
-            {
-                return new ReadOnlyObservableCollection<string>(
-                        new ObservableCollection<string>(from a in accounts
-                         select a.Bic));
-            }
-        }
-
-        public Account GetAccountByBic(string Bic)
-        {
-            Account account = accounts.FirstOrDefault(x => x.Bic == Bic);
-
-            return account;
+            return accounts.FirstOrDefault(x => x.Bic == Bic);
         }
 
         public bool Debit(string bic, decimal sum) //возможно не нужна или нужна только приватная
         {
-            bool executed = false;
-            Account account = GetAccountByBic(bic);
-            account.Debit(sum);
-            return executed;
+            return GetAccountByBic(bic).Debit(sum);
         }
 
-        public void Credit(string bic, decimal sum) // нужна публичная чтобы банк мог инициировать зачисление средств клиенту
+        public void Credit(string bic, decimal sum) // нужна публичная чтобы банк мог инициировать зачисление средств клиенту   или не нужна...
         {
-            Account account = GetAccountByBic(bic);
-            account.Credit(sum);
+            GetAccountByBic(bic).Credit(sum);
         }
 
-
-
-        public void OpenAccount(AccountType type, string departmentId, string customerId, decimal depositAmount = 0)
+        public void OpenAccount(AccountType type, string departmentId, string customerId)
         {
             switch (type)
             {
@@ -79,36 +62,81 @@ namespace BankSystem.Model
                 default:
                     break;
             }
-
         }
 
-        public decimal GetInterest(Account account)
-        {             
-            decimal interest = account.Balance * rate / 12 * 100;
-            return  interest;
+        internal bool IsValidBic(string beneficiaryBic)
+        {
+            throw new NotImplementedException();
         }
 
-        public void CalculateCharge() // нужно наверное сделать универсальный метод, который в зависимости от типа счета считает fee | interest
-                                               // и может лучше его реализовать прямо в классе Division без абстракции?
+        internal bool TryToCredit(string bic, decimal sum)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void Refund(Transaction t)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Закрывает месяц: рассчитывает и проводит все платежи и проценты
+        /// </summary>
+        public void CalculateCharges() 
         {
             foreach (var account in accounts)
             {
-                //Type myType = Type.GetType(Customer, false, true);
-                //var myType = GetType();
-                //myType.GetFields();
-
-                // Console.WriteLine($"{field.FieldType} {field.Name}");
-                decimal Interest = GetInterest(account); // нужно убрать из Account этот метод
-                account.Credit(Interest);
-                OnTransactionRaised(this, new Transaction("00", account.Bic, Interest));
-
-                decimal Fee = fee; // fee и rate брать прямо из this.rate | this.fee
-                if (account.Debit(Fee))
-                    OnTransactionRaised(this, new Transaction(account.Bic, "00", Fee));
-
+               
+                if (account.Type != AccountType.DebitAccount)
+                {
+                    decimal Interest = account.ChargeInterest(rate);
+                    OnTransactionRaised(this, new Transaction("99", account.Bic, Interest, "Начисление процентов"));
+                }
+                
+                else
+                    if (account.Debit(fee))
+                        OnTransactionRaised(this, new Transaction(account.Bic, "99", fee, "Плата за обслуживание"));
             }
+        }
 
+        /// <summary>
+        /// Положить деньги на счет
+        /// </summary>
+        /// <param name="bic">номер счета</param>
+        /// <param name="sum">сумма</param>
+        public void Put(string bic, decimal sum)
+        {
+            GetAccountByBic(bic).Credit(sum);
+            OnTransactionRaised(this, new Transaction("00", bic, sum, "Пополнение через кассу"));
+        }
 
+        /// <summary>
+        /// Снять деньги со счета
+        /// </summary>
+        /// <param name="bic">номер счета</param>
+        /// <param name="sum">сумма</param>
+        /// <returns>true -  успех, или false - недостаточно средств</returns>
+        public bool Withdraw(string bic, decimal sum)
+        {
+            bool executed = GetAccountByBic(bic).Debit(sum);
+            if (executed)
+                OnTransactionRaised(this, new Transaction(bic, "00", sum, "Выдача наличных"));
+            return executed;
+        }
+
+        public bool CloseAccount(string bic)
+        {
+            bool executed;
+            decimal sum;
+            Account account = GetAccountByBic(bic);
+
+            //if null return...
+
+            sum = account.FullBalance();
+            executed = account.Debit(sum);
+            if (executed)
+                OnTransactionRaised(this, new Transaction(bic, "00", sum, "Закрытие счета"));
+            return executed;
         }
 
 

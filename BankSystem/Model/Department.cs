@@ -41,13 +41,14 @@ namespace BankSystem.Model
 
         public override void CreateCustomer(string name, string otherName, string legalId, string phone) // почему у нас нет абстракции этого метода в базовом классе Division? Как потом будем вызывать?
         { //пока это единственный метод, который должен быть явно реализован тут!
-            TCustomer customer = new TCustomer();
-            
-            customer.Name = name;
-            customer.OtherName = otherName;
-            customer.LegalId = legalId;
-            customer.Phone = phone;
-            
+            TCustomer customer = new TCustomer
+            {
+                Name = name,
+                OtherName = otherName,
+                LegalId = legalId,
+                Phone = phone
+            };
+
             this.Customers.Add(customer);
   
         }
@@ -59,11 +60,11 @@ namespace BankSystem.Model
                 string name = ($"Клиент  {this.Id}-{i+1}");
                 string othername = ($"Имярек  {this.Id}-{i+1}");
                 string legalId = ($"{this.Id}-00000-{i+1}");
-                string phone = ($"+7 499 {this.Id}00{i+1}");
+                string phone = ($"+7 499 {this.Id}0000{i+1}");
                 CreateCustomer(name, othername, legalId, phone);
             }
 
-            foreach (var item in Customers)
+            foreach (var item in Customers) 
             {
                 AccountsForExample();
             }
@@ -74,7 +75,7 @@ namespace BankSystem.Model
             foreach (var customer in Customers)
             {
                 OpenAccount(AccountType.DebitAccount, this.Id, customer.Id);
-                OpenAccount(AccountType.DepositAccount, this.Id, customer.Id, 1000);
+                OpenAccount(AccountType.DepositAccount, this.Id, customer.Id);
                 OpenAccount(AccountType.DepositAccountCapitalized, this.Id, customer.Id);
             }
         }

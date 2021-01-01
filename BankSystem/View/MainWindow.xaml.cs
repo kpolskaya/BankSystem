@@ -22,31 +22,21 @@ namespace BankSystem.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        Bank bank ;
+        BankVM bank;
+        public BankVM bankVM;
         public MainWindow()
         {
             InitializeComponent();
-            try
-            {
-               bank = new Bank("BANK");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message + " Аварийное завершение.");
-                Environment.Exit(911);
-            }
+            bank = (BankVM)this.FindResource("bank");
+            DataContext = bank;
 
-           
+        }
 
-            bank.ExampleCustomers();
-
-            //bank.MonthlyCharge();
-
-           // Accounts.ItemsSource = Accounts; 
-            
-            BankVM bankVM = new BankVM(bank);
-
-
+        private void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CustomerInfo newWindow = new CustomerInfo();
+            newWindow.Show();
+            newWindow.DataContext = bank.SelectedItem;
         }
     }
 }

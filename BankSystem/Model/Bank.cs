@@ -9,9 +9,11 @@ namespace BankSystem.Model
 {
     public class Bank
     {
-        public decimal BankBalance { get; private set; }
+        public decimal Profit { get; private set; } //  bic 99 - прибыль/убыток
+        public decimal Cash { get; private set; } // bic 00 - касса банка
         public ObservableCollection<Division> Departments { get; private set; }
         public string Name { get; }
+        public ObservableCollection<Transaction> TransactionHistory { get; private set; }
 
         public Bank()
         {
@@ -28,44 +30,62 @@ namespace BankSystem.Model
                 new Department<Vip>("03", "Отдел по работе с VIP клиентами")
             };
             
-            this.BankBalance = 0;
+            this.Cash = 1_000_000;
             
             foreach (var item in this.Departments) //подписка на эвенты каждого департамента
             {
                 item.TransactionRaised += ProcessPayment;
             }
 
+            this.TransactionHistory = new ObservableCollection<Transaction>();
         }
 
         private void ProcessPayment(Division sender, Transaction t)
         {
-            if (t.BeneficiaryBic == "00")
+            if (t.Type == TransactionType.Internal)
             {
-                BankBalance += t.Sum;
-                return;
-            }
- 
-            if (t.SenderBic == "00")
-            {
-                BankBalance -= t.Sum;
-                return;
+                if (t.BeneficiaryBic == "99") // прибыль банка
+                {
+                    Profit += t.Sum;
+                }
 
-            }
+                if (t.BeneficiaryBic == "00") // выдача денег клиенту
+                {
+                    Cash -= t.Sum;
+                }
 
-            // давай 2 символа на Id Департамента оставим!
-            //логика, если получатель - сам банк ( t.SenderBic.Substring(2) = "00" ) ... return;
+                if (t.SenderBic == "99") // убыток банка
+                {
+                    Profit -= t.Sum;
+                }
 
-            //логика, если плательщик - сам банк ... return;
-
-            // логика проверки получателя средств
-
-            //этот код можно выполить только после того, как мы убедимся, что бик получателя валиден!
-            if (sender.Debit(t.SenderBic, t.Sum)) 
-            {
-                Departments.FirstOrDefault(d => d.Id == t.BeneficiaryBic.Substring(2)).Credit(t.BeneficiaryBic, t.Sum);
-
+                if (t.SenderBic == "00") // внесение денег клиентом
+                {
+                    Cash += t.Sum;
+                }
+                t.Status = TransactionStatus.Done;
             }
 
+            else
+            {
+                Division department = GetDepartmentByBic(t.BeneficiaryBic);
+                if (department != null && department.TryToCredit(t.BeneficiaryBic, t.Sum))
+                    t.Status = TransactionStatus.Done;
+                else
+                {
+                    t.Status = TransactionStatus.Failed;
+                    department.Refund(t);
+                }
+            }
+
+            this.TransactionHistory.Add(t);
+
+        }
+
+        private Division GetDepartmentByBic(string bic)
+        {
+            string id = bic.Substring(0, 2);
+            return Departments.FirstOrDefault(d => d.Id == id);
         }
 
         public void Save(string path)
@@ -82,7 +102,7 @@ namespace BankSystem.Model
         {
             foreach (var department in Departments)
             {
-                department.CalculateCharge();
+                department.CalculateCharges();
             }
         }
 

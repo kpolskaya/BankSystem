@@ -10,9 +10,9 @@ using System.Diagnostics;
 
 namespace BankSystem.ViewModel
 {
-    class DivisionVM : INotifyPropertyChanged
+    public class DivisionVM : INotifyPropertyChanged
     {
-        private Division division;
+        private readonly Division division;
 
         public string Id { get { return division.Id; } }
 
@@ -23,61 +23,77 @@ namespace BankSystem.ViewModel
             this.division = Department;
             this.Customers = new ObservableCollection<CustomerVM>();
 
-                          
-                if (Department is Department<Entity>)
-                foreach (var item in (Department as Department<Entity>).Customers)
-                {
-                    this.Customers.Add(new CustomerVM(item));
-                }
-
-                else if (Department is Department<Person>)
-                foreach (var item in (Department as Department<Person>).Customers)
-                {
-                    this.Customers.Add(new CustomerVM(item));
-                }
-
-                else if(Department is Department<Vip>)
-                foreach (var item in (Department as Department<Vip>).Customers)
-                {
-                    this.Customers.Add(new CustomerVM(item));
-                }
-            else
+                                      
+            if (Department is Department<Entity>)
+            foreach (var item in (Department as Department<Entity>).Customers)
             {
-                return;
+                this.Customers.Add(new CustomerVM(item));
             }
-            //var dType = Department.GetType();
-            //Type[] dTypeParameters = dType.GetGenericArguments();
-            //Type cType = dTypeParameters[0];
 
-            //switch (cType.Name)
-            //{
-            //    case "Entity":
-            //        foreach (var item in (Department as Department<Entity>).Customers)
-            //        {
-            //            this.Customers.Add(new CustomerVM(item));
-            //        }
+            else if (Department is Department<Person>)
+            foreach (var item in (Department as Department<Person>).Customers)
+            {
+                this.Customers.Add(new CustomerVM(item));
+            }
 
-            //        Debug.WriteLine("Entity");
-            //        break;
-            //}
+            else if(Department is Department<Vip>)
+            foreach (var item in (Department as Department<Vip>).Customers)
+            {
+                this.Customers.Add(new CustomerVM(item));
+            }
+                                                                    //else
+                                                                    //{
+                                                                    //    return;
+                                                                    //}
+                                                                    //var dType = Department.GetType();
+                                                                    //Type[] dTypeParameters = dType.GetGenericArguments();
+                                                                    //Type cType = dTypeParameters[0];
 
+                                                                    //switch (cType.Name)
+                                                                    //{
+                                                                    //    case "Entity":
+                                                                    //        foreach (var item in (Department as Department<Entity>).Customers)
+                                                                    //        {
+                                                                    //            this.Customers.Add(new CustomerVM(item));
+                                                                    //        }
 
+                                                                    //        Debug.WriteLine("Entity");
+                                                                    //        break;
+                                                                    //}
 
+            this.Accounts = new ObservableCollection<AccountVM>();
+            foreach (var item in Department.Accounts)
+            {
+                this.Accounts.Add(new AccountVM(item));
+            }
         }
 
+        public ObservableCollection<CustomerVM> Customers { get; private set; }
 
-
-        public ObservableCollection<CustomerVM> Customers
+        public CustomerVM SelectedCustomer
         {
-            get; private set;
+            get
+            {
+                return Customers.FirstOrDefault(x => x.IsSelected);
+            }
         }
 
 
+
+        public ObservableCollection<AccountVM> Accounts { get; private set; }
+
+        public AccountVM SelectedAccount
+        {
+            get
+            {
+                return Accounts.FirstOrDefault(x => x.IsSelected);
+            }
+        }
 
         private bool isSelected;
         public bool IsSelected
         {
-            get => isSelected;
+            get { return isSelected; }
             set
             {
                 if (value != this.isSelected)
@@ -91,8 +107,7 @@ namespace BankSystem.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

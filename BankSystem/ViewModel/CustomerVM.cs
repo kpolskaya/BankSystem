@@ -8,28 +8,19 @@ using BankSystem.Model;
 
 namespace BankSystem.ViewModel
 {
-    class CustomerVM : INotifyPropertyChanged
+    public class CustomerVM : INotifyPropertyChanged
     {
-        private Customer customer;
+        private readonly Customer customer;
         public string Id { get { return this.customer.Id; } }
-        
-        public string OtherName { get; set; } //фамилия/форма собственности юр. лица
-        public string LegalId { get; set; } // номер удостоверения личности или регистрации фирмы
-        public string Phone { get; set; } //контактный телефон
 
-        public CustomerVM(Customer Customer)
+        public string Name
         {
-            this.customer = Customer;
-        }
-
-        public string Name 
-        { 
             get
             {
                 return this.customer.Name;
             }
 
-            set 
+            set
             {
                 if (value != this.customer.Name)
                 {
@@ -39,12 +30,67 @@ namespace BankSystem.ViewModel
             }
         }
 
+        public string OtherName
+        {
+            get
+            {
+                return this.customer.OtherName;
+            }
 
+            set
+            {
+                if (value != this.customer.OtherName)
+                {
+                    this.customer.OtherName = value;
+                    OnPropertyChanged("OtherName");
+                }
+            }
+        }
+        public string LegalId 
+        {
+            get
+            {
+                return this.customer.LegalId;
+            }
+
+            set
+            {
+                if (value != this.customer.LegalId)
+                {
+                    this.customer.LegalId = value;
+                    OnPropertyChanged("LegalId");
+                }
+            }
+
+        }
+        public string Phone 
+        {
+            get
+            {
+                return this.customer.Phone;
+            }
+
+            set
+            {
+                if (value != this.customer.Phone)
+                {
+                    this.customer.Phone = value;
+                    OnPropertyChanged("Phone");
+                }
+            }
+        } 
+
+        public CustomerVM(Customer Customer)
+        {
+            this.customer = Customer;
+        }
+
+     
 
         private bool isSelected;
         public bool IsSelected
         {
-            get => isSelected;
+            get { return isSelected; }
             set
             {
                 if (value != this.isSelected)
@@ -58,8 +104,7 @@ namespace BankSystem.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
         void OnPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
