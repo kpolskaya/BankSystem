@@ -68,18 +68,17 @@ namespace BankSystem.Model
 
             else
             {
-                Division department = GetDepartmentByBic(t.BeneficiaryBic);
-                if (department != null && department.TryToCredit(t.BeneficiaryBic, t.Sum))
+                Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
+                if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum)) // если получилось зачислить деньги получателю
                     t.Status = TransactionStatus.Done;
                 else
                 {
                     t.Status = TransactionStatus.Failed;
-                    department.Refund(t);
+                    sender.Refund(t);                                                   // если не получилось, нужно вернуть деньги отправителю
                 }
             }
 
             this.TransactionHistory.Add(t);
-
         }
 
         private Division GetDepartmentByBic(string bic)

@@ -139,6 +139,11 @@ namespace BankSystem.Model
             return executed;
         }
 
+        public void Transfer(string sender, string beneficiary, decimal sum)
+        {
+            throw new NotImplementedException();
+        }
+
 
         public event TransactionHandler TransactionRaised;
 
