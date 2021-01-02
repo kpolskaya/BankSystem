@@ -37,6 +37,9 @@ namespace BankSystem.View
             CustomerInfo newWindow = new CustomerInfo();
             newWindow.Show();
             newWindow.DataContext = bank.SelectedItem;
+            
         }
+
+        
     }
 }

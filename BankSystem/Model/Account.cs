@@ -33,7 +33,7 @@ namespace BankSystem.Model
 
         public virtual bool Debit(decimal sum)
         {
-            if (Balance < sum)
+            if (Balance + AccruedInterest < sum)
                 return false;
             Balance -= sum;
             return true;

@@ -36,6 +36,8 @@ namespace BankSystem.Model
             return accounts.FirstOrDefault(x => x.Bic == Bic);
         }
 
+      
+
         public bool Debit(string bic, decimal sum) //возможно не нужна или нужна только приватная
         {
             return GetAccountByBic(bic).Debit(sum);
@@ -71,7 +73,11 @@ namespace BankSystem.Model
 
         internal bool TryToCredit(string bic, decimal sum)
         {
-            throw new NotImplementedException();
+            Account account = GetAccountByBic(bic);
+            bool executed = account != null;
+            if (executed)
+                account.Credit(sum);
+            return executed;
         }
 
         internal void Refund(Transaction t)
@@ -100,48 +106,62 @@ namespace BankSystem.Model
         }
 
         /// <summary>
-        /// Положить деньги на счет
+        /// Вносит деньги на счет
         /// </summary>
         /// <param name="bic">номер счета</param>
         /// <param name="sum">сумма</param>
         public void Put(string bic, decimal sum)
         {
-            GetAccountByBic(bic).Credit(sum);
+            Account account = GetAccountByBic(bic);
+            if (account == null)
+                throw new Exception("Несуществующий счет");
             OnTransactionRaised(this, new Transaction("00", bic, sum, "Пополнение через кассу"));
         }
 
         /// <summary>
-        /// Снять деньги со счета
+        /// Снимает деньги со счета
         /// </summary>
         /// <param name="bic">номер счета</param>
         /// <param name="sum">сумма</param>
         /// <returns>true -  успех, или false - недостаточно средств</returns>
         public bool Withdraw(string bic, decimal sum)
         {
-            bool executed = GetAccountByBic(bic).Debit(sum);
+            Account account = GetAccountByBic(bic);
+            bool executed = (account != null && account.Debit(sum));
             if (executed)
                 OnTransactionRaised(this, new Transaction(bic, "00", sum, "Выдача наличных"));
             return executed;
         }
 
-        public bool CloseAccount(string bic)
+        public void CloseAccount(string bic) 
         {
-            bool executed;
-            decimal sum;
             Account account = GetAccountByBic(bic);
-
-            //if null return...
-
-            sum = account.FullBalance();
-            executed = account.Debit(sum);
-            if (executed)
-                OnTransactionRaised(this, new Transaction(bic, "00", sum, "Закрытие счета"));
-            return executed;
+            if (account == null)
+                throw new Exception("Несуществующий счет");
+            //decimal sum = account.FullBalance();
+            //account.Debit(sum);
+            
+            OnTransactionRaised(this, new Transaction(bic, "00", account.FullBalance(), "Выдача наличных и закрытие счета"));
+            this.accounts.Remove(account);
         }
+           
+                            
 
-        public void Transfer(string sender, string beneficiary, decimal sum)
+
+        public void Transfer(string senderBic, string beneficiaryBic, decimal sum, string detailes = "")
         {
-            throw new NotImplementedException();
+            Account senderAccount = GetAccountByBic(senderBic);
+            if (senderAccount == null)
+                throw new Exception("Несуществующий счет");
+            Transaction t; 
+            if (senderAccount is DebitAccount && senderAccount.Debit(sum))
+                t = new Transaction(senderBic, beneficiaryBic, sum, detailes, TransactionType.Transfer);
+            else
+            {
+                t = new Transaction(senderBic, beneficiaryBic, sum, detailes + " -- Отказано в операции", TransactionType.Transfer);
+                t.Status = TransactionStatus.Failed;
+            }
+            OnTransactionRaised(this, t);
         }
 
 

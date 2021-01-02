@@ -20,6 +20,7 @@ namespace BankSystem.Model
         //decimal rate;
         //decimal fee;
 
+       
         public Department(string Id, string Name) : base(Id, Name)
         {
             this.Customers = new ObservableCollection<TCustomer>();
@@ -31,6 +32,9 @@ namespace BankSystem.Model
           
             this.rate = (decimal)cType.GetField("Rate", BindingFlags.Static | BindingFlags.Public).GetValue(null);
             this.fee = (decimal)cType.GetField("Fee", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+            
+          
+
 
             Debug.WriteLine("For type {0} Rate is {1}, Fee is {2}", cType.Name, rate, fee); //  вывод для отладки
         }
@@ -62,12 +66,9 @@ namespace BankSystem.Model
                 string legalId = ($"{this.Id}-00000-{i+1}");
                 string phone = ($"+7 499 {this.Id}0000{i+1}");
                 CreateCustomer(name, othername, legalId, phone);
+                
             }
-
-            foreach (var item in Customers) 
-            {
-                AccountsForExample();
-            }
+            AccountsForExample();
         }
         
         public override void AccountsForExample()

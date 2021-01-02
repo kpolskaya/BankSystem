@@ -18,6 +18,10 @@ namespace BankSystem.ViewModel
 
         public string Name { get { return division.Name; } }
 
+        public string Header1 { get; }
+        public string Header2 { get; }
+        public string Header3 { get; }
+
         public DivisionVM(Division Department)
         {
             this.division = Department;
@@ -28,19 +32,28 @@ namespace BankSystem.ViewModel
             foreach (var item in (Department as Department<Entity>).Customers)
             {
                 this.Customers.Add(new CustomerVM(item));
-            }
+                    Header1 = "Наименование";
+                    Header2 = "Форма";
+                    Header3 = "ОГРН";
+                }
 
             else if (Department is Department<Person>)
             foreach (var item in (Department as Department<Person>).Customers)
             {
                 this.Customers.Add(new CustomerVM(item));
-            }
+                    Header1 = "Имя";
+                    Header2 = "Фамилия";
+                    Header3 = "Паспорт";
+                }
 
             else if(Department is Department<Vip>)
             foreach (var item in (Department as Department<Vip>).Customers)
             {
                 this.Customers.Add(new CustomerVM(item));
-            }
+                    Header1 = "Имя";
+                    Header2 = "Фамилия";
+                    Header3 = "Паспорт";
+                
                                                                     //else
                                                                     //{
                                                                     //    return;
@@ -60,12 +73,15 @@ namespace BankSystem.ViewModel
                                                                     //        Debug.WriteLine("Entity");
                                                                     //        break;
                                                                     //}
+            }
 
             this.Accounts = new ObservableCollection<AccountVM>();
             foreach (var item in Department.Accounts)
             {
                 this.Accounts.Add(new AccountVM(item));
             }
+
+
         }
 
         public ObservableCollection<CustomerVM> Customers { get; private set; }
@@ -88,6 +104,23 @@ namespace BankSystem.ViewModel
             {
                 return Accounts.FirstOrDefault(x => x.IsSelected);
             }
+        }
+
+        public ObservableCollection<AccountVM> CustomersAccounts
+        {
+            get
+            {
+                return new ObservableCollection<AccountVM>(
+                    from a in Accounts
+                    where a.Bic.Substring(2, 8) == SelectedCustomer.Id
+                    select a
+                    );
+            }
+        }
+
+        public void Put(string bic, decimal sum)
+        {
+            division.Put(bic, sum);
         }
 
         private bool isSelected;

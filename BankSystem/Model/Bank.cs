@@ -15,7 +15,7 @@ namespace BankSystem.Model
         public string Name { get; }
         public ObservableCollection<Transaction> TransactionHistory { get; private set; }
 
-        public Bank()
+        public Bank() //убрать или что
         {
 
         }
@@ -30,7 +30,7 @@ namespace BankSystem.Model
                 new Department<Vip>("03", "Отдел по работе с VIP клиентами")
             };
             
-            this.Cash = 1_000_000;
+            this.Cash = 1_000_000; //собственный капитал при открытии
             
             foreach (var item in this.Departments) //подписка на эвенты каждого департамента
             {
@@ -66,7 +66,7 @@ namespace BankSystem.Model
                 t.Status = TransactionStatus.Done;
             }
 
-            else
+            else if (t.Status != TransactionStatus.Failed) //если транзакция между счетами и подтверждена департаментом
             {
                 Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
                 if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum)) // если получилось зачислить деньги получателю
@@ -79,6 +79,8 @@ namespace BankSystem.Model
             }
 
             this.TransactionHistory.Add(t);
+            
+            //TODO save history
         }
 
         private Division GetDepartmentByBic(string bic)

@@ -14,10 +14,10 @@
    
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.4*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <!--<RowDefinition Height="0.25*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>-->
         </Grid.RowDefinitions>
-        <GroupBox Header="Информация о клиенте" Grid.Row="0" Width="Auto" Padding="5">
+        <GroupBox Header="Информация о клиенте"  Width="Auto" Padding="5">
             <StackPanel Orientation="Vertical" Width="Auto" >
 
                 <StackPanel Orientation="Vertical" Width="Auto" Height="Auto" VerticalAlignment="Bottom">
@@ -25,9 +25,9 @@
                     <StackPanel Orientation="Horizontal" Width="Auto">
 
 
-                        <TextBox Text="Наименование" Width="200" TextAlignment="Center" Height="20" />
+                        <TextBox Text="{Binding Header1, Mode=OneWay}" Width="200" TextAlignment="Center" Height="20" />
                         <TextBox Text="клиента" Width="200" TextAlignment="Center" Height="20"/>
-                        <TextBox Text="Рег. номер" Width="200" TextAlignment="Center" Height="20"/>
+                        <TextBox Text="Рег. номер" Width="210" TextAlignment="Center" Height="20"/>
                         <TextBox Text="Телефон" Width="160" TextAlignment="Center"  Height="20"/> 
                         
                     </StackPanel>
@@ -41,17 +41,86 @@
 
                         <TextBox Text="{Binding Path=OtherName,  Mode=TwoWay}" Width="200" HorizontalAlignment="Left"></TextBox>
 
-                        <TextBox Text="{Binding Path=LegalId, Mode=TwoWay}" Width="200"  HorizontalAlignment="Left"></TextBox>
+                        <TextBox Text="{Binding Path=LegalId, Mode=TwoWay}" Width="210"  HorizontalAlignment="Left"></TextBox>
 
                         <TextBox Text="{Binding Path=Phone, Mode=TwoWay}" Width="160" HorizontalAlignment="Right"></TextBox>
                                        
                         
                     </StackPanel>
-                    
+                   
 
                 </StackPanel>
                
-              
+                <ListView x:Name="Accounts"  Width="Auto" Height="Auto" BorderBrush="Transparent" BorderThickness="0"
+                ItemsSource="{Binding CustomersAccounts}" >
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        </Style>
+                        
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.View >
+
+                        <GridView>
+                            <GridViewColumn Width="200">
+                                <GridViewColumnHeader HorizontalAlignment="Right" Width="200">Номер счета</GridViewColumnHeader>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Bic}" HorizontalAlignment="Left"></TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <GridViewColumn Width="100">
+                                <GridViewColumnHeader HorizontalAlignment="Left" Width="100" >Тип счета</GridViewColumnHeader>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Type}" HorizontalAlignment="Left"></TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <GridViewColumn Width="100">
+                                <GridViewColumnHeader HorizontalAlignment="Left" Width="100" >% на остаток</GridViewColumnHeader>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=LegalId}" HorizontalAlignment="Left"></TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
+                            <GridViewColumn Width="110">
+                                <GridViewColumnHeader HorizontalAlignment="Left" Width="110" >За обслуживание</GridViewColumnHeader>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Phone}" HorizontalAlignment="Right"></TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="130">
+                                <GridViewColumnHeader HorizontalAlignment="Left" Width="130" >Баланс</GridViewColumnHeader>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Balance}" HorizontalAlignment="Right"></TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="130">
+                                <GridViewColumnHeader HorizontalAlignment="Left" Width="130" >Сумма %</GridViewColumnHeader>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=Interest}" HorizontalAlignment="Right"></TextBlock>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+
+                </ListView>
+               
             </StackPanel >
 
 

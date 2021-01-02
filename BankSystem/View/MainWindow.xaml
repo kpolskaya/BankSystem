@@ -94,7 +94,7 @@
                                 </GridViewColumn>
 
                                 <GridViewColumn Width="100">
-                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="100" >клиента</GridViewColumnHeader>
+                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="100" Content="{Binding Header2}"/>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Path=OtherName,  Mode=TwoWay}" HorizontalAlignment="Left"></TextBlock>
@@ -147,7 +147,12 @@
                             <GridView>
                                 <GridViewColumn Width="163">
                                     <GridViewColumnHeader HorizontalAlignment="Right" Width="170">Номер счета</GridViewColumnHeader>
-                                   
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Path=Bic}" HorizontalAlignment="Right"></TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+
                                 </GridViewColumn>
    
                             </GridView>

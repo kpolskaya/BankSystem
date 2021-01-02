@@ -43,9 +43,9 @@ namespace BankSystem.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public override string ToString()
-        {
-            return $"{this.Bic} : {this.Balance : ### ### ### ##0.00}";
-        }
+        //public override string ToString()
+        //{
+        //    return $"{this.Bic} : {this.Balance: ### ### ### ##0.00}";
+        //}
     }
 }
