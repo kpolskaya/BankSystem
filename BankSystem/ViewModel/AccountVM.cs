@@ -13,15 +13,27 @@ namespace BankSystem.ViewModel
         private readonly Account account;
 
         public string Bic { get { return this.account.Bic; } }
-        public decimal Balance { get { return this.account.FullBalance();} }
+        public decimal Balance 
+        {
+            //get { return this.account.FullBalance();} 
+            get
+            {
+                return this.account.Balance;
+            }
+        }
         public AccountType Type { get { return this.account.Type; } }
         public decimal Interest { get { return this.account.AccruedInterest; } }
         public AccountVM(Account Account)
         {
             this.account = Account;
+            this.account.Movement += AccountMovement;
         }
 
-    
+        private void AccountMovement(Account sender, string message)
+        {
+            OnPropertyChanged("Balance");
+        }
+
         private bool isSelected;
         public bool IsSelected
         {

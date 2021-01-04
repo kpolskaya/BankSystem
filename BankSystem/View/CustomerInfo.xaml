@@ -78,7 +78,7 @@
 
                 </StackPanel>
                
-                <ListView x:Name="Accounts"  Width="Auto" Height="Auto" Margin="5,10,5,5"
+                <ListView x:Name="Accounts"  Width="Auto" Height="150" Margin="5,10,5,5"
                           ItemsSource="{Binding CustomersAccounts, Mode=OneWay}">
 
                     <ListView.ItemContainerStyle>
@@ -133,14 +133,32 @@
 
                 <StackPanel Orientation="Horizontal">
                    
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="Действия с выбранным счетом:" Width="215" HorizontalAlignment="Left" TextAlignment="Center" Height="20"/>
+                    <StackPanel Orientation="Vertical" Width="300">
+                        <TextBlock Text="Действия с выбранным счетом:" Width="215" HorizontalAlignment="Center" TextAlignment="Center" Height="20"/>
+                        <Button Content="Перевод клиенту банка" Width="150" Height="20" HorizontalAlignment="Center"   Margin="5,5,5,5" Click="Button_Click_Transfer"  />
+                        <Button Content="Списать средства" Width="150" Height="20" HorizontalAlignment="Center"   Margin="5,5,5,5" Click="Button_Click_Withdraw" />
+                        <Button Content="Зачислить средства" Width="150" Height="20" HorizontalAlignment="Center"   Margin="5,5,5,5" Click="Button_Click_Put" />
+                       
 
-                        <Button Content="Списать средства" Width="115" Height="20" HorizontalAlignment="Left"   Margin="5,5,5,5"/>
-                        <Button Content="Зачислить средства" Width="115" Height="20" HorizontalAlignment="Left"   Margin="5,5,5,5"/>
-
-                        <Button Content="Закрыть счет" Width="115" Height="20" Margin="5" HorizontalAlignment="Left" />
+                        <Button Content="Закрыть счет" Width="150" Height="20" Margin="5" HorizontalAlignment="Center" Click="Button_Click_CloseAccount" />
                     </StackPanel>
+                    <StackPanel Orientation="Vertical" >
+                        <TextBlock Text="Введите сумму транзакции:" Width="215" HorizontalAlignment="Center" TextAlignment="Center" Height="20"/>
+                        <TextBox x:Name="TransferSum"  Width="150" Height="20" HorizontalAlignment="Center"   Margin="5,5,5,5"/>
+                        <TextBox  x:Name="WithdrawSum"  Width="150" Height="20" HorizontalAlignment="Center"   Margin="5,5,5,5"/>
+                        <TextBox x:Name="PutSum"  Width="150" Height="20" HorizontalAlignment="Center"   Margin="5,5,5,5"/>
+                       
+
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" >
+                        <TextBlock Text="Введите счет получателя:" Width="215" HorizontalAlignment="Center" TextAlignment="Center" Height="20"/>
+
+                        
+                        <TextBox x:Name="TransferAccount"  Width="200" Height="20" HorizontalAlignment="Center"   Margin="5,5,5,5"/>
+
+                    </StackPanel>
+
 
                 </StackPanel>
                

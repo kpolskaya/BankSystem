@@ -102,6 +102,7 @@ namespace BankSystem.Model
             Account account = GetAccountByBic(bic);
             if (account == null)
                 throw new Exception("Несуществующий счет");
+            account.Credit(sum, "Пополнение через кассу");
             OnTransactionRaised(this, new Transaction("00", bic, sum, "Пополнение через кассу"));
         }
 
@@ -134,7 +135,22 @@ namespace BankSystem.Model
             this.accounts.Remove(account);
         }
            
-                            
+        public bool CheckAccount(string bic) /// написала проверку корявато. перепиши
+        {
+            bool isValid;
+            Account account = GetAccountByBic(bic);
+             if (account != null)
+             {
+                isValid = true;
+                return isValid;
+             }
+
+            else
+            {
+                new Exception("Несуществующий счет");
+            }
+            throw new Exception("Ошибка операции");
+        }
 
 
         public void Transfer(string senderBic, string beneficiaryBic, decimal sum, string detailes = "")
@@ -143,7 +159,7 @@ namespace BankSystem.Model
             if (senderAccount == null)
                 throw new Exception("Несуществующий счет");
             Transaction t; 
-            if (senderAccount is DebitAccount && senderAccount.Debit(sum, detailes))
+            if (senderAccount is DebitAccount && CheckAccount(beneficiaryBic) && senderAccount.Debit(sum, detailes))
                 t = new Transaction(senderBic, beneficiaryBic, sum, detailes, TransactionType.Transfer);
             else
             {

@@ -2,7 +2,7 @@
 
 namespace BankSystem.Model
 {
-    public enum AccountType : byte
+    public enum AccountType : byte 
     {
         DebitAccount = 0,
         DepositAccount = 1,
@@ -19,6 +19,7 @@ namespace BankSystem.Model
        
         public string Bic { get;}
         public decimal Balance { get; protected set; }
+      
         public AccountType Type { get; }
 
         public decimal AccruedInterest { get; protected set; }
@@ -61,10 +62,12 @@ namespace BankSystem.Model
 
         public  void Credit(decimal sum, string detailes)
         {
+            Balance += sum;
+
             string message = String.Format(
                              "Зачисление на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
                               sum, detailes, Balance);
-            Balance += sum;
+
             OnMovement(this, message);
         }
 

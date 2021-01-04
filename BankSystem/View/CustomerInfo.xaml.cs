@@ -35,5 +35,38 @@ namespace BankSystem.View
             department.OpenAccount((AccountType)TypeAccountOpen.SelectedValue, department.SelectedCustomer);
                         
         }
+
+        private void Button_Click_Put(object sender, RoutedEventArgs e)
+        {
+            department = (DivisionVM)customerInfo.DataContext;
+            department.Put(((AccountVM)Accounts.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
+        }
+
+        private void Button_Click_Withdraw(object sender, RoutedEventArgs e)
+        {
+            department = (DivisionVM)customerInfo.DataContext;
+            department.Withdraw(((AccountVM)Accounts.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
+        }
+
+        private void Button_Click_CloseAccount(object sender, RoutedEventArgs e)
+        {
+            department = (DivisionVM)customerInfo.DataContext;
+            department.CloseAccount(((AccountVM)Accounts.SelectedItem).Bic);
+        }
+
+        private void Button_Click_Transfer(object sender, RoutedEventArgs e)
+        {
+            department = (DivisionVM)customerInfo.DataContext;
+            try
+            {
+                department.Transfer(((AccountVM)Accounts.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Несуществующий счет");
+                return;
+            }
+            
+        }
     }
 }

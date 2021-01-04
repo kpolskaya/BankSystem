@@ -162,17 +162,35 @@ namespace BankSystem.ViewModel
                     select a
                     );
             }
+
+          
         }
 
         public void Put(string bic, decimal sum)
         {
             division.Put(bic, sum);
+           
+        }
+
+        public void Withdraw(string bic, decimal sum)
+        {
+            division.Withdraw(bic, sum);
+        }
+
+        public void CloseAccount(string bic)
+        {
+            division.CloseAccount(bic);
         }
 
         public void OpenAccount(AccountType type, CustomerVM customerVM)
         {
             division.OpenAccount(type, customerVM.GetCustomer());
             
+        }
+
+        public void Transfer(string senderBic, string beneficiaryBic, decimal sum, string detailes = "")
+        {
+            division.Transfer(senderBic, beneficiaryBic, sum, detailes);
         }
 
         private bool isSelected;
