@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BankSystem.View" xmlns:viewmodel="clr-namespace:BankSystem.ViewModel" 
         mc:Ignorable="d"
-        Title="CustomerInfo" Height="450" Width="800">
+        Title="CustomerInfo" Height="450" Width="800" x:Name="customerInfo">
      <!--d:DataContext="{d:DesignInstance Type=viewmodel:CustomerVM}"-->
     <Window.Resources>
         <!--<VM:ViewModel x:Key="SharedViewModel" />-->
@@ -18,8 +18,6 @@
             </Style>
        
     </Window.Resources>
-
-          
 
     <Grid>
         <Grid.RowDefinitions>
@@ -69,10 +67,10 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Width="450">
                                                
-                        <Button Content="Открыть счет" Width="115" Height="20" HorizontalAlignment="Left"   Margin="5,5,5,5"/>
+                        <Button Content="Открыть счет" Width="115" Height="20" HorizontalAlignment="Left"   Margin="5,5,5,5" Click="Button_Click_OpenAccount"  />
 
                         <ComboBox x:Name="TypeAccountOpen" Text="Выберите тип счета" IsEditable="True" HorizontalAlignment="Center"
-                                  ItemsSource="{Binding AccountTypeVM}"  Width="250" Height="20" IsSelected="True" />
+                                  ItemsSource="{Binding AccountTypeList}"  Width="250" Height="20" IsSelected="True" />
 
 
                     </StackPanel>

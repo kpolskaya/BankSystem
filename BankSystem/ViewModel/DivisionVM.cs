@@ -34,8 +34,6 @@ namespace BankSystem.ViewModel
             }
         }
 
-      
-
         public DivisionVM(Division Department)
         {
             this.division = Department;
@@ -150,9 +148,9 @@ namespace BankSystem.ViewModel
             division.Put(bic, sum);
         }
 
-        public void OpenAccount(AccountType type, string departmentId, string customerId)
+        public void OpenAccount(AccountType type, string customerId)
         {
-            division.OpenAccount(type, departmentId, customerId);
+            division.OpenAccount(type, customerId);
         }
 
         private bool isSelected;

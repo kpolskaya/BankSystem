@@ -21,11 +21,18 @@ namespace BankSystem.View
     /// </summary>
     public partial class CustomerInfo : Window
     {
+        DivisionVM department;
+       
         public CustomerInfo()
         {
             InitializeComponent();
-          
+            department = (DivisionVM)customerInfo.DataContext;
         }
-        
+
+        private void Button_Click_OpenAccount(object sender, RoutedEventArgs e)
+        {
+            department.OpenAccount((AccountType)TypeAccountOpen, department.SelectedCustomer.Id)
+
+        }
     }
 }

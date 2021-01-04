@@ -24,7 +24,7 @@ namespace BankSystem.View
     public partial class MainWindow : Window
     {
         BankVM bank;
-        public BankVM bankVM;
+        //public BankVM bankVM;
         public MainWindow()
         {
             InitializeComponent();

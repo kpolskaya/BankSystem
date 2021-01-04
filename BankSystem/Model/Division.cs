@@ -48,18 +48,18 @@ namespace BankSystem.Model
             GetAccountByBic(bic).Credit(sum);
         }
 
-        public void OpenAccount(AccountType type, string departmentId, string customerId)
+        public void OpenAccount(AccountType type, string customerId)
         {
             switch (type)
             {
                 case AccountType.DebitAccount:
-                    accounts.Add(new DebitAccount( departmentId, customerId));
+                    accounts.Add(new DebitAccount( this.Id, customerId));
                     break;
                 case AccountType.DepositAccount:
-                    accounts.Add(new DepositAccount(departmentId, customerId));
+                    accounts.Add(new DepositAccount(this.Id, customerId));
                     break;
                 case AccountType.DepositAccountCapitalized:
-                    accounts.Add(new DepositAccountСapitalized (departmentId, customerId));
+                    accounts.Add(new DepositAccountСapitalized (this.Id, customerId));
                     break;
                 default:
                     break;
