@@ -37,17 +37,6 @@ namespace BankSystem.Model
         }
 
       
-
-        public bool Debit(string bic, decimal sum) //возможно не нужна или нужна только приватная
-        {
-            return GetAccountByBic(bic).Debit(sum);
-        }
-
-        public void Credit(string bic, decimal sum) // нужна публичная чтобы банк мог инициировать зачисление средств клиенту   или не нужна...
-        {
-            GetAccountByBic(bic).Credit(sum);
-        }
-
         public void OpenAccount(AccountType type, string customerId)
         {
             switch (type)
@@ -126,22 +115,24 @@ namespace BankSystem.Model
         /// <returns>true -  успех, или false - недостаточно средств</returns>
         public bool Withdraw(string bic, decimal sum)
         {
+            string detailes = "Выдача наличных";
             Account account = GetAccountByBic(bic);
-            bool executed = (account != null && account.Debit(sum));
+            bool executed = (account != null && account.Debit(sum, detailes));
             if (executed)
-                OnTransactionRaised(this, new Transaction(bic, "00", sum, "Выдача наличных"));
+                OnTransactionRaised(this, new Transaction(bic, "00", sum, detailes));
             return executed;
         }
 
         public void CloseAccount(string bic) 
         {
+            string detailes = "Закрытие счета";
             Account account = GetAccountByBic(bic);
             if (account == null)
                 throw new Exception("Несуществующий счет");
             //decimal sum = account.FullBalance();
             //account.Debit(sum);
             
-            OnTransactionRaised(this, new Transaction(bic, "00", account.FullBalance(), "Выдача наличных и закрытие счета"));
+            OnTransactionRaised(this, new Transaction(bic, "00", account.FullBalance(), detailes));
             this.accounts.Remove(account);
         }
            
@@ -154,7 +145,7 @@ namespace BankSystem.Model
             if (senderAccount == null)
                 throw new Exception("Несуществующий счет");
             Transaction t; 
-            if (senderAccount is DebitAccount && senderAccount.Debit(sum))
+            if (senderAccount is DebitAccount && senderAccount.Debit(sum, detailes))
                 t = new Transaction(senderBic, beneficiaryBic, sum, detailes, TransactionType.Transfer);
             else
             {

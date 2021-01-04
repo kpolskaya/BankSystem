@@ -8,7 +8,7 @@ namespace BankSystem.Model
 {
     public enum TransactionStatus
     {
-        Demanded,
+        Pending,
         Done,
         Failed
     }
@@ -41,7 +41,7 @@ namespace BankSystem.Model
             this.BeneficiaryBic = Beneficiary;
             this.Sum = Sum;
             this.Detailes = Detailes;
-            this.Status = TransactionStatus.Demanded;
+            this.Status = TransactionStatus.Pending;
             this.Type = Type;
         }
         public Transaction(string Sender, string Beneficiary, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)

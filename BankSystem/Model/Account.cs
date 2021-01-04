@@ -10,6 +10,10 @@ namespace BankSystem.Model
 
     }
 
+
+
+    public delegate void OperationInfoHandler(Account sender, string message);
+
     public abstract class Account
     {
        
@@ -31,7 +35,7 @@ namespace BankSystem.Model
         }
        
 
-        public virtual bool Debit(decimal sum)
+        public virtual bool Debit(decimal sum, string detailes)
         {
             if (Balance + AccruedInterest < sum)
                 return false;
@@ -41,7 +45,7 @@ namespace BankSystem.Model
         }
 
 
-        public void Credit(decimal sum)
+        public void Credit(decimal sum, string detailes)
         {
             Balance += sum;
         }
@@ -58,8 +62,13 @@ namespace BankSystem.Model
             return this.Balance + this.AccruedInterest;
         }
         //protected abstract decimal InterestFunc(decimal rate);
-        
-        
+
+        public event OperationInfoHandler Movement;
+
+        protected virtual void OnMovemen(Account sender, string message)
+        {
+            Movement?.Invoke(sender, message);
+        }
 
     }
 }
