@@ -75,9 +75,9 @@ namespace BankSystem.Model
         {
             foreach (var customer in Customers)
             {
-                OpenAccount(AccountType.DebitAccount, this.Id, customer.Id);
-                OpenAccount(AccountType.DepositAccount, this.Id, customer.Id);
-                OpenAccount(AccountType.DepositAccountCapitalized, this.Id, customer.Id);
+                OpenAccount(AccountType.DebitAccount, customer.Id);
+                OpenAccount(AccountType.DepositAccount, customer.Id);
+                OpenAccount(AccountType.DepositAccountCapitalized, customer.Id);
             }
         }
 

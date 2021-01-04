@@ -31,7 +31,7 @@ namespace BankSystem.View
 
         private void Button_Click_OpenAccount(object sender, RoutedEventArgs e)
         {
-            department.OpenAccount((AccountType)TypeAccountOpen, department.SelectedCustomer.Id)
+            department.OpenAccount((AccountType)TypeAccountOpen.SelectedValue, department.SelectedCustomer.Id);
 
         }
     }
