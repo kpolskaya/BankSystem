@@ -25,29 +25,47 @@ namespace BankSystem.Model
 
         //protected Func<decimal, decimal> interest;
       
-        public Account(AccountType Type, string DepartmentId, string CustomerId) 
+        public Account(AccountType Type, string DepartmentId, Customer Customer) 
         {
             this.Type = Type;
-            this.Bic =  DepartmentId + CustomerId + Guid.NewGuid().ToString().Remove(8);
+            this.Bic =  DepartmentId + Customer.Id + Guid.NewGuid().ToString().Remove(8);
             this.Balance = 0;
             this.AccruedInterest = 0;
+            this.Movement += Customer.SendMessage;
+
             //this.interest = InterestFunc;
         }
        
 
         public virtual bool Debit(decimal sum, string detailes)
         {
-            if (Balance + AccruedInterest < sum)
+            string message = String.Format(
+                             "Списание на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
+                              sum, detailes, Balance);
+
+            if (Balance + AccruedInterest >= sum)
+            {
+                Balance -= sum;
+                OnMovement(this, message);
+                return true;
+            }
+            
+            else
+            {
+                OnMovement(this, "Отказ - недостаточно средств: " + message);
                 return false;
-            Balance -= sum;
-            return true;
-                       
+            }
+
         }
 
 
-        public void Credit(decimal sum, string detailes)
+        public  void Credit(decimal sum, string detailes)
         {
+            string message = String.Format(
+                             "Зачисление на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
+                              sum, detailes, Balance);
             Balance += sum;
+            OnMovement(this, message);
         }
 
         /// <summary>
@@ -65,7 +83,7 @@ namespace BankSystem.Model
 
         public event OperationInfoHandler Movement;
 
-        protected virtual void OnMovemen(Account sender, string message)
+        protected virtual void OnMovement(Account sender, string message)
         {
             Movement?.Invoke(sender, message);
         }

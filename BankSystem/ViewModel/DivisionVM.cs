@@ -100,24 +100,34 @@ namespace BankSystem.ViewModel
                 }
             }
 
-            this.Accounts = new ObservableCollection<AccountVM>();
-            foreach (var item in Department.Accounts)
+            this.Accounts = new ObservableCollection<AccountVM>(); //не нужна тут обзервабл
+            foreach (var item in this.division.Accounts)
             {
                 this.Accounts.Add(new AccountVM(item));
             }
-            Department.Accounts.CollectionChanged += Users_CollectionChanged;
+            INotifyCollectionChanged notifyAccountsChanged = this.division.Accounts;
+
+            notifyAccountsChanged.CollectionChanged += RereadAcconts;
 
         }
 
-        private void Users_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void RereadAcconts(object sender, NotifyCollectionChangedEventArgs e)
         {
             Accounts = new ObservableCollection<AccountVM>();
-             foreach (var item in Department.Accounts)
-             {
+            foreach (var item in division.Accounts)
+            {
                 this.Accounts.Add(new AccountVM(item));
-             }
-            
+            }
+
+            OnPropertyChanged("Accounts");
+            OnPropertyChanged("CustomersAccounts");
         }
+
+        //private void Users_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    
+
+        //}
 
         public ObservableCollection<CustomerVM> Customers { get; private set; }
 
@@ -142,7 +152,7 @@ namespace BankSystem.ViewModel
             }
         }
 
-        public ObservableCollection<AccountVM> CustomersAccounts
+        public ObservableCollection<AccountVM> CustomersAccounts //не нужна обзервабл (реадонли лист)
         {
             get
             {
@@ -159,9 +169,10 @@ namespace BankSystem.ViewModel
             division.Put(bic, sum);
         }
 
-        public void OpenAccount(AccountType type, string customerId)
+        public void OpenAccount(AccountType type, CustomerVM customerVM)
         {
-            division.OpenAccount(type, customerId);
+            division.OpenAccount(type, customerVM.GetCustomer());
+            
         }
 
         private bool isSelected;

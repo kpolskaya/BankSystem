@@ -79,7 +79,7 @@
                 </StackPanel>
                
                 <ListView x:Name="Accounts"  Width="Auto" Height="Auto" Margin="5,10,5,5"
-                          ItemsSource="{Binding CustomersAccounts}">
+                          ItemsSource="{Binding CustomersAccounts, Mode=OneWay}">
 
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">

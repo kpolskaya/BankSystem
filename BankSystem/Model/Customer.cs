@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace BankSystem.Model
 {
@@ -37,9 +38,11 @@ namespace BankSystem.Model
             this.Id = NextId().ToString("00000000");
         }
 
-        private void SendMessage()
+        public void SendMessage(Account account, string message)
         {
-
+            System.Media.SystemSounds.Asterisk.Play();
+            Debug.WriteLine($"SMS to: {Phone} subj: Движение по счету {account.Bic} " +
+                            $"message: {message}");
         }
 
     }

@@ -106,5 +106,10 @@ namespace BankSystem.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public Customer GetCustomer()
+        {
+            return this.customer;
+        }
     }
 }

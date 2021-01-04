@@ -9,8 +9,8 @@ namespace BankSystem.Model
     class DepositAccountСapitalized : Account
     {
        
-        public DepositAccountСapitalized(string DepartmentId, string CustomerId)
-        : base(AccountType.DepositAccountCapitalized, DepartmentId, CustomerId)
+        public DepositAccountСapitalized(string DepartmentId, Customer Customer)
+        : base(AccountType.DepositAccountCapitalized, DepartmentId, Customer)
         {
             
 

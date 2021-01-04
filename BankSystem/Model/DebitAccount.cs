@@ -9,16 +9,18 @@ namespace BankSystem.Model
     class DebitAccount: Account
     {
         
-        public DebitAccount(string DepartmentId, string CustomerId)
-        : base(AccountType.DebitAccount, DepartmentId, CustomerId)
+        public DebitAccount(string DepartmentId, Customer Customer)
+        : base(AccountType.DebitAccount, DepartmentId, Customer)
         {
             
         }
         public override decimal ChargeInterest(decimal rate)
         {
             decimal i = this.Balance * rate / 12;
-            Credit(i);
+            Credit(i, "Начислены проценты");
             return i;
         }
+
+
     }
 }

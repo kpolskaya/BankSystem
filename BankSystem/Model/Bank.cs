@@ -69,7 +69,7 @@ namespace BankSystem.Model
             else if (t.Status != TransactionStatus.Failed) //если транзакция между счетами и подтверждена департаментом
             {
                 Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
-                if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum)) // если получилось зачислить деньги получателю
+                if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum, t.Detailes)) // если получилось зачислить деньги получателю
                     t.Status = TransactionStatus.Done;
                 else
                 {

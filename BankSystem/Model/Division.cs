@@ -37,41 +37,39 @@ namespace BankSystem.Model
         }
 
       
-        public void OpenAccount(AccountType type, string customerId)
+        public void OpenAccount(AccountType type, Customer customer)
         {
             switch (type)
             {
+                
                 case AccountType.DebitAccount:
-                    accounts.Add(new DebitAccount( this.Id, customerId));
+                    accounts.Add(new DebitAccount( this.Id, customer));
                     break;
                 case AccountType.DepositAccount:
-                    accounts.Add(new DepositAccount(this.Id, customerId));
+                    accounts.Add(new DepositAccount(this.Id, customer));
                     break;
                 case AccountType.DepositAccountCapitalized:
-                    accounts.Add(new DepositAccountСapitalized (this.Id, customerId));
+                    accounts.Add(new DepositAccountСapitalized (this.Id, customer));
                     break;
                 default:
                     break;
             }
         }
 
-        internal bool IsValidBic(string beneficiaryBic)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal bool TryToCredit(string bic, decimal sum)
+        public bool TryToCredit(string bic, decimal sum, string detailes)
         {
             Account account = GetAccountByBic(bic);
             bool executed = account != null;
             if (executed)
-                account.Credit(sum);
+                account.Credit(sum, detailes);
             return executed;
         }
 
-        internal void Refund(Transaction t)
+        public void Refund(Transaction t)
         {
-            throw new NotImplementedException();
+            
+            if (!TryToCredit(t.SenderBic, t.Sum, "Возврат платежа (получатель не найден): " + t.Detailes))
+                throw new Exception("Неизвестный счет получателя");
         }
 
         /// <summary>
@@ -81,15 +79,15 @@ namespace BankSystem.Model
         {
             foreach (var account in accounts)
             {
-               
+
                 if (account.Type != AccountType.DebitAccount)
                 {
                     decimal Interest = account.ChargeInterest(rate);
                     OnTransactionRaised(this, new Transaction("99", account.Bic, Interest, "Начисление процентов"));
                 }
-                
+
                 else
-                    if (account.Debit(fee))
+                    if (account.Debit(fee, "Плата за обслуживание")) 
                         OnTransactionRaised(this, new Transaction(account.Bic, "99", fee, "Плата за обслуживание"));
             }
         }
