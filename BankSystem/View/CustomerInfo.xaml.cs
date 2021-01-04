@@ -24,8 +24,8 @@ namespace BankSystem.View
         public CustomerInfo()
         {
             InitializeComponent();
-
           
         }
+        
     }
 }

@@ -85,7 +85,9 @@
 
                             <GridView>
                                 <GridViewColumn Width="100">
-                                    <GridViewColumnHeader HorizontalAlignment="Right" Width="100">Наименование</GridViewColumnHeader>
+                                    <GridViewColumnHeader HorizontalAlignment="Right" Width="100" Content="{Binding Header1}">
+                                        
+                                    </GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Path=Name,  Mode=TwoWay}" HorizontalAlignment="Left"></TextBlock>
@@ -103,7 +105,9 @@
                                 </GridViewColumn>
 
                                 <GridViewColumn Width="100">
-                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="100" >Рег. номер</GridViewColumnHeader>
+                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="100" Content="{Binding Header3}">
+                                        
+                                    </GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Path=LegalId, Mode=TwoWay}" HorizontalAlignment="Left"></TextBlock>
@@ -112,7 +116,9 @@
                                 </GridViewColumn>
 
                                 <GridViewColumn Width="130">
-                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="135" >Телефон</GridViewColumnHeader>
+                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="135"  Content="{Binding Header4}">
+                                        
+                                    </GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Path=Phone, Mode=TwoWay}" HorizontalAlignment="Right"></TextBlock>

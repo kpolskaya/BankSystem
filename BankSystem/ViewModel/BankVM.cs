@@ -36,7 +36,10 @@ namespace BankSystem.ViewModel
             }
         }
 
-
+        public void ClearSelectedCustomer()
+        {
+            SelectedItem.SelectedCustomer.IsSelected = false;
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

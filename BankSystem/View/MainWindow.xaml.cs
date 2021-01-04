@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using BankSystem.Model;
 using BankSystem.ViewModel;
 
@@ -32,14 +33,19 @@ namespace BankSystem.View
 
         }
 
-        private void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CustomerInfo newWindow = new CustomerInfo();
-            newWindow.Show();
-            newWindow.DataContext = bank.SelectedItem;
-            
+            if (Customers.SelectedItem != null)
+            {
+                
+                CustomerInfo newWindow = new CustomerInfo();
+                newWindow.DataContext = bank.SelectedItem;
+                await Task.Delay(100);
+                newWindow.ShowDialog();
+                bank.ClearSelectedCustomer();
+            }
+            return;
         }
 
-        
     }
 }

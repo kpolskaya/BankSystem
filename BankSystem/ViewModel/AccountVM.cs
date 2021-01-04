@@ -21,6 +21,7 @@ namespace BankSystem.ViewModel
             this.account = Account;
         }
 
+    
         private bool isSelected;
         public bool IsSelected
         {

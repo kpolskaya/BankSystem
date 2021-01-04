@@ -10,6 +10,7 @@ using System.Diagnostics;
 
 namespace BankSystem.ViewModel
 {
+   
     public class DivisionVM : INotifyPropertyChanged
     {
         private readonly Division division;
@@ -21,58 +22,83 @@ namespace BankSystem.ViewModel
         public string Header1 { get; }
         public string Header2 { get; }
         public string Header3 { get; }
+        public string Header4 { get; }
+
+      
+       
+        public IList<AccountType> AccountTypeList
+        {
+            get
+            {
+               return Enum.GetValues(typeof(AccountType)).Cast<AccountType>().ToList<AccountType>();
+            }
+        }
+
+      
 
         public DivisionVM(Division Department)
         {
             this.division = Department;
             this.Customers = new ObservableCollection<CustomerVM>();
 
-                                      
+            Header4 = "Телефон";
             if (Department is Department<Entity>)
-            foreach (var item in (Department as Department<Entity>).Customers)
             {
-                this.Customers.Add(new CustomerVM(item));
-                    Header1 = "Наименование";
-                    Header2 = "Форма";
-                    Header3 = "ОГРН";
+                Header1 = "Наименование";
+                Header2 = "Форма";
+                Header3 = "ОГРН";
+                
+                foreach (var item in (Department as Department<Entity>).Customers)
+                {
+                    this.Customers.Add(new CustomerVM(item));
+
                 }
+            }
+
 
             else if (Department is Department<Person>)
-            foreach (var item in (Department as Department<Person>).Customers)
             {
-                this.Customers.Add(new CustomerVM(item));
-                    Header1 = "Имя";
-                    Header2 = "Фамилия";
-                    Header3 = "Паспорт";
-                }
-
-            else if(Department is Department<Vip>)
-            foreach (var item in (Department as Department<Vip>).Customers)
-            {
-                this.Customers.Add(new CustomerVM(item));
-                    Header1 = "Имя";
-                    Header2 = "Фамилия";
-                    Header3 = "Паспорт";
+                Header1 = "Имя";
+                Header2 = "Фамилия";
+                Header3 = "Паспорт";
                 
-                                                                    //else
-                                                                    //{
-                                                                    //    return;
-                                                                    //}
-                                                                    //var dType = Department.GetType();
-                                                                    //Type[] dTypeParameters = dType.GetGenericArguments();
-                                                                    //Type cType = dTypeParameters[0];
+                foreach (var item in (Department as Department<Person>).Customers)
+                {
+                    this.Customers.Add(new CustomerVM(item));
 
-                                                                    //switch (cType.Name)
-                                                                    //{
-                                                                    //    case "Entity":
-                                                                    //        foreach (var item in (Department as Department<Entity>).Customers)
-                                                                    //        {
-                                                                    //            this.Customers.Add(new CustomerVM(item));
-                                                                    //        }
+                }
+            }
 
-                                                                    //        Debug.WriteLine("Entity");
-                                                                    //        break;
-                                                                    //}
+            else if (Department is Department<Vip>)
+            {
+                Header1 = "Имя";
+                Header2 = "Фамилия";
+                Header3 = "Паспорт";
+               
+                foreach (var item in (Department as Department<Vip>).Customers)
+                {
+                    this.Customers.Add(new CustomerVM(item));
+                    
+                    //else
+                    //{
+                    //    return;
+                    //}
+                    //var dType = Department.GetType();
+                    //Type[] dTypeParameters = dType.GetGenericArguments();
+                    //Type cType = dTypeParameters[0];
+
+                    //switch (cType.Name)
+                    //{
+                    //    case "Entity":
+                    //        foreach (var item in (Department as Department<Entity>).Customers)
+                    //        {
+                    //            this.Customers.Add(new CustomerVM(item));
+                    //        }
+
+                    //        Debug.WriteLine("Entity");
+                    //        break;
+                    //}
+                }
             }
 
             this.Accounts = new ObservableCollection<AccountVM>();
@@ -92,6 +118,7 @@ namespace BankSystem.ViewModel
             {
                 return Customers.FirstOrDefault(x => x.IsSelected);
             }
+
         }
 
 
@@ -121,6 +148,11 @@ namespace BankSystem.ViewModel
         public void Put(string bic, decimal sum)
         {
             division.Put(bic, sum);
+        }
+
+        public void OpenAccount(AccountType type, string departmentId, string customerId)
+        {
+            division.OpenAccount(type, departmentId, customerId);
         }
 
         private bool isSelected;
