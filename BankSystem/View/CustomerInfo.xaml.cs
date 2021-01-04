@@ -26,13 +26,14 @@ namespace BankSystem.View
         public CustomerInfo()
         {
             InitializeComponent();
-            department = (DivisionVM)customerInfo.DataContext;
+            
         }
 
         private void Button_Click_OpenAccount(object sender, RoutedEventArgs e)
         {
+            department = (DivisionVM)customerInfo.DataContext;
             department.OpenAccount((AccountType)TypeAccountOpen.SelectedValue, department.SelectedCustomer.Id);
-
+                        
         }
     }
 }
