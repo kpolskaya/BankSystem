@@ -33,7 +33,7 @@ namespace BankSystem.View
         {
             department = (DivisionVM)customerInfo.DataContext;
             department.OpenAccount((AccountType)TypeAccountOpen.SelectedValue, department.SelectedCustomer.Id);
-
+                        
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BankSystem.Model;
 using System.Diagnostics;
+using System.Collections.Specialized;
 
 namespace BankSystem.ViewModel
 {
@@ -104,8 +105,18 @@ namespace BankSystem.ViewModel
             {
                 this.Accounts.Add(new AccountVM(item));
             }
+            Department.Accounts.CollectionChanged += Users_CollectionChanged;
 
+        }
 
+        private void Users_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Accounts = new ObservableCollection<AccountVM>();
+             foreach (var item in Department.Accounts)
+             {
+                this.Accounts.Add(new AccountVM(item));
+             }
+            
         }
 
         public ObservableCollection<CustomerVM> Customers { get; private set; }
