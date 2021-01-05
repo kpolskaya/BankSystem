@@ -59,7 +59,7 @@ namespace BankSystem.Model
         public bool TryToCredit(string bic, decimal sum, string detailes)
         {
             Account account = GetAccountByBic(bic);
-            bool executed = account != null;
+            bool executed = (account != null);
             if (executed)
                 account.Credit(sum, detailes);
             return executed;
@@ -159,7 +159,7 @@ namespace BankSystem.Model
             if (senderAccount == null)
                 throw new Exception("Несуществующий счет");
             Transaction t; 
-            if (senderAccount is DebitAccount && CheckAccount(beneficiaryBic) && senderAccount.Debit(sum, detailes))
+            if (senderAccount is DebitAccount && senderAccount.Debit(sum, detailes))
                 t = new Transaction(senderBic, beneficiaryBic, sum, detailes, TransactionType.Transfer);
             else
             {
