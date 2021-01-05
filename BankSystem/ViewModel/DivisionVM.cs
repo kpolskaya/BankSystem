@@ -188,7 +188,7 @@ namespace BankSystem.ViewModel
             
         }
 
-        public void Transfer(string senderBic, string beneficiaryBic, decimal sum, string detailes = "")
+        public void Transfer(string senderBic, string beneficiaryBic, decimal sum, string detailes = "Перевод клиенту банка")
         {
             division.Transfer(senderBic, beneficiaryBic, sum, detailes);
         }

@@ -40,20 +40,22 @@ namespace BankSystem.Model
 
         public virtual bool Debit(decimal sum, string detailes)
         {
-            string message = String.Format(
-                             "Списание на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
-                              sum, detailes, Balance);
+            string message; 
 
-            if (Balance + AccruedInterest >= sum)
+            if (FullBalance() >= sum)
             {
                 Balance -= sum;
+                message = String.Format(
+                             "Списание на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
+                              sum, detailes, FullBalance());
                 OnMovement(this, message);
                 return true;
             }
             
             else
             {
-                OnMovement(this, "Отказ - недостаточно средств: " + message);
+                message = String.Format("Отказ - недостаточно средств.Текущий остаток: {0: 0.00}", FullBalance());
+                OnMovement(this, message);
                 return false;
             }
 
@@ -66,7 +68,7 @@ namespace BankSystem.Model
 
             string message = String.Format(
                              "Зачисление на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
-                              sum, detailes, Balance);
+                              sum, detailes, FullBalance());
 
             OnMovement(this, message);
         }
@@ -82,7 +84,7 @@ namespace BankSystem.Model
         {
             return this.Balance + this.AccruedInterest;
         }
-        //protected abstract decimal InterestFunc(decimal rate);
+        
 
         public event OperationInfoHandler Movement;
 

@@ -66,7 +66,7 @@ namespace BankSystem.Model
                 t.Status = TransactionStatus.Done;
             }
 
-            else if (t.Status != TransactionStatus.Failed) //если транзакция между счетами и подтверждена департаментом
+            else if (t.Status != TransactionStatus.Failed && t.Type ==TransactionType.Transfer) //если транзакция между счетами и подтверждена департаментом
             {
                 Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
                 if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum, t.Detailes)) // если получилось зачислить деньги получателю
@@ -85,6 +85,8 @@ namespace BankSystem.Model
 
         private Division GetDepartmentByBic(string bic)
         {
+            if (bic.Length != 18)
+                return null;
             string id = bic.Substring(0, 2);
             return Departments.FirstOrDefault(d => d.Id == id);
         }

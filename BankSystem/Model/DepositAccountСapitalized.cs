@@ -22,5 +22,27 @@ namespace BankSystem.Model
             this.AccruedInterest += i;
             return i;
         }
+        public override bool Debit(decimal sum, string detailes)
+        {
+            string message;
+
+            if (FullBalance() == sum)
+            {
+
+                Balance -= sum; 
+                message = String.Format(
+                             "Списание на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
+                              sum, detailes, FullBalance());
+                
+                OnMovement(this, message);
+                return true;
+            }
+            else
+            {
+                OnMovement(this, "Отказ - по данному счету расходные операции не разрешены.");
+                return false;
+            }
+
+        }
     }
 }

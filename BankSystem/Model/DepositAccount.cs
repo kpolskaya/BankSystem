@@ -25,20 +25,22 @@ namespace BankSystem.Model
 
         public override bool Debit(decimal sum, string detailes)
         {
-            string message = String.Format(
-                             "Списание на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
-                              sum, detailes, Balance);
+            string message;
 
-            if (Balance + AccruedInterest == sum)
+            if (FullBalance() == sum)
             {
                 Balance -= sum;
+                message = String.Format(
+                             "Списание на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
+                              sum, detailes, FullBalance());
+                
                 OnMovement(this, message);
                 return true;
             }
 
             else
             {
-                OnMovement(this, "Отказ - по данному счету расходные операции не разрешены: " + message);
+                OnMovement(this, "Отказ - по данному счету расходные операции не разрешены.");
                 return false;
             }
 
