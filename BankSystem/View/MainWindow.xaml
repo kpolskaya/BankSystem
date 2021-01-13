@@ -7,9 +7,9 @@
         xmlns:viewModel ="clr-namespace:BankSystem.ViewModel"
         mc:Ignorable="d"
         Title="Банк BANK" Height="660" Width="980" x:Name="mainWindow1">
-    <Window.Resources>
+    <!--<Window.Resources>
         <viewModel:BankVM x:Key="bank" />
-    </Window.Resources>
+    </Window.Resources>-->
         
     
     <Grid>
@@ -53,8 +53,8 @@
                    
 
                 </StackPanel>
-                <!--<Button Content="Выгрузить в Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Button_Click_3"/>
-                <Button Content="Загрузить из Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Button_Click_4"/>-->
+                <Button Content="Выгрузить в Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Serialize_Button_Click" />
+                <Button Content="Загрузить из Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Deserialize_Button_Click" />
 
             </StackPanel >
           

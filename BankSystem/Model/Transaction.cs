@@ -1,39 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BankSystem.Model
-{
+{[DataContract]
     public enum TransactionStatus
     {
         Pending,
         Done,
         Failed
     }
-
+    [DataContract]
     public enum TransactionType
     {
         Internal,
         Transfer
     }
+
+    [DataContract]
     public class Transaction
     {
-        public string Id { get; }
-
-        public string SenderBic { get; }
-
-        public string BeneficiaryBic { get; }
-
-        public decimal Sum { get; }
-
-        public string Detailes { get; }
-
-        public TransactionType Type { get; }
-
+        [DataMember]
+        public string Id { get; private set; }
+        [DataMember]
+        public string SenderBic { get; private set; }
+        [DataMember]
+        public string BeneficiaryBic { get; private set; }
+        [DataMember]
+        public decimal Sum { get; private set; }
+        [DataMember]
+        public string Detailes { get; private set; }
+        [DataMember]
+        public TransactionType Type { get; private set; }
+        [DataMember]
         public TransactionStatus Status { get; set; }
-
+        [JsonConstructor]
         public Transaction(string Id, string Sender, string Beneficiary, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
         {
             this.Id = Id;
@@ -44,6 +49,9 @@ namespace BankSystem.Model
             this.Status = TransactionStatus.Pending;
             this.Type = Type;
         }
+
+        public Transaction()
+        { }
         public Transaction(string Sender, string Beneficiary, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
             : this (Guid.NewGuid().ToString(), Sender, Beneficiary, Sum, Detailes, Type)
         {

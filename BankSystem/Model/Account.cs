@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
 
 namespace BankSystem.Model
 {
+
     public enum AccountType : byte 
     {
         DebitAccount = 0,
@@ -13,15 +17,19 @@ namespace BankSystem.Model
 
 
     public delegate void OperationInfoHandler(Account sender, string message);
-
+    [DataContract]
+    [KnownType(typeof(DebitAccount))]
+    [KnownType(typeof(DepositAccount))]
+    [KnownType(typeof(DepositAccountСapitalized))]
     public abstract class Account
     {
-       
-        public string Bic { get;}
+       [DataMember]
+        public string Bic { get; protected set; }
+        [DataMember]
         public decimal Balance { get; protected set; }
-      
-        public AccountType Type { get; }
-
+        [DataMember]
+        public AccountType Type { get; protected set; }
+        [DataMember]
         public decimal AccruedInterest { get; protected set; }
 
         //protected Func<decimal, decimal> interest;
@@ -36,7 +44,18 @@ namespace BankSystem.Model
 
             //this.interest = InterestFunc;
         }
-       
+        public Account ()
+        { }
+
+        [JsonConstructor]
+         public Account(string Bic, decimal Balance, AccountType Type, decimal AccruedInterest)
+         {
+            this.Bic = Bic;
+            this.Balance = Balance;
+            this.Type = Type;
+            this.AccruedInterest = AccruedInterest;
+        
+         }
 
         public virtual bool Debit(decimal sum, string detailes)
         {

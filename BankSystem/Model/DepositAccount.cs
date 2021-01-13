@@ -1,20 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BankSystem.Model
-{
+{   [DataContract]
+    [KnownType(typeof(Account))]
     public class DepositAccount : Account
     {
-        
+       
         public DepositAccount(string DepartmentId, Customer Customer)
         : base(AccountType.DepositAccount, DepartmentId, Customer)
         {
 
         }
-        
+
+        [JsonConstructor]
+        public DepositAccount(string Bic, decimal Balance, AccountType Type, decimal AccruedInterest)
+          : base(Bic, Balance, Type, AccruedInterest)
+        { }
+
+        public DepositAccount()
+        { }
+
         public override decimal ChargeInterest(decimal rate)
         {
             decimal i = this.Balance * rate / 12;

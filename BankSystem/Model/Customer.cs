@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace BankSystem.Model
 {
+    [DataContract]
+    [KnownType(typeof(Entity))]
+    [KnownType(typeof(Person))]
+    [KnownType(typeof(Vip))]
+
     public abstract class Customer
     {
         //public static decimal Fee;
@@ -20,12 +27,17 @@ namespace BankSystem.Model
         {
             return ++lastId;
         }
- 
-        public string Id { get;}
+        [DataMember]
+        public string Id { get; private set; }
+        [DataMember]
         public string Name { get; set; } //имя/название фирмы
+        [DataMember]
         public string OtherName { get; set; } //фамилия/форма собственности юр. лица
+        [DataMember]
         public string LegalId { get; set; } // номер удостоверения личности или регистрации фирмы
+        [DataMember]
         public string Phone { get; set; } //контактный телефон
+
 
         public Customer() { this.Id = NextId().ToString("00000000"); }
 
@@ -37,6 +49,20 @@ namespace BankSystem.Model
             this.Phone = Phone;
             this.Id = NextId().ToString("00000000");
         }
+
+        [JsonConstructor]
+        public Customer(string Id, string Name, string OtherName, string LegalId, string Phone)
+        {
+            this.Name = Name;
+            this.OtherName = OtherName;
+            this.LegalId = LegalId;
+            this.Phone = Phone;
+            this.Id = Id;
+
+        }
+
+       //public Customer()
+       // { }
 
         public void SendMessage(Account account, string message)
         {

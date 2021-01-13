@@ -23,12 +23,16 @@ namespace BankSystem.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        Repository repository;
         BankVM bank;
         //public BankVM bankVM;
         public MainWindow()
         {
             InitializeComponent();
-            bank = (BankVM)this.FindResource("bank");
+            //bank = (BankVM)this.FindResource("bank");
+
+            repository = new Repository();
+            bank = new BankVM(repository.bank);
             DataContext = bank;
 
         }
@@ -47,5 +51,18 @@ namespace BankSystem.View
             return;
         }
 
+        private void Serialize_Button_Click(object sender, RoutedEventArgs e)
+        {
+            repository.SerializeJsonBank();
+        }
+
+        private void Deserialize_Button_Click(object sender, RoutedEventArgs e)
+        {
+            repository.DeserializeJsonBank();
+            bank = new BankVM(repository.bank);
+            DataContext = bank;
+            //var binding = DataContextProperty;
+            //mainWindow1.GetBindingExpression(binding).UpdateTarget();
+        }
     }
 }

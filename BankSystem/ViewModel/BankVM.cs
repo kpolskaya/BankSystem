@@ -16,10 +16,10 @@ namespace BankSystem.ViewModel
         private readonly Bank bank;
                   
 
-        public BankVM()
+        public BankVM(Bank Bank)
         {
-            bank = new Bank("BANK");
-            bank.ExampleCustomers();
+            bank = Bank;
+            //bank.ExampleCustomers();
             this.Departments = new ObservableCollection<DivisionVM>();
             foreach (var item in bank.Departments)
             {
@@ -43,9 +43,10 @@ namespace BankSystem.ViewModel
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-        void OnPropertyChanged(string propertyName)
+        protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 }

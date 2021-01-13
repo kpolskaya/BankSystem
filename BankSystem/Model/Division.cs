@@ -1,36 +1,60 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BankSystem.Model
 {
     public delegate void TransactionHandler(Division sender, Transaction t);
+
+    [System.Runtime.Serialization.DataContract]
+    [KnownType(typeof(Department<>))]
     public abstract class Division //TODO  везде проверки на null (GetAccountByBic) и расставить Exeptions
     {
-        public string Id { get; }
-        public string Name { get; }
-
+        [DataMember]
+        public string Id { get; protected set; }
+        [DataMember]
+        public string Name { get; protected set; }
+        [DataMember]
         public ObservableCollection<Customer> Customers;
-        
+        [DataMember]
         protected decimal fee;
+        [DataMember]
         protected decimal rate;
+        [DataMember]
+        protected ObservableCollection<Account> accounts; //
         
-        protected ObservableCollection<Account> accounts;
-        public ReadOnlyObservableCollection<Account> Accounts { get; protected set; }
+        public ReadOnlyObservableCollection<Account> Accounts { get { return new ReadOnlyObservableCollection<Account>(this.accounts); } }
+        
+        [JsonConstructor]
+        public Division(string Id, string Name, ObservableCollection<Account> accounts)
+        {
+            this.Id = Id;
+            this.Name = Name;
+            this.accounts = accounts;
+            //this.Accounts = new ReadOnlyObservableCollection<Account>(this.accounts);
+        }
+
+        public Division()
+        { }
 
         public Division(string Id, string Name)
         {
             this.Id = Id;
             this.Name = Name;
             this.accounts = new ObservableCollection<Account>();
-            this.Accounts = new ReadOnlyObservableCollection<Account>(this.accounts);
-        
+            //this.Accounts = new ReadOnlyObservableCollection<Account>(this.accounts);
+
         }
- 
+
+        
+
+
         public Account GetAccountByBic(string Bic) //приватная?
         {
             return accounts.FirstOrDefault(x => x.Bic == Bic);
@@ -135,22 +159,7 @@ namespace BankSystem.Model
             this.accounts.Remove(account);
         }
            
-        public bool CheckAccount(string bic) /// написала проверку корявато. перепиши
-        {
-            bool isValid;
-            Account account = GetAccountByBic(bic);
-             if (account != null)
-             {
-                isValid = true;
-                return isValid;
-             }
-
-            else
-            {
-                new Exception("Несуществующий счет");
-            }
-            throw new Exception("Ошибка операции");
-        }
+     
 
 
         public void Transfer(string senderBic, string beneficiaryBic, decimal sum, string detailes = "")

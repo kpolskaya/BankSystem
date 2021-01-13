@@ -11,7 +11,7 @@ using System.Collections.Specialized;
 
 namespace BankSystem.ViewModel
 {
-   
+
     public class DivisionVM : INotifyPropertyChanged
     {
         private readonly Division division;
@@ -25,13 +25,13 @@ namespace BankSystem.ViewModel
         public string Header3 { get; }
         public string Header4 { get; }
 
-      
-       
+
+
         public IList<AccountType> AccountTypeList
         {
             get
             {
-               return Enum.GetValues(typeof(AccountType)).Cast<AccountType>().ToList<AccountType>();
+                return Enum.GetValues(typeof(AccountType)).Cast<AccountType>().ToList<AccountType>();
             }
         }
 
@@ -46,7 +46,7 @@ namespace BankSystem.ViewModel
                 Header1 = "Наименование";
                 Header2 = "Форма";
                 Header3 = "ОГРН";
-                
+
                 foreach (var item in (Department as Department<Entity>).Customers)
                 {
                     this.Customers.Add(new CustomerVM(item));
@@ -60,7 +60,7 @@ namespace BankSystem.ViewModel
                 Header1 = "Имя";
                 Header2 = "Фамилия";
                 Header3 = "Паспорт";
-                
+
                 foreach (var item in (Department as Department<Person>).Customers)
                 {
                     this.Customers.Add(new CustomerVM(item));
@@ -73,11 +73,11 @@ namespace BankSystem.ViewModel
                 Header1 = "Имя";
                 Header2 = "Фамилия";
                 Header3 = "Паспорт";
-               
+
                 foreach (var item in (Department as Department<Vip>).Customers)
                 {
                     this.Customers.Add(new CustomerVM(item));
-                    
+
                     //else
                     //{
                     //    return;
@@ -163,13 +163,13 @@ namespace BankSystem.ViewModel
                     );
             }
 
-          
+
         }
 
         public void Put(string bic, decimal sum)
         {
             division.Put(bic, sum);
-           
+
         }
 
         public void Withdraw(string bic, decimal sum)
@@ -185,7 +185,7 @@ namespace BankSystem.ViewModel
         public void OpenAccount(AccountType type, CustomerVM customerVM)
         {
             division.OpenAccount(type, customerVM.GetCustomer());
-            
+
         }
 
         public void Transfer(string senderBic, string beneficiaryBic, decimal sum, string detailes = "Перевод клиенту банка")
@@ -212,5 +212,9 @@ namespace BankSystem.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
+
+
+     
 }

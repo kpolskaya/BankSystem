@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using BankSystem.ViewModel;
 using BankSystem.Model;
+using System.Text.RegularExpressions;
 
 namespace BankSystem.View
 {
@@ -31,27 +32,61 @@ namespace BankSystem.View
 
         private void Button_Click_OpenAccount(object sender, RoutedEventArgs e)
         {
-            department = (DivisionVM)customerInfo.DataContext;
-            department.OpenAccount((AccountType)TypeAccountOpen.SelectedValue, department.SelectedCustomer);
-                        
+            if (TypeAccountOpen.SelectedValue != null)
+            {
+                department = (DivisionVM)customerInfo.DataContext;
+                department.OpenAccount((AccountType)TypeAccountOpen.SelectedValue, department.SelectedCustomer);
+            }
+            else
+            {
+                MessageBox.Show("Выберите тип счета");
+                return;
+            } 
         }
 
         private void Button_Click_Put(object sender, RoutedEventArgs e)
         {
-            department = (DivisionVM)customerInfo.DataContext;
-            department.Put(((AccountVM)Accounts.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
+            if (AccountsList.SelectedItem != null && PutSum.Text != "")
+            {
+                department = (DivisionVM)customerInfo.DataContext;
+                department.Put(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
+            }
+            else
+            {
+                MessageBox.Show("Выберите счет и введите сумму операции");
+                return;
+            }
         }
 
         private void Button_Click_Withdraw(object sender, RoutedEventArgs e)
         {
-            department = (DivisionVM)customerInfo.DataContext;
-            department.Withdraw(((AccountVM)Accounts.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
+            if (AccountsList.SelectedItem != null && WithdrawSum.Text != "")
+            {
+                department = (DivisionVM)customerInfo.DataContext;
+                department.Withdraw(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
+                               
+            }
+            else
+            {
+                MessageBox.Show("Выберите счет и введите сумму операции");
+                return;
+            }
+
         }
 
         private void Button_Click_CloseAccount(object sender, RoutedEventArgs e)
         {
-            department = (DivisionVM)customerInfo.DataContext;
-            department.CloseAccount(((AccountVM)Accounts.SelectedItem).Bic);
+            if (AccountsList.SelectedItem != null)
+            {
+                department = (DivisionVM)customerInfo.DataContext;
+                department.CloseAccount(((AccountVM)AccountsList.SelectedItem).Bic);
+            }
+            else
+            {
+                MessageBox.Show("Выберите счет");
+                return;
+            }
+
         }
 
         private void Button_Click_Transfer(object sender, RoutedEventArgs e)
@@ -59,7 +94,7 @@ namespace BankSystem.View
             department = (DivisionVM)customerInfo.DataContext;
             try
             {
-                department.Transfer(((AccountVM)Accounts.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));
+                department.Transfer(((AccountVM)AccountsList.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));
             }
             catch (Exception)
             {
@@ -68,5 +103,28 @@ namespace BankSystem.View
             }
             
         }
+
+      
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            {
+                string s = Regex.Replace(((TextBox)sender).Text, @"[^\d,]", "");
+                ((TextBox)sender).Text = s;
+               
+                ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
+                try
+                {
+                   Convert.ToDecimal(string.Format("{0:.##}", s));
+                }
+                catch (Exception)
+                {
+
+                    MessageBox.Show("Недопустимый формат");
+                    return;
+                }
+            }
+        }
+
+       
     }
 }

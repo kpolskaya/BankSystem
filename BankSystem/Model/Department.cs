@@ -6,40 +6,60 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-
+using System.Runtime.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BankSystem.Model
 {
-    
-
+    [DataContract]
+    //[KnownType("GetKnownType")]
     public class Department<TCustomer>  : Division where TCustomer : Customer, new()
-                                                          
+
     {
+    //[DataMember]
+
+    //    private TCustomer Type;
+
+    //    private static Type[] GetKnownType()
+    //    {
+    //        Type[] t = new Type[3];
+    //        t[0] = typeof(Entity);
+    //        t[1] = typeof(Person);
+    //        t[1] = typeof(Vip);
+    //        return t;
+    //    }
+
+        [DataMember]
         public new ObservableCollection<TCustomer> Customers { get; private set; }
 
         //decimal rate;
         //decimal fee;
 
-       
+        
         public Department(string Id, string Name) : base(Id, Name)
         {
             this.Customers = new ObservableCollection<TCustomer>();
                      
             Type cType = typeof(TCustomer);
-
-            //var rateMethod = cType.GetMethod("Rate", BindingFlags.Static | BindingFlags.Public);
-            //this.rate = (decimal)rateMethod.Invoke(null, null);
-          
+            //  этот код нужно поместить в конструктор для json, наверное
             this.rate = (decimal)cType.GetField("Rate", BindingFlags.Static | BindingFlags.Public).GetValue(null);
             this.fee = (decimal)cType.GetField("Fee", BindingFlags.Static | BindingFlags.Public).GetValue(null);
-            
-          
 
-
-            Debug.WriteLine("For type {0} Rate is {1}, Fee is {2}", cType.Name, rate, fee); //  вывод для отладки
         }
 
+        public Department()
+        { }
 
+        [JsonConstructor]
+        public Department(string Id, string Name, ObservableCollection<Account> Accounts, ObservableCollection<TCustomer> Customers)
+            : base(Id, Name, Accounts)
+        
+        {
+            this.Customers = Customers;
+
+
+        }
             
         // логика, которая зависит от типа клиента...
 

@@ -4,19 +4,46 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
+
 
 namespace BankSystem.Model
 {
+    [DataContract]
+    
     public class Bank
-    {
+    {[DataMember]
         public decimal Profit { get; private set; } //  bic 99 - прибыль/убыток
+        [DataMember]
         public decimal Cash { get; private set; } // bic 00 - касса банка
+        [DataMember]
         public ObservableCollection<Division> Departments { get; private set; }
-        public string Name { get; }
+        [DataMember]
+        public string Name { get; private set; }
+        [DataMember]
         public ObservableCollection<Transaction> TransactionHistory { get; private set; }
 
         public Bank() //убрать или что
         {
+
+        }
+
+        [JsonConstructor]
+        public Bank(string Name, ObservableCollection<Division> Departments, ObservableCollection<Transaction> TransactionHistory,
+                    decimal Cash, decimal Profit)
+        {
+            this.Name = Name;
+            this.Departments = Departments;
+            this.TransactionHistory = TransactionHistory;
+            this.Cash = Cash;
+            this.Profit = Profit;
+            foreach (var item in this.Departments) //подписка на эвенты каждого департамента
+            {
+                item.TransactionRaised += ProcessPayment;
+            }
 
         }
 
@@ -29,6 +56,8 @@ namespace BankSystem.Model
                 new Department<Person>("02", "Отдел по работе с физическими лицами"),
                 new Department<Vip>("03", "Отдел по работе с VIP клиентами")
             };
+
+            ExampleCustomers();
             
             this.Cash = 1_000_000; //собственный капитал при открытии
             
@@ -120,7 +149,7 @@ namespace BankSystem.Model
                
             }
         }
+    
 
-       
     }
 }

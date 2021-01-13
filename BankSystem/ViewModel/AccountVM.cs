@@ -11,7 +11,7 @@ namespace BankSystem.ViewModel
     public class AccountVM : INotifyPropertyChanged
     {
         private readonly Account account;
-
+        public string Message { get; set; }
         public string Bic { get { return this.account.Bic; } }
         public decimal Balance 
         {
@@ -27,11 +27,15 @@ namespace BankSystem.ViewModel
         {
             this.account = Account;
             this.account.Movement += AccountMovement;
+           
         }
 
         private void AccountMovement(Account sender, string message)
         {
+           
             OnPropertyChanged("Balance");
+            this.Message = message;
+            OnPropertyChanged("Message");
         }
 
         private bool isSelected;
@@ -56,6 +60,7 @@ namespace BankSystem.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+     
         //public override string ToString()
         //{
         //    return $"{this.Bic} : {this.Balance: ### ### ### ##0.00}";

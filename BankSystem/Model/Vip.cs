@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace BankSystem.Model
 {
+    [DataContract]
+    [KnownType(typeof(Customer))]
     public class Vip : Customer
     {
         //public static decimal Fee() { return fee; }
@@ -14,14 +18,20 @@ namespace BankSystem.Model
             Rate = 0.24m; // 24 10
         }
 
-        public Vip() : base() { }
+        public Vip()
+        { }
 
-        public bool IsReliable { get; set; } // надежный ли заемщик - опция для физлиц
+
 
         public Vip(string Name, string OtherName, string LegalId, string Phone)
             : base(Name, OtherName, LegalId, Phone)
         {
-            this.IsReliable = Customer.random.Next(3) == 0;
+           
         }
+
+        [JsonConstructor]
+        public Vip(string Id, string Name, string OtherName, string LegalId, string Phone)
+            : base(Id, Name, OtherName, LegalId, Phone)
+        { }
     }
 }
