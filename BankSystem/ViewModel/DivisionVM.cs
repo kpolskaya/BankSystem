@@ -25,38 +25,10 @@ namespace BankSystem.ViewModel
         public string Header3 { get; }
         public string Header4 { get; }
 
-        //public ObservableCollection<CustomerVM> Customers // можно просто коллекцию
-        //{ 
-        //    get
-        //    {
-        //        switch (typeOfCustomer.Name)
-        //        {
-        //            case "Entity":
-        //                return new ObservableCollection<CustomerVM>(
-        //                    (from c in (this.division as Department<Entity>).Customers
-        //                     select new CustomerVM(c)).ToList()
-        //                    );
+        public ObservableCollection<CustomerVM> Customers { get; private set; }
 
-        //            case "Person":
-        //                return new ObservableCollection<CustomerVM>(
-        //                    (from c in (this.division as Department<Person>).Customers
-        //                     select new CustomerVM(c)).ToList()
-        //                    );
-
-        //            case "Vip":
-        //                return new ObservableCollection<CustomerVM>(
-        //                    (from c in (this.division as Department<Vip>).Customers
-        //                     select new CustomerVM(c)).ToList()
-        //                    );
-        //            default:
-        //                return new ObservableCollection<CustomerVM>();
-        //        }
-        //    }
- 
-        //}
-
-        public ObservableCollection<CustomerVM> Customers { get; set; }
-
+        public ObservableCollection<AccountVM> Accounts { get; private set; }
+      
         public IList<AccountType> AccountTypeList
         {
             get
@@ -66,9 +38,6 @@ namespace BankSystem.ViewModel
         }
 
 
-
-
-
         private Type typeOfCustomer;
 
         public DivisionVM(Division Department)
@@ -76,50 +45,86 @@ namespace BankSystem.ViewModel
             
             this.division = Department;
             this.typeOfCustomer = Department.GetType().GetGenericArguments()[0];
-
-            this.Customers = new ObservableCollection<CustomerVM>();
-
+            //this.Customers = new ObservableCollection<CustomerVM>();
+            Header1 = "Имя";
+            Header2 = "Фамилия";
+            Header3 = "Паспорт";
             Header4 = "Телефон";
-            if (Department is Department<Entity>)
+
+            switch (typeOfCustomer.Name)
             {
-                Header1 = "Наименование";
-                Header2 = "Форма";
-                Header3 = "ОГРН";
+                case "Entity":
 
-                foreach (var item in (Department as Department<Entity>).Customers)
-                {
-                    this.Customers.Add(new CustomerVM(item));
+                    this.Customers = new ObservableCollection<CustomerVM>(
+                        (from c in (this.division as Department<Entity>).Customers
+                         select new CustomerVM(c)).ToList()
+                        );
 
-                }
+                    Header1 = "Наименование";
+                    Header2 = "Форма";
+                    Header3 = "ОГРН";
+                    break;
+
+                case "Person":
+                    this.Customers = new ObservableCollection<CustomerVM>(
+                        (from c in (this.division as Department<Person>).Customers
+                         select new CustomerVM(c)).ToList()
+                        );
+                    break;
+
+                case "Vip":
+                    this.Customers = new ObservableCollection<CustomerVM>(
+                        (from c in (this.division as Department<Vip>).Customers
+                         select new CustomerVM(c)).ToList()
+                        );
+                    break;
+                default:
+                    this.Customers = new ObservableCollection<CustomerVM>();
+                    break;
             }
 
 
-            else if (Department is Department<Person>)
-            {
-                Header1 = "Имя";
-                Header2 = "Фамилия";
-                Header3 = "Паспорт";
+            
+            //if (Department is Department<Entity>)
+            //{
+            //    Header1 = "Наименование";
+            //    Header2 = "Форма";
+            //    Header3 = "ОГРН";
 
-                foreach (var item in (Department as Department<Person>).Customers)
-                {
-                    this.Customers.Add(new CustomerVM(item));
+            //    foreach (var item in (Department as Department<Entity>).Customers)
+            //    {
+            //        this.Customers.Add(new CustomerVM(item));
 
-                }
-            }
-
-            else if (Department is Department<Vip>)
-            {
-                Header1 = "Имя";
-                Header2 = "Фамилия";
-                Header3 = "Паспорт";
-
-                foreach (var item in (Department as Department<Vip>).Customers)
-                {
-                    this.Customers.Add(new CustomerVM(item));
+            //    }
+            //}
 
 
-                }
-            }
+            //else if (Department is Department<Person>)
+            //{
+            //    Header1 = "Имя";
+            //    Header2 = "Фамилия";
+            //    Header3 = "Паспорт";
+
+            //    foreach (var item in (Department as Department<Person>).Customers)
+            //    {
+            //        this.Customers.Add(new CustomerVM(item));
+
+            //    }
+            //}
+
+            //else if (Department is Department<Vip>)
+            //{
+            //    Header1 = "Имя";
+            //    Header2 = "Фамилия";
+            //    Header3 = "Паспорт";
+
+            //    foreach (var item in (Department as Department<Vip>).Customers)
+            //    {
+            //        this.Customers.Add(new CustomerVM(item));
+
+
+            //    }
+            //}
 
             this.Accounts = new ObservableCollection<AccountVM>(); //не нужна тут обзервабл
             foreach (var item in this.division.Accounts)
@@ -127,18 +132,8 @@ namespace BankSystem.ViewModel
                 this.Accounts.Add(new AccountVM(item));
             }
             INotifyCollectionChanged notifyAccountsChanged = this.division.Accounts;
-
             notifyAccountsChanged.CollectionChanged += RereadAcconts;
-
         }
-
-       
-
-        //private void Users_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    
-
-        //}
 
 
         public CustomerVM SelectedCustomer
@@ -152,7 +147,7 @@ namespace BankSystem.ViewModel
 
 
 
-        public ObservableCollection<AccountVM> Accounts { get; private set; }
+       
 
         public AccountVM SelectedAccount
         {
