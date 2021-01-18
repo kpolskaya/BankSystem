@@ -20,8 +20,8 @@ namespace BankSystem.Model
         public string Id { get; protected set; }
         [DataMember]
         public string Name { get; protected set; }
-        [DataMember]
-        public ObservableCollection<Customer> Customers;
+        //[DataMember]
+        //public ObservableCollection<Customer> Customers;
         [DataMember]
         protected decimal fee;
         [DataMember]
@@ -61,7 +61,7 @@ namespace BankSystem.Model
         }
 
       
-        public void OpenAccount(AccountType type, Customer customer)
+        public void OpenAccount(AccountType type, Customer customer) //почему бы не перенести этот метод в Department
         {
             switch (type)
             {
@@ -146,7 +146,7 @@ namespace BankSystem.Model
             return executed;
         }
 
-        public void CloseAccount(string bic) 
+        public void CloseAccount(string bic) // нужно придумать как отписаться от сообщений  по счету
         {
             string detailes = "Закрытие счета";
             Account account = GetAccountByBic(bic);

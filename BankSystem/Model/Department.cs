@@ -31,7 +31,7 @@ namespace BankSystem.Model
     //    }
 
         [DataMember]
-        public new ObservableCollection<TCustomer> Customers { get; private set; }
+        public  ObservableCollection<TCustomer> Customers { get; private set; }
 
         //decimal rate;
         //decimal fee;
