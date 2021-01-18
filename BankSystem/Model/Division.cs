@@ -29,7 +29,7 @@ namespace BankSystem.Model
         [DataMember]
         protected ObservableCollection<Account> accounts; //
         
-        public ReadOnlyObservableCollection<Account> Accounts { get { return new ReadOnlyObservableCollection<Account>(this.accounts); } }
+        public ReadOnlyObservableCollection<Account> Accounts { get { return new ReadOnlyObservableCollection<Account>(this.accounts); } }//TODO подумать как вообще избавиться от этого свойства
         
         [JsonConstructor]
         public Division(string Id, string Name, ObservableCollection<Account> accounts)

@@ -23,9 +23,9 @@
         <GroupBox Header="Структура банка" Grid.Column="0" Width="Auto" Padding="5">
             <StackPanel Orientation="Vertical" Width="Auto" >
 
-                <StackPanel Orientation="Vertical" Width="Auto" Height="Auto" VerticalAlignment="Bottom">
+                <StackPanel Orientation="Vertical" Width="Auto" Height="400" VerticalAlignment="Bottom">
 
-                    <ListView x:Name="Divisions"   Grid.Column="1"   Width="Auto" Height="130" BorderBrush="Transparent" BorderThickness="0"
+                    <ListView x:Name="Divisions"   Grid.Column="1"   Width="Auto" Height="300" BorderBrush="Transparent" BorderThickness="0"
                 ItemsSource="{Binding Departments}" DisplayMemberPath="Name"  >
 
                         <ListView.ItemContainerStyle>
@@ -49,16 +49,23 @@
 
                         </ListView.View>
                         </ListView>
-                           
-                   
+                    <Button Content="Выгрузить в Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Serialize_Button_Click" />
+                    <Button Content="Загрузить из Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Deserialize_Button_Click" />
 
                 </StackPanel>
-                <Button Content="Выгрузить в Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Serialize_Button_Click" />
-                <Button Content="Загрузить из Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Deserialize_Button_Click" />
+             
+                <StackPanel VerticalAlignment ="Bottom" >
+
+                    <Button Content="Закрытие месяца" Width="120" Height="20" Margin="10" HorizontalAlignment="Center" Click="MonthlyCharge_Button_Click"  />
+                    <TextBlock Text="Собственные средства банка:" Margin="5" />
+                    <TextBox Text="{Binding Profit, Mode=OneWay}" Width="200" TextAlignment="Center"  />
+                    <TextBlock Text="Средства на счетах клиентов:" Margin="5"/>
+                    <TextBox Text="{Binding Profit, Mode=OneWay}" Width="200" TextAlignment="Center"  />
+                    <TextBlock Text="Прибыль (убыток) банка:" Margin="5"/>
+                    <TextBox Text="{Binding Profit, Mode=OneWay}" Width="200" TextAlignment="Center" />
+                </StackPanel>
 
             </StackPanel >
-          
-
 
         </GroupBox >
 
@@ -71,7 +78,7 @@
 
                 <StackPanel Orientation="Vertical" Width="Auto" Height="Auto" VerticalAlignment="Bottom">
 
-                    <ListView x:Name="Customers"   Grid.Column="1"   Width="Auto" Height="Auto" BorderBrush="Transparent" BorderThickness="0"
+                    <ListView x:Name="Customers"   Grid.Column="1"   Width="Auto" Height="500" BorderBrush="Transparent" BorderThickness="0"
                 DataContext ="{Binding ElementName=Divisions, Path=SelectedItem}" ItemsSource="{Binding Customers}" SelectionChanged="Customers_SelectionChanged"  >
 
                         <ListView.ItemContainerStyle>
@@ -131,8 +138,26 @@
 
                     </ListView>
                 </StackPanel>
-            </StackPanel >
+                <StackPanel Orientation="Vertical" Width="Auto">
+                    <Button Content="Добавить клиента" Width="120" Height="20" Margin="5" HorizontalAlignment="Left" Click="New_Client_Button_Click"  />
+                    <StackPanel Orientation="Horizontal" Width="Auto" DataContext="{Binding ElementName=Divisions, Path=SelectedItem}" >
 
+                    <TextBox Text="{Binding Header1, Mode=OneWay}" Width="100" TextAlignment="Center"  />
+                    <TextBox Text="{Binding Header2, Mode=OneWay}" Width="100" TextAlignment="Center"  />
+                    <TextBox Text="{Binding Header3, Mode=OneWay}" Width="100" TextAlignment="Center" />
+                    <TextBox Text="{Binding Header4, Mode=OneWay}" Width="135" TextAlignment="Center" />
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Width="Auto" Height="20"  >
+              
+                    <TextBox x:Name="NewName"  Width="100" HorizontalAlignment="Left" ></TextBox>
+                    <TextBox x:Name="NewOtherName"  Width="100" HorizontalAlignment="Left"></TextBox>
+                    <TextBox x:Name="NewLegalId"  Width="100"  HorizontalAlignment="Left"></TextBox>
+                    <TextBox x:Name="NewPhone" Width="135" HorizontalAlignment="Right"></TextBox>
+
+                </StackPanel>
+                </StackPanel>
+            </StackPanel >
 
         </GroupBox >
 
@@ -146,7 +171,6 @@
 
                     <ListView x:Name="Accounts"   Grid.Column="1"   Width="Auto" Height="Auto" BorderBrush="Transparent" BorderThickness="0"
                 DataContext ="{Binding ElementName=Divisions, Path=SelectedItem}" ItemsSource="{Binding Accounts}"  >
-
                       
                         <ListView.View >
 
@@ -166,10 +190,8 @@
 
                     </ListView>
 
-
                 </StackPanel>
             </StackPanel >
-
 
         </GroupBox >
 

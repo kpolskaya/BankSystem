@@ -25,7 +25,37 @@ namespace BankSystem.ViewModel
         public string Header3 { get; }
         public string Header4 { get; }
 
+        //public ObservableCollection<CustomerVM> Customers // можно просто коллекцию
+        //{ 
+        //    get
+        //    {
+        //        switch (typeOfCustomer.Name)
+        //        {
+        //            case "Entity":
+        //                return new ObservableCollection<CustomerVM>(
+        //                    (from c in (this.division as Department<Entity>).Customers
+        //                     select new CustomerVM(c)).ToList()
+        //                    );
 
+        //            case "Person":
+        //                return new ObservableCollection<CustomerVM>(
+        //                    (from c in (this.division as Department<Person>).Customers
+        //                     select new CustomerVM(c)).ToList()
+        //                    );
+
+        //            case "Vip":
+        //                return new ObservableCollection<CustomerVM>(
+        //                    (from c in (this.division as Department<Vip>).Customers
+        //                     select new CustomerVM(c)).ToList()
+        //                    );
+        //            default:
+        //                return new ObservableCollection<CustomerVM>();
+        //        }
+        //    }
+ 
+        //}
+
+        public ObservableCollection<CustomerVM> Customers { get; set; }
 
         public IList<AccountType> AccountTypeList
         {
@@ -35,9 +65,18 @@ namespace BankSystem.ViewModel
             }
         }
 
+
+
+
+
+        private Type typeOfCustomer;
+
         public DivisionVM(Division Department)
         {
+            
             this.division = Department;
+            this.typeOfCustomer = Department.GetType().GetGenericArguments()[0];
+
             this.Customers = new ObservableCollection<CustomerVM>();
 
             Header4 = "Телефон";
@@ -78,25 +117,7 @@ namespace BankSystem.ViewModel
                 {
                     this.Customers.Add(new CustomerVM(item));
 
-                    //else
-                    //{
-                    //    return;
-                    //}
-                    //var dType = Department.GetType();
-                    //Type[] dTypeParameters = dType.GetGenericArguments();
-                    //Type cType = dTypeParameters[0];
 
-                    //switch (cType.Name)
-                    //{
-                    //    case "Entity":
-                    //        foreach (var item in (Department as Department<Entity>).Customers)
-                    //        {
-                    //            this.Customers.Add(new CustomerVM(item));
-                    //        }
-
-                    //        Debug.WriteLine("Entity");
-                    //        break;
-                    //}
                 }
             }
 
@@ -111,17 +132,7 @@ namespace BankSystem.ViewModel
 
         }
 
-        private void RereadAcconts(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            Accounts = new ObservableCollection<AccountVM>();
-            foreach (var item in division.Accounts)
-            {
-                this.Accounts.Add(new AccountVM(item));
-            }
-
-            OnPropertyChanged("Accounts");
-            OnPropertyChanged("CustomersAccounts");
-        }
+       
 
         //private void Users_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         //{
@@ -129,7 +140,6 @@ namespace BankSystem.ViewModel
 
         //}
 
-        public ObservableCollection<CustomerVM> Customers { get; private set; }
 
         public CustomerVM SelectedCustomer
         {
@@ -164,6 +174,12 @@ namespace BankSystem.ViewModel
             }
 
 
+        }
+
+        public void CreateCustomer(string name, string otherName, string legalId, string phone)
+        {
+            division.CreateCustomer(name, otherName, legalId, phone);
+            this.OnPropertyChanged("Customers");
         }
 
         public void Put(string bic, decimal sum)
@@ -211,6 +227,18 @@ namespace BankSystem.ViewModel
         void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void RereadAcconts(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Accounts = new ObservableCollection<AccountVM>();
+            foreach (var item in division.Accounts)
+            {
+                this.Accounts.Add(new AccountVM(item));
+            }
+
+            OnPropertyChanged("Accounts");
+            OnPropertyChanged("CustomersAccounts");
         }
 
     }

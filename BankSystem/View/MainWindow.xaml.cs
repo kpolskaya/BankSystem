@@ -42,8 +42,8 @@ namespace BankSystem.View
             if (Customers.SelectedItem != null)
             {
                 
-                CustomerInfo newWindow = new CustomerInfo();
-                newWindow.DataContext = bank.SelectedItem;
+                CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem);
+                //newWindow.DataContext = bank.SelectedItem;
                 await Task.Delay(100);
                 newWindow.ShowDialog();
                 bank.ClearSelectedCustomer();
@@ -63,6 +63,25 @@ namespace BankSystem.View
             DataContext = bank;
             //var binding = DataContextProperty;
             //mainWindow1.GetBindingExpression(binding).UpdateTarget();
+        }
+
+        private void New_Client_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (Divisions.SelectedItem!=null)
+            {
+                ((DivisionVM)Divisions.SelectedItem).CreateCustomer(NewName.Text, NewOtherName.Text, NewLegalId.Text, NewPhone.Text);
+            }
+            else
+            {
+                MessageBox.Show("Выберите отдел");
+                return;
+            } 
+
+        }
+
+        private void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e)
+        {
+            bank.MonthlyCharge();
         }
     }
 }

@@ -24,17 +24,18 @@ namespace BankSystem.View
     {
         DivisionVM department;
        
-        public CustomerInfo()
+        public CustomerInfo(object DataContext) 
         {
+            this.DataContext = DataContext;
             InitializeComponent();
-            
+            department = this.DataContext as DivisionVM;
         }
 
         private void Button_Click_OpenAccount(object sender, RoutedEventArgs e)
         {
             if (TypeAccountOpen.SelectedValue != null)
             {
-                department = (DivisionVM)customerInfo.DataContext;
+                //department = (DivisionVM)customerInfo.DataContext;
                 department.OpenAccount((AccountType)TypeAccountOpen.SelectedValue, department.SelectedCustomer);
             }
             else
@@ -48,7 +49,7 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null && PutSum.Text != "")
             {
-                department = (DivisionVM)customerInfo.DataContext;
+                //department = (DivisionVM)customerInfo.DataContext;
                 department.Put(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
             }
             else
@@ -62,7 +63,7 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null && WithdrawSum.Text != "")
             {
-                department = (DivisionVM)customerInfo.DataContext;
+                //department = (DivisionVM)customerInfo.DataContext;
                 department.Withdraw(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
                                
             }
@@ -78,7 +79,7 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null)
             {
-                department = (DivisionVM)customerInfo.DataContext;
+                //department = (DivisionVM)customerInfo.DataContext;
                 department.CloseAccount(((AccountVM)AccountsList.SelectedItem).Bic);
             }
             else
@@ -91,7 +92,7 @@ namespace BankSystem.View
 
         private void Button_Click_Transfer(object sender, RoutedEventArgs e)
         {
-            department = (DivisionVM)customerInfo.DataContext;
+            //department = (DivisionVM)customerInfo.DataContext;
             try
             {
                 department.Transfer(((AccountVM)AccountsList.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));

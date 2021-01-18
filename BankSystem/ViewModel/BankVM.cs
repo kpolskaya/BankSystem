@@ -14,7 +14,15 @@ namespace BankSystem.ViewModel
         public ObservableCollection<DivisionVM> Departments { get; set; }
 
         private readonly Bank bank;
-                  
+        public decimal Profit {
+            get
+            {
+                OnPropertyChanged("bank.Profit");
+                return this.bank.Profit;
+                
+            }
+                
+        }
 
         public BankVM(Bank Bank)
         {
@@ -39,6 +47,11 @@ namespace BankSystem.ViewModel
         public void ClearSelectedCustomer()
         {
             SelectedItem.SelectedCustomer.IsSelected = false;
+        }
+
+        public void MonthlyCharge()
+        {
+            bank.MonthlyCharge();
         }
 
 
