@@ -12,6 +12,8 @@ using System.Runtime.Serialization;
 
 namespace BankSystem.Model
 {
+    public delegate void BankBalanceChanged(string name);
+
     [DataContract]
     
     public class Bank
@@ -67,7 +69,10 @@ namespace BankSystem.Model
             }
 
             this.TransactionHistory = new ObservableCollection<Transaction>();
+           
         }
+        
+        public event BankBalanceChanged BankBalanceChanged;
 
         private void ProcessPayment(Division sender, Transaction t)
         {
@@ -76,21 +81,26 @@ namespace BankSystem.Model
                 if (t.BeneficiaryBic == "99") // прибыль банка
                 {
                     Profit += t.Sum;
+                    OnBalanceChanged("Profit");
                 }
 
                 if (t.BeneficiaryBic == "00") // выдача денег клиенту
                 {
                     Cash -= t.Sum;
+                    OnBalanceChanged("Cash");
                 }
 
                 if (t.SenderBic == "99") // убыток банка
                 {
                     Profit -= t.Sum;
+                    OnBalanceChanged("Profit");
+
                 }
 
                 if (t.SenderBic == "00") // внесение денег клиентом
                 {
                     Cash += t.Sum;
+                    OnBalanceChanged("Cash");
                 }
                 t.Status = TransactionStatus.Done;
             }
@@ -110,6 +120,11 @@ namespace BankSystem.Model
             this.TransactionHistory.Add(t);
             
             //TODO save history
+        }
+
+        private void OnBalanceChanged(string name)
+        {
+            BankBalanceChanged?.Invoke(name);
         }
 
         private Division GetDepartmentByBic(string bic)
@@ -150,6 +165,14 @@ namespace BankSystem.Model
             }
         }
     
-
+        public decimal ClientsFunds()
+        {
+            decimal total = 0;
+            foreach (var item in this.Departments)
+            {
+                total += item.ClientsFunds();
+            }
+            return total;
+        }
     }
 }

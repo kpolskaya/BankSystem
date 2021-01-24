@@ -16,7 +16,10 @@ namespace BankSystem.Model
 
         public Repository()
         {
-            this.bank = new Bank("Банк");
+            if (File.Exists("Bank.json"))
+                DeserializeJsonBank();
+            else
+                this.bank = new Bank("Банк");
         }
 
         public void SerializeJsonBank()
@@ -51,7 +54,7 @@ namespace BankSystem.Model
             JsonSerializerSettings jss = new JsonSerializerSettings();
             jss.TypeNameHandling = TypeNameHandling.All;
             //jss.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
-            bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
+            this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
 
             //using (StreamReader file = File.OpenText("Bank.json"))
             //{

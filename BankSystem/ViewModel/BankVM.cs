@@ -14,16 +14,13 @@ namespace BankSystem.ViewModel
         public ObservableCollection<DivisionVM> Departments { get; set; }
 
         private readonly Bank bank;
-        public decimal Profit {
-            get
-            {
-                OnPropertyChanged("bank.Profit");
-                return this.bank.Profit;
-                
-            }
-                
-        }
+        public decimal Profit {get { return this.bank.Profit;} }
 
+        public decimal Capital { get { return this.bank.Cash - ClientsFunds; } }
+
+        public decimal ClientsFunds { get { return this.bank.ClientsFunds(); } }
+
+        public decimal Cash { get { return this.bank.Cash; } }
         public BankVM(Bank Bank)
         {
             bank = Bank;
@@ -33,6 +30,7 @@ namespace BankSystem.ViewModel
             {
                 this.Departments.Add(new DivisionVM(item));
             }
+            bank.BankBalanceChanged += UpdateTarget;
         }
 
         public DivisionVM SelectedItem
@@ -44,6 +42,7 @@ namespace BankSystem.ViewModel
             }
         }
 
+
         public void ClearSelectedCustomer()
         {
             SelectedItem.SelectedCustomer.IsSelected = false;
@@ -52,6 +51,8 @@ namespace BankSystem.ViewModel
         public void MonthlyCharge()
         {
             bank.MonthlyCharge();
+            OnPropertyChanged("ClientsFunds");
+            OnPropertyChanged("Capital");
         }
 
 
@@ -61,5 +62,10 @@ namespace BankSystem.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private void UpdateTarget (string name)
+        {
+            OnPropertyChanged(name);
+          
+        }
     }
 }

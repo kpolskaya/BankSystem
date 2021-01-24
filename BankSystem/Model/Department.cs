@@ -74,12 +74,12 @@ namespace BankSystem.Model
             };
 
             this.Customers.Add(customer);
-  
+          
         }
 
         public override void CustomersForExample()
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++) //3!!!!!
             {
                 string name = ($"Клиент  {this.Id}-{i+1}");
                 string othername = ($"Имярек  {this.Id}-{i+1}");
@@ -96,14 +96,20 @@ namespace BankSystem.Model
             foreach (var customer in Customers)
             {
                 OpenAccount(AccountType.DebitAccount, customer);
-                OpenAccount(AccountType.DepositAccount, customer);
-                OpenAccount(AccountType.DepositAccountCapitalized, customer);
+                //OpenAccount(AccountType.DepositAccount, customer);
+                //OpenAccount(AccountType.DepositAccountCapitalized, customer);
             }
         }
 
-       
-
-
+        public override decimal ClientsFunds()
+        {
+            decimal total = 0;
+            foreach (var item in this.accounts)
+            {
+                total += item.FullBalance();
+            }
+            return total;
+        }
     }
 }
 

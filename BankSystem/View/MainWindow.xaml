@@ -23,9 +23,9 @@
         <GroupBox Header="Структура банка" Grid.Column="0" Width="Auto" Padding="5">
             <StackPanel Orientation="Vertical" Width="Auto" >
 
-                <StackPanel Orientation="Vertical" Width="Auto" Height="400" VerticalAlignment="Bottom">
+                <StackPanel Orientation="Vertical" Width="Auto" Height="300" VerticalAlignment="Bottom">
 
-                    <ListView x:Name="Divisions"   Grid.Column="1"   Width="Auto" Height="300" BorderBrush="Transparent" BorderThickness="0"
+                    <ListView x:Name="Divisions"   Grid.Column="1"   Width="Auto" Height="200" BorderBrush="Transparent" BorderThickness="0"
                 ItemsSource="{Binding Departments}" DisplayMemberPath="Name"  >
 
                         <ListView.ItemContainerStyle>
@@ -58,11 +58,13 @@
 
                     <Button Content="Закрытие месяца" Width="120" Height="20" Margin="10" HorizontalAlignment="Center" Click="MonthlyCharge_Button_Click"  />
                     <TextBlock Text="Собственные средства банка:" Margin="5" />
-                    <TextBox Text="{Binding Profit, Mode=OneWay}" Width="200" TextAlignment="Center"  />
+                    <TextBox Text="{Binding Capital, Mode=OneWay}" Width="200" TextAlignment="Center"  />
                     <TextBlock Text="Средства на счетах клиентов:" Margin="5"/>
-                    <TextBox Text="{Binding Profit, Mode=OneWay}" Width="200" TextAlignment="Center"  />
+                    <TextBox Text="{Binding ClientsFunds, Mode=OneWay}" Width="200" TextAlignment="Center"  />
                     <TextBlock Text="Прибыль (убыток) банка:" Margin="5"/>
                     <TextBox Text="{Binding Profit, Mode=OneWay}" Width="200" TextAlignment="Center" />
+                    <TextBlock Text="Денег в банке:" Margin="5" />
+                    <TextBox Text="{Binding Cash, Mode=OneWay}" Width="200" TextAlignment="Center"  />
                 </StackPanel>
 
             </StackPanel >

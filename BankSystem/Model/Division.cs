@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace BankSystem.Model
 {
     public delegate void TransactionHandler(Division sender, Transaction t);
-
+    
     [System.Runtime.Serialization.DataContract]
     [KnownType(typeof(Department<>))]
     public abstract class Division //TODO  везде проверки на null (GetAccountByBic) и расставить Exeptions
@@ -20,8 +20,8 @@ namespace BankSystem.Model
         public string Id { get; protected set; }
         [DataMember]
         public string Name { get; protected set; }
-        [DataMember]
-        public ObservableCollection<Customer> Customers;
+        //[DataMember]
+        //public ObservableCollection<Customer> Customers; // удалить
         [DataMember]
         protected decimal fee;
         [DataMember]
@@ -180,6 +180,7 @@ namespace BankSystem.Model
 
 
         public event TransactionHandler TransactionRaised;
+      
 
         protected virtual void OnTransactionRaised(Division sender, Transaction t)
         {
@@ -188,13 +189,16 @@ namespace BankSystem.Model
             TransactionRaised?.Invoke(sender, t);
         }
 
-       
-        public abstract void CreateCustomer(string name, string otherName, string legalId, string phone);
+             
 
+        public abstract void CreateCustomer(string name, string otherName, string legalId, string phone);
+        
         public abstract void CustomersForExample();
 
         public abstract void AccountsForExample();
 
-        //public abstract void RefillAccounts();
+        public abstract decimal ClientsFunds();
+
+       
     }
 }

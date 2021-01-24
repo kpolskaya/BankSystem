@@ -32,8 +32,7 @@ namespace BankSystem.Model
         [DataMember]
         public decimal AccruedInterest { get; protected set; }
 
-        //protected Func<decimal, decimal> interest;
-      
+              
         public Account(AccountType Type, string DepartmentId, Customer Customer) 
         {
             this.Type = Type;
@@ -54,8 +53,10 @@ namespace BankSystem.Model
             this.Balance = Balance;
             this.Type = Type;
             this.AccruedInterest = AccruedInterest;
-        
-         }
+            //this.Movement += Customer.SendMessage; - не работает, потому что неизвестен клиент!
+            //сделать в департаменте публичный метод переподписки клиентов после загрузки базы.
+
+        }
 
         public virtual bool Debit(decimal sum, string detailes)
         {
@@ -104,8 +105,8 @@ namespace BankSystem.Model
             return this.Balance + this.AccruedInterest;
         }
         
-
-        public event OperationInfoHandler Movement;
+       
+        public event OperationInfoHandler Movement; //подписка на движение по счетам пропадает после загрузки из json - конструкторЁ!ЁЁ!
 
         protected virtual void OnMovement(Account sender, string message)
         {
