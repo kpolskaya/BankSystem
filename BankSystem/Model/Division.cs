@@ -199,6 +199,7 @@ namespace BankSystem.Model
 
         public abstract decimal ClientsFunds();
 
+        public abstract void RefreshSubscriptions();
        
     }
 }

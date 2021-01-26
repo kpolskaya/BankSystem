@@ -29,7 +29,7 @@ namespace BankSystem.Model
        
         public override decimal ChargeInterest(decimal rate)
         {
-            decimal i = this.Balance * rate / 12;
+            decimal i = Math.Round(this.Balance * rate / 12, 2, MidpointRounding.ToEven);//банковское округление
             Credit(i, "Начислены проценты");
             return i;
         }

@@ -13,6 +13,14 @@
         
     
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height ="20">         
+                
+            </RowDefinition>
+            <RowDefinition Height ="Auto">
+
+            </RowDefinition>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -20,7 +28,21 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="0.25*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <GroupBox Header="Структура банка" Grid.Column="0" Width="Auto" Padding="5">
+     
+            <DockPanel Grid.Row="0" Grid.ColumnSpan="5" Height="Auto">
+                <Menu DockPanel.Dock="Left">
+                    <MenuItem Header="Файл">
+                    <MenuItem Header="Открыть" Click="Deserialize_Button_Click" />
+                    <MenuItem Header="Сохранить..." Click ="Serialize_Button_Click" />
+                    </MenuItem>
+                <MenuItem Header="Журнал транзакций" Click="Transactions_Click" >
+
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
+       
+        
+        <GroupBox Header="Структура банка" Grid.Column="0" Grid.Row="1" Width="Auto" Padding="5" >
             <StackPanel Orientation="Vertical" Width="Auto" >
 
                 <StackPanel Orientation="Vertical" Width="Auto" Height="300" VerticalAlignment="Bottom">
@@ -49,14 +71,14 @@
 
                         </ListView.View>
                         </ListView>
-                    <Button Content="Выгрузить в Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Serialize_Button_Click" />
-                    <Button Content="Загрузить из Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Deserialize_Button_Click" />
+                    <!--<Button Content="Выгрузить в Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Serialize_Button_Click" />
+                    <Button Content="Загрузить из Json" Width="120" Height="20" Margin="5" HorizontalAlignment="Center" Click="Deserialize_Button_Click" />-->
 
                 </StackPanel>
              
                 <StackPanel VerticalAlignment ="Bottom" >
 
-                    <Button Content="Закрытие месяца" Width="120" Height="20" Margin="10" HorizontalAlignment="Center" Click="MonthlyCharge_Button_Click"  />
+                    <Button Content="Закрытие месяца" Width="120" Height="20" Margin="10" HorizontalAlignment="Center" Click="MonthlyCharge_Button_Click" ToolTip="Начисление платежей за обслуживание и процентов"  />
                     <TextBlock Text="Собственные средства банка:" Margin="5" />
                     <TextBox Text="{Binding Capital, Mode=OneWay}" Width="200" TextAlignment="Center"  />
                     <TextBlock Text="Средства на счетах клиентов:" Margin="5"/>
@@ -74,8 +96,8 @@
 
         <GridSplitter Grid.Column="1" ShowsPreview="True" Width="3"
                  HorizontalAlignment="Center"  VerticalAlignment="Stretch"/>
-        
-        <GroupBox Header="Список клиентов" Grid.Column="2" Width="Auto" Padding="5">
+
+        <GroupBox Header="Список клиентов" Grid.Column="2" Grid.Row="1" Width="Auto" Padding="5">
             <StackPanel Orientation="Vertical" Width="Auto" >
 
                 <StackPanel Orientation="Vertical" Width="Auto" Height="Auto" VerticalAlignment="Bottom">
@@ -166,12 +188,12 @@
 
         <GridSplitter Grid.Column="3" ShowsPreview="True" Width="3"
                  HorizontalAlignment="Center"  VerticalAlignment="Stretch"/>
-        <GroupBox Header="Список счетов" Grid.Column="4" Width="Auto" Padding="5">
+        <GroupBox Header="Список счетов" Grid.Column="4"  Grid.Row="1" Width="Auto" Padding="5">
             <StackPanel Orientation="Vertical" Width="Auto" >
 
                 <StackPanel Orientation="Vertical" Width="Auto" Height="Auto" VerticalAlignment="Bottom">
 
-                    <ListView x:Name="Accounts"   Grid.Column="1"   Width="Auto" Height="Auto" BorderBrush="Transparent" BorderThickness="0"
+                    <ListView x:Name="Accounts"   Grid.Column="1"   Width="Auto" Height="Auto" BorderBrush="Transparent" BorderThickness="0" 
                 DataContext ="{Binding ElementName=Divisions, Path=SelectedItem}" ItemsSource="{Binding Accounts}"  >
                       
                         <ListView.View >
@@ -181,7 +203,7 @@
                                     <GridViewColumnHeader HorizontalAlignment="Right" Width="170">Номер счета</GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Path=Bic}" HorizontalAlignment="Right"></TextBlock>
+                                            <TextBlock x:Name="Acc" Text="{Binding Path=Bic}" HorizontalAlignment="Right" ></TextBlock>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
 

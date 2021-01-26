@@ -96,7 +96,7 @@
                                 <GridViewColumnHeader HorizontalAlignment="Right" Width="200">Номер счета</GridViewColumnHeader>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Path=Bic}" HorizontalAlignment="Left"></TextBlock>
+                                        <TextBlock Text="{Binding Path=Bic}" HorizontalAlignment="Left" MouseLeftButtonDown="TextBlock_MouseLeftButtonDown" ToolTip="Левая кнопка - копировать в буфер"></TextBlock>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

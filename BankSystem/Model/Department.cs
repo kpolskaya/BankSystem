@@ -31,7 +31,7 @@ namespace BankSystem.Model
     //    }
 
         [DataMember]
-        public new ObservableCollection<TCustomer> Customers { get; private set; }
+        public ObservableCollection<TCustomer> Customers { get; private set; }
 
         //decimal rate;
         //decimal fee;
@@ -110,6 +110,19 @@ namespace BankSystem.Model
             }
             return total;
         }
+        public override void RefreshSubscriptions()
+        {
+            foreach (var customer in this.Customers)
+            {
+                foreach (var acc in this.accounts)
+                {
+                    if (customer.Id == acc.Bic.Substring(2, 8))
+                        acc.Movement += customer.SendMessage;
+                }
+            }
+        }
     }
+
+    
 }
 

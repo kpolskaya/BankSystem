@@ -53,7 +53,7 @@ namespace BankSystem.Model
         public Transaction()
         { }
         public Transaction(string Sender, string Beneficiary, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
-            : this (Guid.NewGuid().ToString(), Sender, Beneficiary, Sum, Detailes, Type)
+            : this (Guid.NewGuid().ToString().Substring(0,6), Sender, Beneficiary, Sum, Detailes, Type)
         {
             
         }

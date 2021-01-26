@@ -46,6 +46,7 @@ namespace BankSystem.Model
             {
                 item.TransactionRaised += ProcessPayment;
             }
+            RefreshSubscriptions();
 
         }
 
@@ -173,6 +174,14 @@ namespace BankSystem.Model
                 total += item.ClientsFunds();
             }
             return total;
+        }
+
+        public void RefreshSubscriptions()
+        {
+            foreach (var item in this.Departments)
+            {
+                item.RefreshSubscriptions();
+            }
         }
     }
 }

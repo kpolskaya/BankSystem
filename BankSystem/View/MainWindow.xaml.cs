@@ -34,7 +34,7 @@ namespace BankSystem.View
             repository = new Repository();
             bank = new BankVM(repository.bank);
             DataContext = bank;
-
+           
         }
 
         private async void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -67,13 +67,17 @@ namespace BankSystem.View
 
         private void New_Client_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (Divisions.SelectedItem!=null)
+            if (Divisions.SelectedItem!=null 
+                && !String.IsNullOrEmpty(NewName.Text)
+                && !String.IsNullOrEmpty(NewOtherName.Text)
+                && !String.IsNullOrEmpty(NewLegalId.Text)
+                && !String.IsNullOrEmpty(NewPhone.Text))
             {
                 ((DivisionVM)Divisions.SelectedItem).CreateCustomer(NewName.Text, NewOtherName.Text, NewLegalId.Text, NewPhone.Text);
             }
             else
             {
-                MessageBox.Show("Выберите отдел");
+                MessageBox.Show("Выберите отдел и заполните все данные клиента");
                 return;
             } 
 
@@ -82,6 +86,14 @@ namespace BankSystem.View
         private void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e)
         {
             bank.MonthlyCharge();
+        }
+
+        private void Transactions_Click(object sender, RoutedEventArgs e)
+        {
+            Transactions tWindow = new Transactions(repository.bank);
+            //DataContext = repository.bank; // - зачем? слетал датаконтекст главного окна!
+           // await Task.Delay(100);
+            tWindow.ShowDialog();
         }
     }
 }

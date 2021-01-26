@@ -1,0 +1,82 @@
+﻿<Window x:Class="BankSystem.View.Transactions"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BankSystem.View"
+        mc:Ignorable="d"
+        Title="Transactions" Height="450" Width="800">
+    <Grid>
+        <GroupBox Header="Журнал транзакций" Grid.Column="0" Grid.Row="1" Width="Auto" Padding="5">
+            <ListView x:Name="TransactionsHistory"   Width="Auto" Height="Auto" 
+                ItemsSource="{Binding TransactionHistory, Mode=OneWay}" >
+            <ListView.View >
+
+                <GridView>
+                    <GridViewColumn >
+                        <GridViewColumnHeader HorizontalAlignment="Center" Width="110">Номер транзакции</GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Id}" HorizontalAlignment="Right"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                        <GridViewColumn >
+                        <GridViewColumnHeader HorizontalAlignment="Center" Width="135" >Счет отправителя</GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=SenderBic}" HorizontalAlignment="Right"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                        <GridViewColumn >
+                        <GridViewColumnHeader HorizontalAlignment="Center" Width="135" >Счет получателя</GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                    <TextBlock Text="{Binding Path=BeneficiaryBic}" HorizontalAlignment="Right"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                        <GridViewColumn >
+                        <GridViewColumnHeader HorizontalAlignment="Center" Width="90" >Сумма</GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Sum}" HorizontalAlignment="Right"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                        <GridViewColumn >
+                            <GridViewColumnHeader HorizontalAlignment="Left" Width="160" >Описание</GridViewColumnHeader>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Detailes}" HorizontalAlignment="Right"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn >
+                            <GridViewColumnHeader HorizontalAlignment="Center" Width="80" >Тип</GridViewColumnHeader>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Type}" HorizontalAlignment="Center"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn >
+                            <GridViewColumnHeader HorizontalAlignment="Left" >Статус </GridViewColumnHeader>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Status}" HorizontalAlignment="Center"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+            </ListView.View>
+
+            </ListView>
+
+
+        </GroupBox>
+    </Grid>
+</Window>

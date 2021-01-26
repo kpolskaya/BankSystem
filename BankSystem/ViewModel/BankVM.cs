@@ -65,6 +65,8 @@ namespace BankSystem.ViewModel
         private void UpdateTarget (string name)
         {
             OnPropertyChanged(name);
+            if (name == "Cash")
+                OnPropertyChanged("ClientsFunds");
           
         }
     }

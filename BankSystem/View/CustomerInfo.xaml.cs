@@ -35,7 +35,6 @@ namespace BankSystem.View
         {
             if (TypeAccountOpen.SelectedValue != null)
             {
-                //department = (DivisionVM)customerInfo.DataContext;
                 department.OpenAccount((AccountType)TypeAccountOpen.SelectedValue, department.SelectedCustomer);
             }
             else
@@ -49,8 +48,7 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null && PutSum.Text != "")
             {
-                //department = (DivisionVM)customerInfo.DataContext;
-                department.Put(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
+                 department.Put(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
             }
             else
             {
@@ -63,7 +61,6 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null && WithdrawSum.Text != "")
             {
-                //department = (DivisionVM)customerInfo.DataContext;
                 department.Withdraw(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
                                
             }
@@ -79,7 +76,6 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null)
             {
-                //department = (DivisionVM)customerInfo.DataContext;
                 department.CloseAccount(((AccountVM)AccountsList.SelectedItem).Bic);
             }
             else
@@ -92,17 +88,23 @@ namespace BankSystem.View
 
         private void Button_Click_Transfer(object sender, RoutedEventArgs e)
         {
-            //department = (DivisionVM)customerInfo.DataContext;
-            try
+            if (AccountsList.SelectedItem != null)
             {
-                department.Transfer(((AccountVM)AccountsList.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));
+                try
+                {
+                    department.Transfer(((AccountVM)AccountsList.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Несуществующий счет");
+                    return;
+                }
             }
-            catch (Exception)
+            else
             {
-                MessageBox.Show("Несуществующий счет");
+                MessageBox.Show("Выберите счет");
                 return;
             }
-            
         }
 
       
@@ -126,6 +128,22 @@ namespace BankSystem.View
             }
         }
 
-       
+        private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (((TextBlock)sender).Text == string.Empty)
+                return;
+            else
+            {
+                try
+                {
+                    Clipboard.SetText(((TextBlock)sender).Text);
+                }
+                catch (Exception )
+                {
+                    MessageBox.Show("Ошибка");
+                    return;
+                }
+            }
+        }
     }
 }

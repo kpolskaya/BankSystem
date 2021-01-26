@@ -27,6 +27,13 @@ namespace BankSystem.Model
         {
             return ++lastId;
         }
+
+        static void SetLastId(uint id)
+        {
+            if (lastId < id)
+                lastId = id;
+        }
+
         [DataMember]
         public string Id { get; private set; }
         [DataMember]
@@ -48,6 +55,7 @@ namespace BankSystem.Model
             this.LegalId = LegalId;
             this.Phone = Phone;
             this.Id = NextId().ToString("00000000");
+
         }
 
         [JsonConstructor]
@@ -58,7 +66,16 @@ namespace BankSystem.Model
             this.LegalId = LegalId;
             this.Phone = Phone;
             this.Id = Id;
+            try
+            {
+                uint id = uint.Parse(Id);
+                SetLastId(id);
+            }
+            catch (Exception)
+            {
 
+                throw new Exception("Несоответствующий формат поля Id клиента");
+            }
         }
 
        //public Customer()
