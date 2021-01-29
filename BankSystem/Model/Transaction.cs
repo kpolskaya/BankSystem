@@ -7,20 +7,22 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace BankSystem.Model
-{[DataContract]
+{
     public enum TransactionStatus
     {
         Pending,
         Done,
         Failed
     }
-    [DataContract]
+    
     public enum TransactionType
     {
         Internal,
         Transfer
     }
-
+    /// <summary>
+    /// Запись в журнале банковских операций
+    /// </summary>
     [DataContract]
     public class Transaction
     {
@@ -38,7 +40,7 @@ namespace BankSystem.Model
         public TransactionType Type { get; private set; }
         [DataMember]
         public TransactionStatus Status { get; set; }
-        [JsonConstructor]
+        
         public Transaction(string Id, string Sender, string Beneficiary, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
         {
             this.Id = Id;

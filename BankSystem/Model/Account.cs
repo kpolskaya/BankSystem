@@ -13,10 +13,16 @@ namespace BankSystem.Model
         DepositAccountCapitalized = 2,
 
     }
-
-
-
+    /// <summary>
+    /// Делегат для события "Операция по счету"
+    /// </summary>
+    /// <param name="sender">Счет, по которому проведена операция</param>
+    /// <param name="message">Передаваемое сообщение о деталях операции</param>
     public delegate void OperationInfoHandler(Account sender, string message);
+    
+    /// <summary>
+    /// Абстрактный класс для всех типов клиентских счетов
+    /// </summary>
     [DataContract]
     [KnownType(typeof(DebitAccount))]
     [KnownType(typeof(DepositAccount))]
@@ -39,25 +45,26 @@ namespace BankSystem.Model
             this.Bic =  DepartmentId + Customer.Id + Guid.NewGuid().ToString().Remove(8);
             this.Balance = 0;
             this.AccruedInterest = 0;
-            this.Movement += Customer.SendMessage;
+            this.Movement += Customer.SendMessage; //нужно при создании счета подписать владельца на события
 
-            //this.interest = InterestFunc;
         }
         public Account ()
         { }
 
-        [JsonConstructor]
-         public Account(string Bic, decimal Balance, AccountType Type, decimal AccruedInterest)
-         {
-            this.Bic = Bic;
-            this.Balance = Balance;
-            this.Type = Type;
-            this.AccruedInterest = AccruedInterest;
-            //this.Movement += Customer.SendMessage; - не работает, потому что неизвестен клиент!
-            //сделать в департаменте публичный метод переподписки клиентов после загрузки базы.
+        //public Account(string Bic, decimal Balance, AccountType Type, decimal AccruedInterest) //что будет если удалить этот конструктор? - Ничего!
+        //{
+        //    this.Bic = Bic;
+        //    this.Balance = Balance;
+        //    this.Type = Type;
+        //    this.AccruedInterest = AccruedInterest;
+        //}
 
-        }
-
+        /// <summary>
+        /// Операция списания средств
+        /// </summary>
+        /// <param name="sum">Сумма платежа</param>
+        /// <param name="detailes">Детали операции</param>
+        /// <returns> true - если операция успешна, false - если недостаточно средств на счете</returns>
         public virtual bool Debit(decimal sum, string detailes)
         {
             string message; 
@@ -71,17 +78,19 @@ namespace BankSystem.Model
                 OnMovement(this, message);
                 return true;
             }
-            
             else
             {
                 message = String.Format("Отказ - недостаточно средств.Текущий остаток: {0: 0.00}", FullBalance());
                 OnMovement(this, message);
                 return false;
             }
-
         }
 
-
+        /// <summary>
+        /// Зачисляет средства на счет
+        /// </summary>
+        /// <param name="sum">Сумма прихода</param>
+        /// <param name="detailes">Детали операции</param>
         public  void Credit(decimal sum, string detailes)
         {
             Balance += sum;
@@ -89,7 +98,6 @@ namespace BankSystem.Model
             string message = String.Format(
                              "Зачисление на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
                               sum, detailes, FullBalance());
-
             OnMovement(this, message);
         }
 
@@ -105,9 +113,16 @@ namespace BankSystem.Model
             return this.Balance + this.AccruedInterest;
         }
         
-       
-        public event OperationInfoHandler Movement; //подписка на движение по счетам пропадает после загрузки из json - конструкторЁ!ЁЁ!
+        /// <summary>
+        /// Событие, возникающее при проведении операции по счету
+        /// </summary>
+        public event OperationInfoHandler Movement; 
 
+        /// <summary>
+        /// Вызов обработчика события "Операция по счету"
+        /// </summary>
+        /// <param name="sender">Счет операции</param>
+        /// <param name="message">Сообщение владельцу счета</param>
         protected virtual void OnMovement(Account sender, string message)
         {
             Movement?.Invoke(sender, message);

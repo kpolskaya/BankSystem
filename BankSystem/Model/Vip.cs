@@ -4,14 +4,24 @@ using Newtonsoft.Json;
 
 namespace BankSystem.Model
 {
+    /// <summary>
+    /// Клиент - Физическое лицо VIP
+    /// </summary>
     [DataContract]
     [KnownType(typeof(Customer))]
     public class Vip : Customer
     {
-        //public static decimal Fee() { return fee; }
-        //public static decimal Rate() { return rate; }
+        
+        /// <summary>
+        /// Плата за обслуживание для данного типа
+        /// </summary>
         public static decimal Fee;
+
+        /// <summary>
+        /// Базовая ставка по депозиту для данного типа
+        /// </summary>
         public static decimal Rate;
+        
         static Vip()
         {
             Fee = 40; // 40 30
@@ -19,9 +29,9 @@ namespace BankSystem.Model
         }
 
         public Vip()
-        { }
-
-
+        { 
+        
+        }
 
         public Vip(string Name, string OtherName, string LegalId, string Phone)
             : base(Name, OtherName, LegalId, Phone)
@@ -32,6 +42,8 @@ namespace BankSystem.Model
         [JsonConstructor]
         public Vip(string Id, string Name, string OtherName, string LegalId, string Phone)
             : base(Id, Name, OtherName, LegalId, Phone)
-        { }
+        { 
+        
+        }
     }
 }

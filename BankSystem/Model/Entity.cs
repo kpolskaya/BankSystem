@@ -5,14 +5,20 @@ using System.Runtime.Serialization;
 
 namespace BankSystem.Model
 {
+    /// <summary>
+    /// Клиент - Юридическое лицо
+    /// </summary>
     [DataContract]
     [KnownType(typeof(Customer))]
-
     public class Entity : Customer 
     {
-        //public static decimal Fee() { return fee; }
-        //public static decimal Rate() { return rate; }
+        /// <summary>
+        /// Плата за обслуживание для данного типа
+        /// </summary>
         public static decimal Fee;
+        /// <summary>
+        /// Базовая ставка по депозиту для данного типа
+        /// </summary>
         public static decimal Rate;
 
         static Entity()
@@ -23,7 +29,9 @@ namespace BankSystem.Model
 
 
         public Entity()
-        { }
+        { 
+        
+        }
 
 
         public Entity(string Name, string OtherName, string LegalId, string Phone)
@@ -35,6 +43,8 @@ namespace BankSystem.Model
         [JsonConstructor]
         public Entity(string Id, string Name, string OtherName, string LegalId, string Phone)
            : base(Id, Name, OtherName, LegalId, Phone)
-        { }
+        { 
+        
+        }
     }
 }
