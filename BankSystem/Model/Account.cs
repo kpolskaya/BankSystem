@@ -45,7 +45,7 @@ namespace BankSystem.Model
             this.Bic =  DepartmentId + Customer.Id + Guid.NewGuid().ToString().Remove(8);
             this.Balance = 0;
             this.AccruedInterest = 0;
-            this.Movement += Customer.SendMessage; //нужно при создании счета подписать владельца на события
+            this.Movement += Customer.SendMessage; // нужно при создании счета подписать владельца на события
 
         }
         public Account ()
