@@ -22,30 +22,31 @@ namespace BankSystem.Model
 
         }
 
-        //[JsonConstructor]
-        //public DepositAccount(string Bic, decimal Balance, AccountType Type, decimal AccruedInterest)
-        //  : base(Bic, Balance, Type, AccruedInterest)
-        //{ }
-
         public DepositAccount()
         { }
 
         public override decimal ChargeInterest(decimal rate)
         {
-            decimal i =Math.Round( this.Balance * rate / 12, 2, MidpointRounding.ToEven);//банковское округление
-            this.AccruedInterest += i;
-            string message = String.Format(
-                            "Начислены проценты - {0: 0.00}. Остаток средств на счете {1 : 0.00}",
-                             i, FullBalance());
-            OnMovement(this, message);
-            return i;
+            if (this.Balance > 0)
+            {
+                decimal i = Math.Round(this.Balance * rate / 12, 2, MidpointRounding.ToEven);//банковское округление
+                this.AccruedInterest += i;
+                string message = String.Format(
+                                "Начислены проценты - {0: 0.00}. Остаток средств на счете {1 : 0.00}",
+                                 i, FullBalance());
+                OnMovement(message);
+                return i;
+            }
+            else return 0;
         }
 
 
         public override bool Debit(decimal sum, string detailes)
         {
+            if (sum <= 0)
+                return false;
+            
             string message;
-
             if (FullBalance() == sum)
             {
                 Balance -= (sum - AccruedInterest);
@@ -54,16 +55,14 @@ namespace BankSystem.Model
                              "Списание на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
                               sum, detailes, FullBalance());
                 
-                OnMovement(this, message);
+                OnMovement(message);
                 return true;
             }
-
             else
             {
-                OnMovement(this, "Отказ - по данному счету расходные операции не разрешены.");
+                OnMovement("Отказ - по данному счету расходные операции не разрешены.");
                 return false;
             }
-
         }
     }
 }

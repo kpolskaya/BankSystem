@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace BankSystem.Model
 {
+    /// <summary>
+    /// Перечислитель статусов транзакции
+    /// </summary>
     public enum TransactionStatus
     {
         Pending,
@@ -15,6 +18,9 @@ namespace BankSystem.Model
         Failed
     }
     
+    /// <summary>
+    /// Перечислитель типов транзакции
+    /// </summary>
     public enum TransactionType
     {
         Internal,
@@ -28,12 +34,24 @@ namespace BankSystem.Model
     {
         [DataMember]
         public string Id { get; private set; }
+        /// <summary>
+        /// Счет отправителя
+        /// </summary>
         [DataMember]
         public string SenderBic { get; private set; }
+        /// <summary>
+        /// Счет получателя
+        /// </summary>
         [DataMember]
         public string BeneficiaryBic { get; private set; }
+        /// <summary>
+        /// Сумма тразакции
+        /// </summary>
         [DataMember]
         public decimal Sum { get; private set; }
+        /// <summary>
+        /// Детали платежа
+        /// </summary>
         [DataMember]
         public string Detailes { get; private set; }
         [DataMember]

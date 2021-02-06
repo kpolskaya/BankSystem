@@ -5,7 +5,9 @@ using Newtonsoft.Json;
 
 namespace BankSystem.Model
 {
-
+    /// <summary>
+    /// Перечислитель типов счетов
+    /// </summary>
     public enum AccountType : byte 
     {
         DebitAccount = 0,
@@ -29,12 +31,24 @@ namespace BankSystem.Model
     [KnownType(typeof(DepositAccountСapitalized))]
     public abstract class Account
     {
-       [DataMember]
+        /// <summary>
+        /// Номер счета
+        /// </summary>
+        [DataMember]
         public string Bic { get; protected set; }
+        /// <summary>
+        /// Текущий баланс счета
+        /// </summary>
         [DataMember]
         public decimal Balance { get; protected set; }
+        /// <summary>
+        /// Тип счета
+        /// </summary>
         [DataMember]
         public AccountType Type { get; protected set; }
+        /// <summary>
+        /// Сумма начисленных по счету процентов
+        /// </summary>
         [DataMember]
         public decimal AccruedInterest { get; protected set; }
 
@@ -51,39 +65,33 @@ namespace BankSystem.Model
         public Account ()
         { }
 
-        //public Account(string Bic, decimal Balance, AccountType Type, decimal AccruedInterest) //что будет если удалить этот конструктор? - Ничего!
-        //{
-        //    this.Bic = Bic;
-        //    this.Balance = Balance;
-        //    this.Type = Type;
-        //    this.AccruedInterest = AccruedInterest;
-        //}
-
+        
         /// <summary>
         /// Операция списания средств
         /// </summary>
         /// <param name="sum">Сумма платежа</param>
         /// <param name="detailes">Детали операции</param>
-        /// <returns> true - если операция успешна, false - если недостаточно средств на счете</returns>
+        /// <returns> true - если операция успешна, false - если недостаточно средств на счете или некорректная сумма</returns>
         public virtual bool Debit(decimal sum, string detailes)
         {
-            string message; 
+            string message;
 
-            if (FullBalance() >= sum)
+            if (FullBalance() >= sum && sum > 0)
             {
                 Balance -= sum;
                 message = String.Format(
                              "Списание на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
                               sum, detailes, FullBalance());
-                OnMovement(this, message);
+                OnMovement(message);
                 return true;
             }
-            else
+            else if (sum > 0)
             {
                 message = String.Format("Отказ - недостаточно средств.Текущий остаток: {0: 0.00}", FullBalance());
-                OnMovement(this, message);
+                OnMovement(message);
                 return false;
             }
+            else return false;
         }
 
         /// <summary>
@@ -93,12 +101,16 @@ namespace BankSystem.Model
         /// <param name="detailes">Детали операции</param>
         public  void Credit(decimal sum, string detailes)
         {
-            Balance += sum;
+            if (sum > 0)
+            {
+                Balance += sum;
 
-            string message = String.Format(
-                             "Зачисление на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
-                              sum, detailes, FullBalance());
-            OnMovement(this, message);
+                string message = String.Format(
+                                 "Зачисление на сумму {0: 0.00}, основание: {1}. Остаток средств {2 : 0.00}",
+                                  sum, detailes, FullBalance());
+                OnMovement(message);
+            }
+            
         }
 
         /// <summary>
@@ -112,6 +124,11 @@ namespace BankSystem.Model
         {
             return this.Balance + this.AccruedInterest;
         }
+
+        public void NotifyIfRemoved()
+        {
+            OnMovement($"Счет {this.Bic} закрыт.");
+        }
         
         /// <summary>
         /// Событие, возникающее при проведении операции по счету
@@ -123,8 +140,9 @@ namespace BankSystem.Model
         /// </summary>
         /// <param name="sender">Счет операции</param>
         /// <param name="message">Сообщение владельцу счета</param>
-        protected virtual void OnMovement(Account sender, string message)
+        protected virtual void OnMovement(string message)
         {
+            Account sender = this;
             Movement?.Invoke(sender, message);
         }
 

@@ -28,17 +28,14 @@ namespace BankSystem.Model
         public string Id { get; protected set; }
         [DataMember]
         public string Name { get; protected set; }
-        [DataMember]
-        protected decimal fee; // плата за обслуживание - определяется типом клиентов департамента ВОЗМОЖНО УБРАТЬ 
-        [DataMember]
-        protected decimal rate; // базовая ставка по депозитам - определяется типом клиентов департамента ВОЗМОЖНО УБРАТЬ
+        
         [DataMember]
         protected ObservableCollection<Account> accounts; // все счета департамента
         
         /// <summary>
-        /// Список счетов департамента
+        /// Публичный список счетов департамента
         /// </summary>
-        public ReadOnlyObservableCollection<Account> Accounts { get { return new ReadOnlyObservableCollection<Account>(this.accounts); } } //-ЕЩЕ ПОДУМАТЬ!!!
+        public ReadOnlyObservableCollection<Account> Accounts { get { return new ReadOnlyObservableCollection<Account>(this.accounts); } } 
         
         [JsonConstructor]
         public Division(string Id, string Name, ObservableCollection<Account> accounts)
@@ -46,7 +43,6 @@ namespace BankSystem.Model
             this.Id = Id;
             this.Name = Name;
             this.accounts = accounts;
-            //this.Accounts = new ReadOnlyObservableCollection<Account>(this.accounts);
         }
 
         public Division()
@@ -59,8 +55,6 @@ namespace BankSystem.Model
             this.Id = Id;
             this.Name = Name;
             this.accounts = new ObservableCollection<Account>();
-            //this.Accounts = new ReadOnlyObservableCollection<Account>(this.accounts);
-
         }
 
         /// <summary>
@@ -123,28 +117,13 @@ namespace BankSystem.Model
                 throw new Exception("Попытка возмещения средств по состоявшейся транзакции!");
 
             if (!TryToCredit(t.SenderBic, t.Sum, "Возврат платежа (получатель не найден): " + t.Detailes))
-                throw new Exception("Неизвестный счет получателя");
+                throw new Exception("Клиентский счет для возврата средств отсутствует");
         }
 
         /// <summary>
         /// Закрывает месяц: рассчитывает и проводит все платежи и проценты
         /// </summary>
-        public void CalculateCharges() // исправить начисление процентов по счетам с нулями на балансе!
-        {
-            foreach (var account in accounts)
-            {
-
-                if (account.Type != AccountType.DebitAccount)
-                {
-                    decimal Interest = account.ChargeInterest(rate);
-                    OnTransactionRaised(this, new Transaction("99", account.Bic, Interest, "Начисление процентов"));
-                }
-
-                else
-                    if (account.Debit(fee, "Плата за обслуживание")) 
-                        OnTransactionRaised(this, new Transaction(account.Bic, "99", fee, "Плата за обслуживание"));
-            }
-        }
+        public abstract void CalculateCharges(); 
 
         /// <summary>
         /// Вносит деньги на счет
@@ -157,7 +136,7 @@ namespace BankSystem.Model
             if (account == null)
                 throw new Exception("Несуществующий счет");
             account.Credit(sum, "Пополнение через кассу");
-            OnTransactionRaised(this, new Transaction("00", bic, sum, "Пополнение через кассу"));
+            OnTransactionRaised(new Transaction("00", bic, sum, "Пополнение через кассу"));
         }
 
         /// <summary>
@@ -172,7 +151,7 @@ namespace BankSystem.Model
             Account account = GetAccountByBic(bic);
             bool executed = (account != null && account.Debit(sum, detailes));
             if (executed)
-                OnTransactionRaised(this, new Transaction(bic, "00", sum, detailes));
+                OnTransactionRaised(new Transaction(bic, "00", sum, detailes));
             return executed;
         }
 
@@ -186,8 +165,8 @@ namespace BankSystem.Model
             Account account = GetAccountByBic(bic);
             if (account == null)
                 throw new Exception("Несуществующий счет");
-            
-            OnTransactionRaised(this, new Transaction(bic, "00", account.FullBalance(), detailes));
+            account.NotifyIfRemoved();
+            OnTransactionRaised(new Transaction(bic, "00", account.FullBalance(), detailes));
             this.accounts.Remove(account);
         }
  
@@ -208,10 +187,10 @@ namespace BankSystem.Model
                 t = new Transaction(senderBic, beneficiaryBic, sum, detailes, TransactionType.Transfer);
             else
             {
-                t = new Transaction(senderBic, beneficiaryBic, sum, detailes + " -- Отказано в операции", TransactionType.Transfer); //проверить еще, как работает, не возвращает ли сумму ошибочно?
+                t = new Transaction(senderBic, beneficiaryBic, sum, detailes + " -- Отказано в операции", TransactionType.Transfer); //!!!проверить еще, как работает, не возвращает ли сумму ошибочно?
                 t.Status = TransactionStatus.Failed;
             }
-            OnTransactionRaised(this, t);
+            OnTransactionRaised(t);
         }
 
         /// <summary>
@@ -224,10 +203,10 @@ namespace BankSystem.Model
         /// </summary>
         /// <param name="sender">Инициатор транзакции</param>
         /// <param name="t">параметры транзакции</param>
-        protected virtual void OnTransactionRaised(Division sender, Transaction t)
+        protected virtual void OnTransactionRaised(Transaction t)
         {
 
-            sender = this;
+            Division sender = this;
             TransactionRaised?.Invoke(sender, t);
         }
           
@@ -239,17 +218,20 @@ namespace BankSystem.Model
         /// <param name="legalId"> паспорт / регистрация ю.л.</param>
         /// <param name="phone">Контакный телефон</param>
         public abstract void CreateCustomer(string name, string otherName, string legalId, string phone);
-        
-      
-        //public abstract void CustomersForExample();
-
-        //protected abstract void AccountsForExample();
 
         /// <summary>
         /// Средства на счетах клиентов департамента
         /// </summary>
         /// <returns>Сумму остатков по всем клиентским счетам</returns>
-        public abstract decimal ClientsFunds();
+        public decimal ClientsFunds()
+        {
+            decimal total = 0;
+            foreach (var item in this.accounts)
+            {
+                total += item.FullBalance();
+            }
+            return total;
+        }
 
         /// <summary>
         /// Обновляет подписки клиентов на сообщения об операциях по счетам

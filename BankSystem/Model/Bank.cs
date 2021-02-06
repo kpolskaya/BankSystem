@@ -12,10 +12,13 @@ using System.Runtime.Serialization;
 
 namespace BankSystem.Model
 {
+    /// <summary>
+    /// Делегат для события изменения банковского баланса
+    /// </summary>
+    /// <param name="name">Какой счет банка изменился</param>
     public delegate void BankBalanceChanged(string name);
 
     [DataContract]
-    
     public class Bank
     {[DataMember]
         public decimal Profit { get; private set; } //  bic 99 - прибыль/убыток
@@ -60,7 +63,7 @@ namespace BankSystem.Model
                 new Department<Vip>("03", "Отдел по работе с VIP клиентами")
             };
 
-            ExampleCustomers();
+            //ExampleCustomers();
             
             this.Cash = 1_000_000; //собственный капитал при открытии
             
@@ -72,9 +75,16 @@ namespace BankSystem.Model
             this.TransactionHistory = new ObservableCollection<Transaction>();
            
         }
-        
+        /// <summary>
+        /// публичное событие изменения статей банковского баланса
+        /// </summary>
         public event BankBalanceChanged BankBalanceChanged;
 
+        /// <summary>
+        /// Обрабатывает транзакцию, инициированную департаментом
+        /// </summary>
+        /// <param name="sender">Департамент - инициатор транзакции</param>
+        /// <param name="t">Параметры транзакции</param>
         private void ProcessPayment(Division sender, Transaction t)
         {
             if (t.Type == TransactionType.Internal)
@@ -154,17 +164,17 @@ namespace BankSystem.Model
             }
         }
 
-        public void ExampleCustomers()
-        {
-            foreach (var department in Departments)
-            {
-                //var dType = department.GetType();
-                //Type[] dTypeParameters = dType.GetGenericArguments();
-                                                                            
-                department.CustomersForExample();
-               
-            }
-        }
+        //public void ExampleCustomers()
+        //{
+        //    foreach (var department in Departments)
+        //    {
+        //        var dType = department.GetType();
+        //        Type[] dTypeParameters = dType.GetGenericArguments();
+
+        //        department.CustomersForExample();
+
+        //    }
+        //}
     
         public decimal ClientsFunds()
         {

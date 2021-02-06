@@ -15,11 +15,7 @@ namespace BankSystem.Model
     [KnownType(typeof(Account))]
     public class DebitAccount: Account
     {
-        //[JsonConstructor]
-        //public DebitAccount(string Bic, decimal Balance, AccountType Type, decimal AccruedInterest)
-        //   : base(Bic, Balance, Type, AccruedInterest)
-        //{ }
-
+ 
         public DebitAccount ()
         { }
         
@@ -29,12 +25,14 @@ namespace BankSystem.Model
             
         }
 
-        
+        /// <summary>
+        /// В этой версии начисление процентов по текущим счетам не реализовано
+        /// </summary>
+        /// <param name="rate">ставка</param>
+        /// <returns> всегда 0</returns>
         public override decimal ChargeInterest(decimal rate)
         {
-            decimal i = Math.Round(this.Balance * rate / 12, 2, MidpointRounding.ToEven);//банковское округление
-            Credit(i, "Начислены проценты");
-            return i;
+            return 0;
         }
 
 

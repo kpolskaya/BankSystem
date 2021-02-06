@@ -25,14 +25,25 @@ namespace BankSystem.Model
         /// </summary>
         [DataMember]
         public ObservableCollection<TCustomer> Customers { get; private set; }
+
+        /// <summary>
+        /// Ставка по депозитам для данного типа клиентов
+        /// </summary>
+        public decimal Rate 
+        { get 
+            { return (decimal)typeof(TCustomer).GetField("Rate", BindingFlags.Static | BindingFlags.Public).GetValue(null); } 
+        }
+        /// <summary>
+        /// Плата за обслуживание для данного типа клиентов
+        /// </summary>
+        public decimal Fee 
+        { get 
+            { return (decimal)typeof(TCustomer).GetField("Fee", BindingFlags.Static | BindingFlags.Public).GetValue(null); } 
+        }
         
         public Department(string Id, string Name) : base(Id, Name)
         {
             this.Customers = new ObservableCollection<TCustomer>();
-            Type cType = typeof(TCustomer);
-            //  этот код нужно поместить в конструктор для json  или переделать на автосвойство { get { return (decimal)typeof(TCustomer).GetField(...); } }
-            this.rate = (decimal)cType.GetField("Rate", BindingFlags.Static | BindingFlags.Public).GetValue(null);
-            this.fee = (decimal)cType.GetField("Fee", BindingFlags.Static | BindingFlags.Public).GetValue(null);
         }
 
         public Department()
@@ -49,6 +60,13 @@ namespace BankSystem.Model
             
         // логика, которая зависит от типа клиента...
 
+        /// <summary>
+        /// Создает клиента департамента с типом, соответствующим аргументу типа департамента
+        /// </summary>
+        /// <param name="name">Имя/наименование</param>
+        /// <param name="otherName">Фамилия/форма собственности</param>
+        /// <param name="legalId">Паспорт/рег. номер</param>
+        /// <param name="phone">Телефон</param>
         public override void CreateCustomer(string name, string otherName, string legalId, string phone) 
         { 
             TCustomer customer = new TCustomer
@@ -60,16 +78,10 @@ namespace BankSystem.Model
             };
             this.Customers.Add(customer);
         }
-
-        public override decimal ClientsFunds()
-        {
-            decimal total = 0;
-            foreach (var item in this.accounts)
-            {
-                total += item.FullBalance();
-            }
-            return total;
-        }
+        
+        /// <summary>
+        /// Обновляет подписки клиентов на движения по счетам после десериализации
+        /// </summary>
         public override void RefreshSubscriptions()
         {
             foreach (var customer in this.Customers)
@@ -79,6 +91,27 @@ namespace BankSystem.Model
                     if (customer.Id == acc.Bic.Substring(2, 8))
                         acc.Movement += customer.SendMessage;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Рассчитывает ежемесячные платежи за обслуживание и проценты по депозитам
+        /// </summary>
+        public override void CalculateCharges()
+        {
+            foreach (var account in accounts)
+            {
+
+                if (account.Type != AccountType.DebitAccount)
+                {
+                    decimal interest = account.ChargeInterest(Rate);
+                    if (interest > 0)
+                        OnTransactionRaised(new Transaction("99", account.Bic, interest, "Начисление процентов"));
+                }
+
+                else
+                    if (account.Debit(Fee, "Плата за обслуживание"))
+                    OnTransactionRaised(new Transaction(account.Bic, "99", Fee, "Плата за обслуживание"));
             }
         }
 
