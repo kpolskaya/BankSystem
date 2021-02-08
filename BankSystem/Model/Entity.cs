@@ -23,8 +23,8 @@ namespace BankSystem.Model
 
         static Entity()
         {
-            Fee = 30; // 40 30
-            Rate = 0.1m; // 24 10
+            Fee = 200; 
+            Rate = 0.1m; 
         }
 
 

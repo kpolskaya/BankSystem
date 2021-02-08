@@ -24,8 +24,8 @@ namespace BankSystem.Model
         
         static Vip()
         {
-            Fee = 40; // 40 30
-            Rate = 0.24m; // 24 10
+            Fee = 300; 
+            Rate = 0.18m; 
         }
 
         public Vip()

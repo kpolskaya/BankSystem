@@ -31,6 +31,11 @@ namespace BankSystem.View
             department = this.DataContext as DivisionVM;
         }
 
+        /// <summary>
+        /// Обработчик кнопки открытия счета
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click_OpenAccount(object sender, RoutedEventArgs e)
         {
             if (TypeAccountOpen.SelectedValue != null)
@@ -44,6 +49,11 @@ namespace BankSystem.View
             } 
         }
 
+        /// <summary>
+        /// Обработчик кнопки внесения средств
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click_Put(object sender, RoutedEventArgs e)
         {
             if (AccountsList.SelectedItem != null && PutSum.Text != "")
@@ -57,6 +67,11 @@ namespace BankSystem.View
             }
         }
 
+        /// <summary>
+        /// Обработчик кнопки снятия средств
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click_Withdraw(object sender, RoutedEventArgs e)
         {
             if (AccountsList.SelectedItem != null && WithdrawSum.Text != "")
@@ -69,9 +84,13 @@ namespace BankSystem.View
                 MessageBox.Show("Выберите счет и введите сумму операции");
                 return;
             }
-
         }
 
+        /// <summary>
+        /// Обработчик кнопки закрытия счета
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click_CloseAccount(object sender, RoutedEventArgs e)
         {
             if (AccountsList.SelectedItem != null)
@@ -86,6 +105,11 @@ namespace BankSystem.View
 
         }
 
+        /// <summary>
+        /// Обработчик кнопки перевода средств
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click_Transfer(object sender, RoutedEventArgs e)
         {
             if (AccountsList.SelectedItem != null)
@@ -107,7 +131,11 @@ namespace BankSystem.View
             }
         }
 
-      
+        /// <summary>
+        /// Проверка поля на корректное значение
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             {
@@ -121,13 +149,17 @@ namespace BankSystem.View
                 }
                 catch (Exception)
                 {
-
                     MessageBox.Show("Недопустимый формат");
                     return;
                 }
             }
         }
 
+        /// <summary>
+        /// Копирование содержимого поля в буфер обмена
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TextBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (((TextBlock)sender).Text == string.Empty)

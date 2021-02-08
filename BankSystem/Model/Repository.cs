@@ -12,58 +12,76 @@ namespace BankSystem.Model
 {
     public class Repository
     {
-        public Bank bank { get; private set; } //для сериализации сет
+        public Bank bank { get; private set; } 
 
         public Repository()
         {
             if (File.Exists("Bank.json"))
-                DeserializeJsonBank();
+                try
+                {
+                    DeserializeJsonBank();
+                }
+                catch (Exception)
+                {
+                    this.bank = new Bank("Банк");
+                }
+
             else
                 this.bank = new Bank("Банк");
+
+            bank.Autosave = SerializeJsonBank;  //код, который нужно вызывать классу Bank для автосохранения
         }
 
+        /// <summary>
+        /// Сохранение информации в json
+        /// </summary>
         public void SerializeJsonBank()
         {
-            //Bank bsObj = bank;
-            //DataContractJsonSerializer j = new DataContractJsonSerializer(typeof(Bank));
-
-            //MemoryStream msObj = new MemoryStream();
-            //j.WriteObject(msObj, bsObj);
-            //msObj.Position = 0;
-            //StreamReader sr = new StreamReader(msObj);
-
-            //string json = sr.ReadToEnd();
-            //File.WriteAllText("Bank.json", json);
-            //sr.Close();
-            //msObj.Close();
             var settings = new JsonSerializerSettings 
             { 
-              TypeNameHandling = TypeNameHandling.All,
-              Formatting = Formatting.Indented
-             // PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                  TypeNameHandling = TypeNameHandling.All,
+                  Formatting = Formatting.Indented
             };
-            var text = JsonConvert.SerializeObject(bank, settings);
-            // string jsonString = JsonConvert.SerializeObject(bank);
-            File.WriteAllText("Bank.json", text);
 
+            var text = JsonConvert.SerializeObject(bank, settings);
+            try
+            {
+                File.WriteAllText("Bank.json", text);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
+        /// <summary>
+        /// Восстановление информации из файла .json
+        /// </summary>
         public void DeserializeJsonBank()
         {
-            string text = File.ReadAllText("Bank.json");
+            string text;
+            try
+            {
+                text = File.ReadAllText("Bank.json");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
             JsonSerializerSettings jss = new JsonSerializerSettings();
             jss.TypeNameHandling = TypeNameHandling.All;
-            //jss.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
-            this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
 
-            //using (StreamReader file = File.OpenText("Bank.json"))
-            //{
-            //    Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
-            //    JsonSerializerSettings jss = new JsonSerializerSettings();
-            //    jss.TypeNameHandling = TypeNameHandling.All;
-            //    Bank bank = (Bank)JsonConvert.DeserializeObject(file, typeof(Bank), jss);
+            try
+            {
+                this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
+            }
+            catch (Exception ex)
+            {
 
-            //}
+                throw ex;
+            }
+            bank.Autosave = SerializeJsonBank;
         }
     }
 }

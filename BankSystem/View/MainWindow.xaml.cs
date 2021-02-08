@@ -25,25 +25,25 @@ namespace BankSystem.View
     {
         Repository repository;
         BankVM bank;
-        //public BankVM bankVM;
+
         public MainWindow()
         {
             InitializeComponent();
-            //bank = (BankVM)this.FindResource("bank");
-
             repository = new Repository();
             bank = new BankVM(repository.bank);
             DataContext = bank;
-           
         }
 
+        /// <summary>
+        /// Открывает окно информации о выбранном клиенте
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Customers.SelectedItem != null)
             {
-                
                 CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem);
-                //newWindow.DataContext = bank.SelectedItem;
                 await Task.Delay(100);
                 newWindow.ShowDialog();
                 bank.ClearSelectedCustomer();
@@ -51,18 +51,42 @@ namespace BankSystem.View
             return;
         }
 
+        /// <summary>
+        /// Сохранение данных
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Serialize_Button_Click(object sender, RoutedEventArgs e)
         {
-            repository.SerializeJsonBank();
+            try
+            {
+                repository.SerializeJsonBank();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка записи файла данных. " + ex.Message);
+            }
         }
 
+        /// <summary>
+        /// Чтение данных из файла
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Deserialize_Button_Click(object sender, RoutedEventArgs e)
         {
-            repository.DeserializeJsonBank();
+            try
+            {
+                repository.DeserializeJsonBank();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка чтения файла данных. " + ex.Message);
+                return;
+            }
+            
             bank = new BankVM(repository.bank);
             DataContext = bank;
-            //var binding = DataContextProperty;
-            //mainWindow1.GetBindingExpression(binding).UpdateTarget();
         }
 
         private void New_Client_Button_Click(object sender, RoutedEventArgs e)
@@ -80,7 +104,6 @@ namespace BankSystem.View
                 MessageBox.Show("Выберите отдел и заполните все данные клиента");
                 return;
             } 
-
         }
 
         private void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e)
@@ -88,11 +111,14 @@ namespace BankSystem.View
             bank.MonthlyCharge();
         }
 
+        /// <summary>
+        /// Открытие окна истории транзакций
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Transactions_Click(object sender, RoutedEventArgs e)
         {
             Transactions tWindow = new Transactions(repository.bank);
-            //DataContext = repository.bank; // - зачем? слетал датаконтекст главного окна!
-           // await Task.Delay(100);
             tWindow.ShowDialog();
         }
     }

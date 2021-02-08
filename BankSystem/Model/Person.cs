@@ -22,8 +22,8 @@ namespace BankSystem.Model
         
         static Person()
         {
-            Fee = 10; // 40 30
-            Rate = 0.12m; // 24 10
+            Fee = 100; 
+            Rate = 0.12m; 
         }
         
 

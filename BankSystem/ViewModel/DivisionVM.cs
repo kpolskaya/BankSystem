@@ -38,54 +38,38 @@ namespace BankSystem.ViewModel
         }
 
 
-        private Type typeOfCustomer;
+        private Type typeOfCustomer; 
 
         public DivisionVM(Division Department)
         {
-            
             this.division = Department;
             this.typeOfCustomer = Department.GetType().GetGenericArguments()[0];
             Header1 = "Имя";
             Header2 = "Фамилия";
             Header3 = "Паспорт";
             Header4 = "Телефон";
+            RereadCustomers(null, null);
 
+            // в зависимости от типа клиента настраиваем представление и формируем списки клиентов)
             switch (typeOfCustomer.Name)
             {
                 case "Entity":
-                    this.Customers = new ObservableCollection<CustomerVM>(
-                        (from c in (this.division as Department<Entity>).Customers
-                         select new CustomerVM(c)).ToList()
-                        );
-                    (this.division as Department<Entity>).Customers.CollectionChanged += SelectEntities;
- 
+                    (this.division as Department<Entity>).Customers.CollectionChanged += RereadCustomers;
                     Header1 = "Наименование";
                     Header2 = "Форма";
                     Header3 = "ОГРН";
                     break;
 
                 case "Person":
-                    this.Customers = new ObservableCollection<CustomerVM>(
-                        (from c in (this.division as Department<Person>).Customers
-                         select new CustomerVM(c)).ToList()
-                        );
-                    (this.division as Department<Person>).Customers.CollectionChanged += SelectPersons;
+                    (this.division as Department<Person>).Customers.CollectionChanged += RereadCustomers;
                     break;
 
                 case "Vip":
-                    this.Customers = new ObservableCollection<CustomerVM>(
-                        (from c in (this.division as Department<Vip>).Customers
-                         select new CustomerVM(c)).ToList()
-                        );
-                    (this.division as Department<Vip>).Customers.CollectionChanged += SelectVips;
-                         
+                    (this.division as Department<Vip>).Customers.CollectionChanged += RereadCustomers;
                     break;
-                default:
-                    this.Customers = new ObservableCollection<CustomerVM>();
-                    break;
-            }
+            } 
 
-            this.Accounts = new ObservableCollection<AccountVM>(); //не нужна тут обзервабл
+            this.Accounts = new ObservableCollection<AccountVM>(); 
             foreach (var item in this.division.Accounts)
             {
                 this.Accounts.Add(new AccountVM(item));
@@ -94,51 +78,66 @@ namespace BankSystem.ViewModel
             (this.division.Accounts as INotifyCollectionChanged).CollectionChanged += RereadAcconts;
         }
 
-
-        private void SelectEntities(object sender, NotifyCollectionChangedEventArgs e)
+        /// <summary>
+        /// Обновление списка представлений клиентов департамента
+        /// </summary>
+        private void RereadCustomers(object sender, NotifyCollectionChangedEventArgs e)
         {
-            this.Customers = new ObservableCollection<CustomerVM>(
+            switch (typeOfCustomer.Name)
+            {
+                case "Entity":
+                    this.Customers = new ObservableCollection<CustomerVM>(
                         (from c in (this.division as Department<Entity>).Customers
                          select new CustomerVM(c)).ToList()
                         );
-           
-        }
+                    break;
 
-        private void SelectPersons(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            this.Customers = new ObservableCollection<CustomerVM>(
+                case "Person":
+                    this.Customers = new ObservableCollection<CustomerVM>(
                         (from c in (this.division as Department<Person>).Customers
                          select new CustomerVM(c)).ToList()
                         );
-        }
+                    break;
 
-        private void SelectVips(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            this.Customers = new ObservableCollection<CustomerVM>(
+                case "Vip":
+                    this.Customers = new ObservableCollection<CustomerVM>(
                         (from c in (this.division as Department<Vip>).Customers
                          select new CustomerVM(c)).ToList()
                         );
+                    break;
+                default:
+                    this.Customers = new ObservableCollection<CustomerVM>();
+                    break;
+            }
         }
 
+        /// <summary>
+        /// Выбранный пользователем клиент
+        /// </summary>
         public CustomerVM SelectedCustomer
         {
             get
             {
-                return Customers.FirstOrDefault(x => x.IsSelected);
+                return Customers.FirstOrDefault(e => e.IsSelected);
             }
 
         }
 
-
+        /// <summary>
+        /// Выбранный пользователем счет
+        /// </summary>
         public AccountVM SelectedAccount
         {
             get
             {
-                return Accounts.FirstOrDefault(x => x.IsSelected);
+                return Accounts.FirstOrDefault(e => e.IsSelected);
             }
         }
 
-        public ObservableCollection<AccountVM> CustomersAccounts //не нужна обзервабл (реадонли лист)
+        /// <summary>
+        /// Формирует список счетов конкретного клиента
+        /// </summary>
+        public ObservableCollection<AccountVM> CustomersAccounts 
         {
             get
             {
@@ -148,7 +147,6 @@ namespace BankSystem.ViewModel
                     select a
                     );
             }
-
         }
 
         public void CreateCustomer(string name, string otherName, string legalId, string phone)
@@ -204,6 +202,11 @@ namespace BankSystem.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Заново формирует список представлений счетов департамента при их изменении
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RereadAcconts(object sender, NotifyCollectionChangedEventArgs e)
         {
             Accounts = new ObservableCollection<AccountVM>();

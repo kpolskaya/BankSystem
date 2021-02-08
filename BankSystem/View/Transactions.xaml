@@ -10,43 +10,43 @@
         <GroupBox Header="Журнал транзакций" Grid.Column="0" Grid.Row="1" Width="Auto" Padding="5">
             <ListView x:Name="TransactionsHistory"   Width="Auto" Height="Auto" 
                 ItemsSource="{Binding TransactionHistory, Mode=OneWay}" >
-            <ListView.View >
+                <ListView.View >
 
-                <GridView>
-                    <GridViewColumn >
-                        <GridViewColumnHeader HorizontalAlignment="Center" Width="110">Номер транзакции</GridViewColumnHeader>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=Id}" HorizontalAlignment="Right"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                    <GridView>
+                        <GridViewColumn >
+                            <GridViewColumnHeader HorizontalAlignment="Center" Width="110">Номер транзакции</GridViewColumnHeader>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Id}" HorizontalAlignment="Right"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
                         <GridViewColumn >
-                        <GridViewColumnHeader HorizontalAlignment="Center" Width="135" >Счет отправителя</GridViewColumnHeader>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=SenderBic}" HorizontalAlignment="Right"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                            <GridViewColumnHeader HorizontalAlignment="Center" Width="135" >Счет отправителя</GridViewColumnHeader>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=SenderBic}" HorizontalAlignment="Right"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
 
                         <GridViewColumn >
-                        <GridViewColumnHeader HorizontalAlignment="Center" Width="135" >Счет получателя</GridViewColumnHeader>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
+                            <GridViewColumnHeader HorizontalAlignment="Center" Width="135" >Счет получателя</GridViewColumnHeader>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
                                     <TextBlock Text="{Binding Path=BeneficiaryBic}" HorizontalAlignment="Right"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn >
-                        <GridViewColumnHeader HorizontalAlignment="Center" Width="90" >Сумма</GridViewColumnHeader>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=Sum}" HorizontalAlignment="Right"></TextBlock>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
+                            <GridViewColumnHeader HorizontalAlignment="Center" Width="90" >Сумма</GridViewColumnHeader>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Sum}" HorizontalAlignment="Right"></TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn >
                             <GridViewColumnHeader HorizontalAlignment="Left" Width="160" >Описание</GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
@@ -64,7 +64,7 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn >
-                            <GridViewColumnHeader HorizontalAlignment="Left" >Статус </GridViewColumnHeader>
+                            <GridViewColumnHeader HorizontalAlignment="Left" >Статус</GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=Status}" HorizontalAlignment="Center"></TextBlock>
@@ -72,7 +72,7 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                     </GridView>
-            </ListView.View>
+                </ListView.View>
 
             </ListView>
 

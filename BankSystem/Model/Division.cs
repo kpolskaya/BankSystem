@@ -37,13 +37,13 @@ namespace BankSystem.Model
         /// </summary>
         public ReadOnlyObservableCollection<Account> Accounts { get { return new ReadOnlyObservableCollection<Account>(this.accounts); } } 
         
-        [JsonConstructor]
-        public Division(string Id, string Name, ObservableCollection<Account> accounts)
-        {
-            this.Id = Id;
-            this.Name = Name;
-            this.accounts = accounts;
-        }
+        //[JsonConstructor]
+        //public Division(string Id, string Name, ObservableCollection<Account> accounts)
+        //{
+        //    this.Id = Id;
+        //    this.Name = Name;
+        //    this.accounts = accounts;
+        //}
 
         public Division()
         { 

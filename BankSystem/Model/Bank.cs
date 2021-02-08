@@ -18,6 +18,9 @@ namespace BankSystem.Model
     /// <param name="name">Какой счет банка изменился</param>
     public delegate void BankBalanceChanged(string name);
 
+    /// <summary>
+    /// Головной офис банка
+    /// </summary>
     [DataContract]
     public class Bank
     {[DataMember]
@@ -31,11 +34,7 @@ namespace BankSystem.Model
         [DataMember]
         public ObservableCollection<Transaction> TransactionHistory { get; private set; }
 
-        public Bank() //убрать или что
-        {
-
-        }
-
+  
         [JsonConstructor]
         public Bank(string Name, ObservableCollection<Division> Departments, ObservableCollection<Transaction> TransactionHistory,
                     decimal Cash, decimal Profit)
@@ -62,9 +61,7 @@ namespace BankSystem.Model
                 new Department<Person>("02", "Отдел по работе с физическими лицами"),
                 new Department<Vip>("03", "Отдел по работе с VIP клиентами")
             };
-
-            //ExampleCustomers();
-            
+              
             this.Cash = 1_000_000; //собственный капитал при открытии
             
             foreach (var item in this.Departments) //подписка на эвенты каждого департамента
@@ -75,10 +72,16 @@ namespace BankSystem.Model
             this.TransactionHistory = new ObservableCollection<Transaction>();
            
         }
+
         /// <summary>
         /// публичное событие изменения статей банковского баланса
         /// </summary>
         public event BankBalanceChanged BankBalanceChanged;
+        
+        /// <summary>
+        /// Делегат для запуска автосохранения
+        /// </summary>
+        public Action Autosave; 
 
         /// <summary>
         /// Обрабатывает транзакцию, инициированную департаментом
@@ -121,23 +124,31 @@ namespace BankSystem.Model
                 Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
                 if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum, t.Detailes))  // если получилось зачислить деньги получателю
                     t.Status = TransactionStatus.Done;
-                else if (t.Status !=TransactionStatus.Failed)                                       //если не отвергнута департаментом по другим причинам
+                else if (t.Status !=TransactionStatus.Failed)                                       //если не была отвергнута департаментом по другим причинам
                 {
                     t.Status = TransactionStatus.Failed;
-                    sender.Refund(t);                                                               // если не получилось, нужно вернуть деньги отправителю
+                    sender.Refund(t);                                                               // то зачислить не получилось, нужно вернуть деньги отправителю
                 }
             }
-
             this.TransactionHistory.Add(t);
             
-            //TODO save history
+            Autosave();
         }
 
+        /// <summary>
+        /// Вызов кода при изменении статей баланса
+        /// </summary>
+        /// <param name="name">Статья баланса</param>
         private void OnBalanceChanged(string name)
         {
             BankBalanceChanged?.Invoke(name);
         }
 
+        /// <summary>
+        /// Получает конкретный департамент по номеру счета клиента
+        /// </summary>
+        /// <param name="bic">Номер счета</param>
+        /// <returns>Экземпляр департамента</returns>
         private Division GetDepartmentByBic(string bic)
         {
             if (bic.Length != 18)
@@ -146,16 +157,9 @@ namespace BankSystem.Model
             return Departments.FirstOrDefault(d => d.Id == id);
         }
 
-        public void Save(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Load(string path)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Начисляет месячные платежи и проценты по счетам клиентов
+        /// </summary>
         public void MonthlyCharge()
         {
             foreach (var department in Departments)
@@ -163,19 +167,11 @@ namespace BankSystem.Model
                 department.CalculateCharges();
             }
         }
-
-        //public void ExampleCustomers()
-        //{
-        //    foreach (var department in Departments)
-        //    {
-        //        var dType = department.GetType();
-        //        Type[] dTypeParameters = dType.GetGenericArguments();
-
-        //        department.CustomersForExample();
-
-        //    }
-        //}
-    
+        
+        /// <summary>
+        /// Сумма денег на клиентских счетах (обязательства банка перед клиентами)
+        /// </summary>
+        /// <returns></returns>
         public decimal ClientsFunds()
         {
             decimal total = 0;
@@ -186,6 +182,9 @@ namespace BankSystem.Model
             return total;
         }
 
+        /// <summary>
+        /// Обновляет подписку на события департаментов после десериализации
+        /// </summary>
         public void RefreshSubscriptions()
         {
             foreach (var item in this.Departments)

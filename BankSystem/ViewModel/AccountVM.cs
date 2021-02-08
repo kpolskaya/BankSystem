@@ -11,11 +11,14 @@ namespace BankSystem.ViewModel
     public class AccountVM : INotifyPropertyChanged
     {
         private readonly Account account;
+        
+        /// <summary>
+        /// Последнее информационное сообщение пользователю по операциям с данным счетом
+        /// </summary>
         public string Message { get; set; }
         public string Bic { get { return this.account.Bic; } }
         public decimal Balance 
         {
-            //get { return this.account.FullBalance();} 
             get
             {
                 return this.account.Balance;
@@ -23,11 +26,11 @@ namespace BankSystem.ViewModel
         }
         public AccountType Type { get { return this.account.Type; } }
         public decimal Interest { get { return this.account.AccruedInterest; } }
+        
         public AccountVM(Account Account)
         {
             this.account = Account;
             this.account.Movement += AccountMovement;
-           
         }
 
         private void AccountMovement(Account sender, string message)
@@ -60,10 +63,5 @@ namespace BankSystem.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-     
-        //public override string ToString()
-        //{
-        //    return $"{this.Bic} : {this.Balance: ### ### ### ##0.00}";
-        //}
     }
 }

@@ -51,12 +51,12 @@ namespace BankSystem.Model
         
         }
 
-        [JsonConstructor]
-        public Department(string Id, string Name, ObservableCollection<Account> Accounts, ObservableCollection<TCustomer> Customers)
-            : base(Id, Name, Accounts)
-        {
-            this.Customers = Customers;
-        }
+        //[JsonConstructor]
+        //public Department(string Id, string Name, ObservableCollection<Account> Accounts, ObservableCollection<TCustomer> Customers)
+        //    : base(Id, Name, Accounts)
+        //{
+        //    this.Customers = Customers;
+        //}
             
         // логика, которая зависит от типа клиента...
 
@@ -104,40 +104,17 @@ namespace BankSystem.Model
 
                 if (account.Type != AccountType.DebitAccount)
                 {
-                    decimal interest = account.ChargeInterest(Rate);
+                    decimal interest = account.ChargeInterest(this.Rate);
                     if (interest > 0)
                         OnTransactionRaised(new Transaction("99", account.Bic, interest, "Начисление процентов"));
                 }
 
                 else
                     if (account.Debit(Fee, "Плата за обслуживание"))
-                    OnTransactionRaised(new Transaction(account.Bic, "99", Fee, "Плата за обслуживание"));
+                    OnTransactionRaised(new Transaction(account.Bic, "99", this.Fee, "Плата за обслуживание"));
             }
         }
 
-        #region ForExample
-        public void CustomersForExample()
-        {
-            for (int i = 0; i < 1; i++) //3!!!!!
-            {
-                string name = ($"Клиент  {this.Id}-{i + 1}");
-                string othername = ($"Имярек  {this.Id}-{i + 1}");
-                string legalId = ($"{this.Id}-00000-{i + 1}");
-                string phone = ($"+7 499 {this.Id}0000{i + 1}");
-                CreateCustomer(name, othername, legalId, phone);
-
-            }
-            AccountsForExample();
-        }
-
-        private void AccountsForExample()
-        {
-            foreach (var customer in Customers)
-            {
-                OpenAccount(AccountType.DebitAccount, customer);
-            }
-        }
-        #endregion
     }
 }
 
