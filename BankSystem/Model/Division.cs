@@ -126,7 +126,7 @@ namespace BankSystem.Model
         public abstract void CalculateCharges(); 
 
         /// <summary>
-        /// Вносит деньги на счет
+        /// Вносит деньги на счет. Исключение, если счет не существует
         /// </summary>
         /// <param name="bic">номер счета</param>
         /// <param name="sum">сумма</param>
@@ -156,7 +156,7 @@ namespace BankSystem.Model
         }
 
         /// <summary>
-        /// Закрывает счет клиента
+        /// Закрывает счет клиента. Исключение, если счет не существует.
         /// </summary>
         /// <param name="bic"></param>
         public void CloseAccount(string bic) 
@@ -182,12 +182,13 @@ namespace BankSystem.Model
             Account senderAccount = GetAccountByBic(senderBic);
             if (senderAccount == null)
                 throw new Exception("Несуществующий счет");
-            Transaction t; 
-            if (senderAccount is DebitAccount && senderAccount.Debit(sum, detailes))
+            Transaction t;
+            
+            if (senderAccount.Debit(sum, detailes))
                 t = new Transaction(senderBic, beneficiaryBic, sum, detailes, TransactionType.Transfer);
             else
             {
-                t = new Transaction(senderBic, beneficiaryBic, sum, detailes + " -- Отказано в операции", TransactionType.Transfer); //!!!проверить еще, как работает, не возвращает ли сумму ошибочно?
+                t = new Transaction(senderBic, beneficiaryBic, sum, detailes + " -- Отказано в операции", TransactionType.Transfer); 
                 t.Status = TransactionStatus.Failed;
             }
             OnTransactionRaised(t);

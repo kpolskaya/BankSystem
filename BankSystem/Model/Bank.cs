@@ -124,7 +124,7 @@ namespace BankSystem.Model
                 Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
                 if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum, t.Detailes))  // если получилось зачислить деньги получателю
                     t.Status = TransactionStatus.Done;
-                else if (t.Status !=TransactionStatus.Failed)                                       //если не была отвергнута департаментом по другим причинам
+                else //if (t.Status !=TransactionStatus.Failed)                                       //если не была отвергнута департаментом по другим причинам
                 {
                     t.Status = TransactionStatus.Failed;
                     sender.Refund(t);                                                               // то зачислить не получилось, нужно вернуть деньги отправителю
@@ -132,7 +132,8 @@ namespace BankSystem.Model
             }
             this.TransactionHistory.Add(t);
             
-            Autosave();
+            if (Autosave != null)
+                Autosave();
         }
 
         /// <summary>
@@ -148,7 +149,7 @@ namespace BankSystem.Model
         /// Получает конкретный департамент по номеру счета клиента
         /// </summary>
         /// <param name="bic">Номер счета</param>
-        /// <returns>Экземпляр департамента</returns>
+        /// <returns>Экземпляр департамента  или null если департамент не найден</returns>
         private Division GetDepartmentByBic(string bic)
         {
             if (bic.Length != 18)
