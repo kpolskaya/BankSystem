@@ -10,6 +10,11 @@
         <GroupBox Header="Журнал транзакций" Grid.Column="0" Grid.Row="1" Width="Auto" Padding="5">
             <ListView x:Name="TransactionsHistory"   Width="Auto" Height="Auto" 
                 ItemsSource="{Binding TransactionHistory, Mode=OneWay}" >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.View >
 
                     <GridView>
@@ -43,7 +48,7 @@
                             <GridViewColumnHeader HorizontalAlignment="Center" Width="90" >Сумма</GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Path=Sum}" HorizontalAlignment="Right"></TextBlock>
+                                    <TextBlock Text="{Binding Path=Sum , StringFormat=\{0: ### ### ##0.00\}}" HorizontalAlignment="Right" TextAlignment="Right"></TextBlock>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
