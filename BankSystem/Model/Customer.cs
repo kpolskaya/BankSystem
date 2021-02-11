@@ -69,8 +69,15 @@ namespace BankSystem.Model
             this.Id = NextId().ToString("00000000");
         }
 
-        
-        public Customer(string Id, string Name, string OtherName, string LegalId, string Phone) //- как это работает?
+        /// <summary>
+        /// Конструктор необходим для правильной нумерации клиентов после восстановления из .json
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="Name"></param>
+        /// <param name="OtherName"></param>
+        /// <param name="LegalId"></param>
+        /// <param name="Phone"></param>
+        public Customer(string Id, string Name, string OtherName, string LegalId, string Phone) 
         {
             this.Name = Name;
             this.OtherName = OtherName;

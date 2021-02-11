@@ -142,8 +142,7 @@ namespace BankSystem.Model
         /// <param name="message">Сообщение владельцу счета</param>
         protected virtual void OnMovement(string message)
         {
-            Account sender = this;
-            Movement?.Invoke(sender, message);
+            Movement?.Invoke(this, message);
         }
 
     }

@@ -19,7 +19,7 @@
 
                     <GridView>
                         <GridViewColumn >
-                            <GridViewColumnHeader HorizontalAlignment="Center" Width="110">Номер транзакции</GridViewColumnHeader>
+                            <GridViewColumnHeader HorizontalAlignment="Center" Width="80">N транзакции</GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=Id}" HorizontalAlignment="Right"></TextBlock>
@@ -28,7 +28,7 @@
                         </GridViewColumn>
 
                         <GridViewColumn >
-                            <GridViewColumnHeader HorizontalAlignment="Center" Width="135" >Счет отправителя</GridViewColumnHeader>
+                            <GridViewColumnHeader HorizontalAlignment="Center" Width="130" >Счет отправителя</GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=SenderBic}" HorizontalAlignment="Right"></TextBlock>
@@ -37,7 +37,7 @@
                         </GridViewColumn>
 
                         <GridViewColumn >
-                            <GridViewColumnHeader HorizontalAlignment="Center" Width="135" >Счет получателя</GridViewColumnHeader>
+                            <GridViewColumnHeader HorizontalAlignment="Center" Width="130" >Счет получателя</GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=BeneficiaryBic}" HorizontalAlignment="Right"></TextBlock>
@@ -53,7 +53,7 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn >
-                            <GridViewColumnHeader HorizontalAlignment="Left" Width="160" >Описание</GridViewColumnHeader>
+                            <GridViewColumnHeader HorizontalAlignment="Left" Width="175" >Описание</GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=Detailes}" HorizontalAlignment="Right"></TextBlock>
@@ -69,7 +69,7 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn >
-                            <GridViewColumnHeader HorizontalAlignment="Left" >Статус</GridViewColumnHeader>
+                            <GridViewColumnHeader HorizontalAlignment="Center" >Статус</GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=Status}" HorizontalAlignment="Center"></TextBlock>

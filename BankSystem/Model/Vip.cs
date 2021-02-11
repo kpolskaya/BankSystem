@@ -42,8 +42,8 @@ namespace BankSystem.Model
         [JsonConstructor]
         public Vip(string Id, string Name, string OtherName, string LegalId, string Phone)
             : base(Id, Name, OtherName, LegalId, Phone)
-        { 
-        
+        {
+
         }
     }
 }

@@ -34,8 +34,8 @@ namespace BankSystem.Model
         }
 
 
-        public Entity(string Name, string OtherName, string LegalId, string Phone)
-            : base(Name, OtherName, LegalId, Phone)
+        public Entity(string Name, string FormOfOwnership, string LegalId, string Phone)
+            : base(Name, FormOfOwnership, LegalId, Phone)
         {
            
         }
@@ -43,8 +43,8 @@ namespace BankSystem.Model
         [JsonConstructor]
         public Entity(string Id, string Name, string OtherName, string LegalId, string Phone)
            : base(Id, Name, OtherName, LegalId, Phone)
-        { 
-        
+        {
+
         }
     }
 }

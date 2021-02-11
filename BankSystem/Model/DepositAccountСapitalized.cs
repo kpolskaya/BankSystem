@@ -20,11 +20,7 @@ namespace BankSystem.Model
 
         }
 
-        //[JsonConstructor]
-        //public DepositAccountСapitalized(string Bic, decimal Balance, AccountType Type, decimal AccruedInterest)
-        //   : base(Bic, Balance, Type, AccruedInterest)
-        //{ }
-
+       
         public DepositAccountСapitalized()
         { }
 

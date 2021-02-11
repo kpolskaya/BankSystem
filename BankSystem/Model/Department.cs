@@ -50,13 +50,6 @@ namespace BankSystem.Model
         { 
         
         }
-
-        //[JsonConstructor]
-        //public Department(string Id, string Name, ObservableCollection<Account> Accounts, ObservableCollection<TCustomer> Customers)
-        //    : base(Id, Name, Accounts)
-        //{
-        //    this.Customers = Customers;
-        //}
             
         // логика, которая зависит от типа клиента...
 

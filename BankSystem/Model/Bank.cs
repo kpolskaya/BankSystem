@@ -124,16 +124,15 @@ namespace BankSystem.Model
                 Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
                 if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum, t.Detailes))  // если получилось зачислить деньги получателю
                     t.Status = TransactionStatus.Done;
-                else //if (t.Status !=TransactionStatus.Failed)                                       //если не была отвергнута департаментом по другим причинам
+                else                                                                                //если не получилось
                 {
                     t.Status = TransactionStatus.Failed;
-                    sender.Refund(t);                                                               // то зачислить не получилось, нужно вернуть деньги отправителю
+                    sender.Refund(t);                                                               // то нужно вернуть деньги отправителю
                 }
             }
             this.TransactionHistory.Add(t);
-            
-            if (Autosave != null)
-                Autosave();
+
+            Autosave?.Invoke();
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace BankSystem.Model
     /// </summary>
     [System.Runtime.Serialization.DataContract]
     [KnownType(typeof(Department<>))]
-    public abstract class Division                      //TODO  везде проверки на null (GetAccountByBic) и расставить Exeptions
+    public abstract class Division                      
     {
         [DataMember]
         public string Id { get; protected set; }
@@ -36,15 +36,7 @@ namespace BankSystem.Model
         /// Публичный список счетов департамента
         /// </summary>
         public ReadOnlyObservableCollection<Account> Accounts { get { return new ReadOnlyObservableCollection<Account>(this.accounts); } } 
-        
-        //[JsonConstructor]
-        //public Division(string Id, string Name, ObservableCollection<Account> accounts)
-        //{
-        //    this.Id = Id;
-        //    this.Name = Name;
-        //    this.accounts = accounts;
-        //}
-
+   
         public Division()
         { 
         
@@ -207,8 +199,7 @@ namespace BankSystem.Model
         protected virtual void OnTransactionRaised(Transaction t)
         {
 
-            Division sender = this;
-            TransactionRaised?.Invoke(sender, t);
+            TransactionRaised?.Invoke(this, t);
         }
           
         /// <summary>

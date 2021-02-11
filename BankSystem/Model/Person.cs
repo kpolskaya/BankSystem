@@ -41,8 +41,8 @@ namespace BankSystem.Model
         [JsonConstructor]
         public Person(string Id, string Name, string OtherName, string LegalId, string Phone)
            : base(Id, Name, OtherName, LegalId, Phone)
-        { 
-        
+        {
+
         }
     }
 }
