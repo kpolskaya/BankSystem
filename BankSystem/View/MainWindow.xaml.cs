@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -120,6 +121,22 @@ namespace BankSystem.View
         {
             Transactions tWindow = new Transactions(repository.bank);
             tWindow.ShowDialog();
+        }
+
+        /// <summary>
+        /// Проверка поля на корректное значение - только цифры
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            {
+                string s = Regex.Replace(((TextBox)sender).Text, @"[^\d]", "");
+                ((TextBox)sender).Text = s;
+
+                ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
+        
+            }
         }
     }
 }

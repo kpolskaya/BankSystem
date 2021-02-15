@@ -188,7 +188,9 @@
                         <TextBox x:Name="NewName"  Width="100" HorizontalAlignment="Left" ></TextBox>
                         <TextBox x:Name="NewOtherName"  Width="100" HorizontalAlignment="Left"></TextBox>
                         <TextBox x:Name="NewLegalId"  Width="100"  HorizontalAlignment="Left"></TextBox>
-                        <TextBox x:Name="NewPhone" Width="135" HorizontalAlignment="Right"></TextBox>
+                        <TextBox x:Name="NewPhone" Width="135" HorizontalAlignment="Right" 
+                                 ToolTip="Только цифры!"
+                                 TextChanged="TextBox_TextChanged"></TextBox>
 
                     </StackPanel>
                     
