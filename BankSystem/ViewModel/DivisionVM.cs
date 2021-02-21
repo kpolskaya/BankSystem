@@ -153,8 +153,12 @@ namespace BankSystem.ViewModel
      
         public void CreateCustomer(string name, string otherName, string legalId, string phone)
         {
-            division.CreateCustomer(name, otherName, legalId, phone);
-            this.OnPropertyChanged("Customers");
+            if (!Customers.Any(p => p.LegalId == legalId))
+            {
+                division.CreateCustomer(name, otherName, legalId, phone);
+                this.OnPropertyChanged("Customers");
+            }
+            else throw new Exception("Такой клиент уже существует");
         }
 
         public void Put(string bic, decimal sum)

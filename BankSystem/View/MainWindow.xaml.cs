@@ -98,7 +98,16 @@ namespace BankSystem.View
                 && !String.IsNullOrEmpty(NewLegalId.Text)
                 && !String.IsNullOrEmpty(NewPhone.Text))
             {
-                ((DivisionVM)Divisions.SelectedItem).CreateCustomer(NewName.Text, NewOtherName.Text, NewLegalId.Text, NewPhone.Text);
+                try
+                {
+                    ((DivisionVM)Divisions.SelectedItem).CreateCustomer(NewName.Text, NewOtherName.Text, NewLegalId.Text, NewPhone.Text);
+                }
+                catch (Exception ex)
+                {
+
+                    MessageBox.Show(ex.Message);
+                }
+                
             }
             else
             {
