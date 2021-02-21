@@ -24,6 +24,7 @@ namespace BankSystem.Model
     [KnownType(typeof(Department<>))]
     public abstract class Division                      
     {
+       
         [DataMember]
         public string Id { get; protected set; }
         [DataMember]
@@ -57,6 +58,7 @@ namespace BankSystem.Model
         protected Account GetAccountByBic(string Bic) 
         {
             return accounts.FirstOrDefault(x => x.Bic == Bic);
+         
         }
 
         /// <summary>
@@ -83,6 +85,7 @@ namespace BankSystem.Model
             }
         }
 
+      
         /// <summary>
         /// В случае успеха зачисляет средства на указанный счет
         /// </summary>
@@ -220,11 +223,13 @@ namespace BankSystem.Model
             decimal total = 0;
             foreach (var item in this.accounts)
             {
-                total += item.FullBalance();
+                total += (decimal)item;
+
             }
             return total;
         }
 
+     
         /// <summary>
         /// Обновляет подписки клиентов на сообщения об операциях по счетам
         /// </summary>

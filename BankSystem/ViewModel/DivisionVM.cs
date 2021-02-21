@@ -111,6 +111,7 @@ namespace BankSystem.ViewModel
             }
         }
 
+      
         /// <summary>
         /// Выбранный пользователем клиент
         /// </summary>
@@ -149,6 +150,7 @@ namespace BankSystem.ViewModel
             }
         }
 
+     
         public void CreateCustomer(string name, string otherName, string legalId, string phone)
         {
             division.CreateCustomer(name, otherName, legalId, phone);

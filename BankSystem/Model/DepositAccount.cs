@@ -15,7 +15,7 @@ namespace BankSystem.Model
     [KnownType(typeof(Account))]
     public class DepositAccount : Account
     {
-       
+
         public DepositAccount(string DepartmentId, Customer Customer)
         : base(AccountType.DepositAccount, DepartmentId, Customer)
         {

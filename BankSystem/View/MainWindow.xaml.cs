@@ -138,5 +138,10 @@ namespace BankSystem.View
         
             }
         }
+
+        private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e)
+        {
+                    bank.LoyalityProg();
+        }
     }
 }

@@ -89,5 +89,12 @@ namespace BankSystem.ViewModel
             if (name == "Cash")
                 OnPropertyChanged("ClientsFunds"); //меняются оба поля
         }
+
+        public void LoyalityProg()
+        {
+            bank.LoyalityProg();
+
+
+        }
     }
 }

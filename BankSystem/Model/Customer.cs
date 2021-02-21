@@ -12,7 +12,7 @@ namespace BankSystem.Model
     [KnownType(typeof(Entity))]
     [KnownType(typeof(Person))]
     [KnownType(typeof(Vip))]
-    public abstract class Customer
+    public  class Customer 
     {
         //public static Random random;
         static uint lastId;

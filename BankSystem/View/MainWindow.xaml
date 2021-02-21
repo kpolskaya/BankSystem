@@ -75,7 +75,7 @@
              
                 <StackPanel VerticalAlignment ="Bottom" >
 
-                    <Button Content="Закрытие месяца" Width="120" Height="20" Margin="10" 
+                    <Button Content="Закрытие месяца" Width="140" Height="20" Margin="10" 
                             HorizontalAlignment="Center" Click="MonthlyCharge_Button_Click" 
                             ToolTip="Начисление платежей за обслуживание и процентов"  />
                     
@@ -87,6 +87,10 @@
                     <TextBox Text="{Binding Profit, Mode=OneWay}" Width="200" TextAlignment="Center" />
                     <TextBlock Text="Денег в банке:" Margin="5" />
                     <TextBox Text="{Binding Cash, Mode=OneWay}" Width="200" TextAlignment="Center"  />
+
+                    <Button Content="Программа лояльности" Width="140" Height="20" Margin="10" 
+                            HorizontalAlignment="Center" Click="LoyalityProgram_Button_Click" 
+                            ToolTip="Запуск программы лояльности"  />
                 </StackPanel>
 
             </StackPanel >

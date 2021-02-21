@@ -81,7 +81,19 @@ namespace BankSystem.Model
         /// <summary>
         /// Делегат для запуска автосохранения
         /// </summary>
-        public Action Autosave; 
+        public Action Autosave;
+
+        /// <summary>
+        /// Запускает программу лояльности из расширения
+        /// </summary>
+        public void LoyalityProg() 
+      
+            {
+                (Departments[0] as Department<Entity>).LoyalityProgramExtension();
+                (Departments[1] as Department<Person>).LoyalityProgramExtension();
+                (Departments[2] as Department<Vip>).LoyalityProgramExtension();
+            }
+      
 
         /// <summary>
         /// Обрабатывает транзакцию, инициированную департаментом
@@ -167,7 +179,8 @@ namespace BankSystem.Model
                 department.CalculateCharges();
             }
         }
-        
+
+              
         /// <summary>
         /// Сумма денег на клиентских счетах (обязательства банка перед клиентами)
         /// </summary>
