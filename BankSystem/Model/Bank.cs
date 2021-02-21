@@ -86,13 +86,13 @@ namespace BankSystem.Model
         /// <summary>
         /// Запускает программу лояльности из расширения
         /// </summary>
-        public void LoyalityProg() 
+        //public void LoyalityProg() ///!!!!!!!
       
-            {
-                (Departments[0] as Department<Entity>).LoyalityProgramExtension();
-                (Departments[1] as Department<Person>).LoyalityProgramExtension();
-                (Departments[2] as Department<Vip>).LoyalityProgramExtension();
-            }
+        //    {
+        //        (Departments[0] as Department<Entity>).LoyalityProgramExtension();
+        //        (Departments[1] as Department<Person>).LoyalityProgramExtension();
+        //        (Departments[2] as Department<Vip>).LoyalityProgramExtension();
+        //    }
       
 
         /// <summary>

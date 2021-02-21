@@ -17,15 +17,7 @@ namespace BankSystem.Model
         public Repository()
         {
             if (File.Exists("Bank.json"))
-                try
-                {
-                    DeserializeJsonBank();
-                }
-                catch (Exception)
-                {
-                    this.bank = new Bank("Банк");
-                }
-
+                DeserializeJsonBank();
             else
                 this.bank = new Bank("Банк");
 
@@ -44,14 +36,7 @@ namespace BankSystem.Model
             };
 
             var text = JsonConvert.SerializeObject(bank, settings);
-            try
-            {
-                File.WriteAllText("Bank.json", text);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            File.WriteAllText("Bank.json", text);
         }
 
         /// <summary>
@@ -60,27 +45,12 @@ namespace BankSystem.Model
         public void DeserializeJsonBank()
         {
             string text;
-            try
-            {
-                text = File.ReadAllText("Bank.json");
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
+            text = File.ReadAllText("Bank.json");
+            
             JsonSerializerSettings jss = new JsonSerializerSettings();
             jss.TypeNameHandling = TypeNameHandling.All;
-
-            try
-            {
-                this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
+            
             bank.Autosave = SerializeJsonBank;
         }
     }

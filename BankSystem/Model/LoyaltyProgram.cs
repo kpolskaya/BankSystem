@@ -9,12 +9,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BankSystem
+namespace BankSystem.Model
 {
     /// <summary>
     /// Программа лояльности. Выбирает клиентов с максимальным остатком на счетах в каждом департаменте и вручает подарок.
     /// </summary>
-    public static class LoyalityProgram
+    public static class LoyaltyProgram
     {
         public class CustomersFunds : IComparable<CustomersFunds>
         {
@@ -41,7 +41,7 @@ namespace BankSystem
         }
 
 
-        public static List<CustomersFunds> LoyalityProgramExtension<TCustomer>(this Department<TCustomer> d) where TCustomer : Customer, new()
+        public static void LoyaltyProgramExtension<TCustomer>(this Department<TCustomer> d) where TCustomer : Customer, new()
         {
             List<CustomersFunds> CustomersFundsList = new List<CustomersFunds>();
 
@@ -58,13 +58,13 @@ namespace BankSystem
             }
 
             CustomersFundsList.Sort();
-            if (CustomersFundsList[0].TotalFunds > 0)
+            if (CustomersFundsList.Count > 0 && CustomersFundsList[0].TotalFunds > 0)
             {
             string Phone = CustomersFundsList[0].Customer.Phone;
             System.Media.SystemSounds.Asterisk.Play();
             Debug.WriteLine($"SMS to: {Phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
             }
-            return CustomersFundsList;
+            //return CustomersFundsList;
             
         }
 

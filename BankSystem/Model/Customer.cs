@@ -92,7 +92,7 @@ namespace BankSystem.Model
             catch (Exception)
             {
 
-                throw new Exception("Несоответствующий формат поля Id клиента");
+                throw new Exception("Недопустимый формат поля Id клиента");
             }
         }
 
@@ -101,7 +101,7 @@ namespace BankSystem.Model
         /// </summary>
         /// <param name="account">Счет операции</param>
         /// <param name="message">Сообщение</param>
-        public void SendMessage(Account account, string message)
+        public virtual void SendMessage(Account account, string message)
         {
             System.Media.SystemSounds.Asterisk.Play();
             Debug.WriteLine($"SMS to: {Phone} subj: Движение по счету {account.Bic} " +

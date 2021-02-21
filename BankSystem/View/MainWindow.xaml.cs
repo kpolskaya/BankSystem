@@ -30,7 +30,16 @@ namespace BankSystem.View
         public MainWindow()
         {
             InitializeComponent();
-            repository = new Repository();
+            try
+            {
+                repository = new Repository();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Работа программы невозможна. При чтении данных из файла возникло исключение: {ex.Message}");
+                Application.Current.Shutdown();
+            }
+
             bank = new BankVM(repository.bank);
             DataContext = bank;
         }
@@ -150,7 +159,7 @@ namespace BankSystem.View
 
         private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e)
         {
-                    bank.LoyalityProg();
+                    bank.LoyaltyProg();
         }
     }
 }

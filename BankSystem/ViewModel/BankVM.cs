@@ -90,10 +90,15 @@ namespace BankSystem.ViewModel
                 OnPropertyChanged("ClientsFunds"); //меняются оба поля
         }
 
-        public void LoyalityProg()
+        /// <summary>
+        /// 
+        /// </summary>
+        public void LoyaltyProg()
         {
-            bank.LoyalityProg();
 
+            (bank.Departments[0] as Department<Entity>).LoyaltyProgramExtension();
+            (bank.Departments[1] as Department<Person>).LoyaltyProgramExtension();
+            (bank.Departments[2] as Department<Vip>).LoyaltyProgramExtension();
 
         }
     }
