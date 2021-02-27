@@ -1,13 +1,9 @@
-﻿using BankSystem.Model;
-using BankSystem.ViewModel;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BankSystemLib;
 
 namespace BankSystem.Model
 {
@@ -16,6 +12,10 @@ namespace BankSystem.Model
     /// </summary>
     public static class LoyaltyProgram
     {
+        /// <summary>
+        ///  Содержит информацию о сумме средств на всех счетах данного клиента. 
+        ///  Реализует интерфейс IComparable для сортировки клиентов по сумме средств на счетах.
+        /// </summary>
         internal class CustomersFunds : IComparable<CustomersFunds>
         {
            internal decimal TotalFunds { get;  private set; }
@@ -23,7 +23,7 @@ namespace BankSystem.Model
             internal Customer Customer { get;  }
 
             internal CustomersFunds (Customer customer, decimal TotalFunds)
-           {
+            {
                 this.Customer = customer;
                 this.TotalFunds = TotalFunds;
             }
@@ -31,7 +31,7 @@ namespace BankSystem.Model
 
             public int CompareTo(CustomersFunds obj)
             {
-                if (obj == null || obj.Customer == null)
+                if (obj == null)
                     return 1;
                 if (this.TotalFunds > obj.TotalFunds)
                     return -1; 
@@ -42,6 +42,11 @@ namespace BankSystem.Model
             }
         }
 
+        internal static void SendInvitation(string phone)
+        {
+            System.Media.SystemSounds.Asterisk.Play();
+            Debug.WriteLine($"SMS to: {phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
+        }
 
         public static void LoyaltyProgramExtension<TCustomer>(this Department<TCustomer> d) where TCustomer : Customer, new()
         {
@@ -62,14 +67,9 @@ namespace BankSystem.Model
             CustomersFundsList.Sort();
             if (CustomersFundsList.Count > 0 && CustomersFundsList[0].TotalFunds > 0)
             {
-            string Phone = CustomersFundsList[0].Customer.Phone;
-            System.Media.SystemSounds.Asterisk.Play();
-            Debug.WriteLine($"SMS to: {Phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
+                SendInvitation(CustomersFundsList[0].Customer.Phone);
             }
-            
-            
         }
-
            
     }
 }

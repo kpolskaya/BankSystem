@@ -87,7 +87,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\BankExceptions.cs" />
     <Compile Include="Model\LoyaltyProgram.cs" />
     <Compile Include="View\Transactions.xaml.cs">
       <DependentUpon>Transactions.xaml</DependentUpon>
@@ -104,19 +103,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\Account.cs" />
-    <Compile Include="Model\Bank.cs" />
-    <Compile Include="Model\Customer.cs" />
-    <Compile Include="Model\DebitAccount.cs" />
-    <Compile Include="Model\Department.cs" />
-    <Compile Include="Model\DepositAccount.cs" />
-    <Compile Include="Model\DepositAccountСapitalized.cs" />
-    <Compile Include="Model\Division.cs" />
-    <Compile Include="Model\Entity.cs" />
-    <Compile Include="Model\Person.cs" />
     <Compile Include="Model\Repository.cs" />
-    <Compile Include="Model\Transaction.cs" />
-    <Compile Include="Model\Vip.cs" />
     <Compile Include="ViewModel\AccountVM.cs" />
     <Compile Include="ViewModel\BankVM.cs" />
     <Compile Include="ViewModel\CustomerVM.cs" />
@@ -160,6 +147,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\BankSystemLib\BankSystemLib.csproj">
+      <Project>{979c2124-8820-49eb-a5ca-b5c97d132fab}</Project>
+      <Name>BankSystemLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

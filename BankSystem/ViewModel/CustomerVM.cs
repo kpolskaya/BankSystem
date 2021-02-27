@@ -4,7 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BankSystem.Model;
+using BankSystemLib;
+
 
 namespace BankSystem.ViewModel
 {
