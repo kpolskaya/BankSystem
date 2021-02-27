@@ -58,7 +58,14 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null && PutSum.Text != "")
             {
-                 department.Put(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
+                try
+                {
+                    department.Put(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
+                }
+                catch (Exception ex) // ошибка при автосохранении
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
             else
             {
@@ -76,8 +83,16 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null && WithdrawSum.Text != "")
             {
-                department.Withdraw(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
-                               
+
+                try
+                {
+                    department.Withdraw(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
             }
             else
             {
@@ -95,7 +110,14 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null)
             {
-                department.CloseAccount(((AccountVM)AccountsList.SelectedItem).Bic);
+                try
+                {
+                    department.CloseAccount(((AccountVM)AccountsList.SelectedItem).Bic);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
             else
             {
@@ -118,9 +140,9 @@ namespace BankSystem.View
                 {
                     department.Transfer(((AccountVM)AccountsList.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));
                 }
-                catch (Exception)
+                catch (Exception ex)  
                 {
-                    MessageBox.Show("Несуществующий счет");
+                    MessageBox.Show(ex.Message);
                     return;
                 }
             }

@@ -36,7 +36,16 @@ namespace BankSystem.Model
             };
 
             var text = JsonConvert.SerializeObject(bank, settings);
-            File.WriteAllText("Bank.json", text);
+            try
+            {
+                File.WriteAllText("Bank.json", text);
+
+            }
+            catch (Exception)
+            {
+
+                throw new SaveDataErrorException();
+            }
         }
 
         /// <summary>

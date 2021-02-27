@@ -74,7 +74,7 @@ namespace BankSystem.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка записи файла данных. " + ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -127,7 +127,14 @@ namespace BankSystem.View
 
         private void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e)
         {
-            bank.MonthlyCharge();
+            try
+            {
+                bank.MonthlyCharge();
+            }
+            catch (Exception ex) //при автосохранении возможно исключение
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>

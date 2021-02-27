@@ -38,4 +38,12 @@ namespace BankSystem.Model
 
         }
     }
+
+    public class SaveDataErrorException : Exception
+    {
+        public SaveDataErrorException() : base("Ошибка сохранения данных в файл")
+        {
+
+        }
+    }
 }

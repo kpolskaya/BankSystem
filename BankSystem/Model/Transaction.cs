@@ -53,7 +53,7 @@ namespace BankSystem.Model
         /// Детали платежа
         /// </summary>
         [DataMember]
-        public string Detailes { get; private set; }
+        public string Detailes { get;  set; }
         [DataMember]
         public TransactionType Type { get; private set; }
         [DataMember]

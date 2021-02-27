@@ -127,7 +127,16 @@ namespace BankSystem.Model
                 else                                                                                //если не получилось
                 {
                     t.Status = TransactionStatus.Failed;
-                    sender.Refund(t);                                                               // то нужно вернуть деньги отправителю
+                    try
+                    {
+                        sender.Refund(t);                                                            // то нужно вернуть деньги отправителю
+                    }
+                    catch (Exception)
+                    {
+                        Profit += t.Sum;                                                            // если не смогли вернуть деньги клиенту, зачисляем в прибыль банка
+                        OnBalanceChanged("Profit");
+                        t.Detailes += " - не удалось вернуть отправителю";
+                    }
                 }
             }
             this.TransactionHistory.Add(t);
