@@ -93,7 +93,7 @@ namespace BankSystem.Model
         /// <param name="sum">Сумма</param>
         /// <param name="detailes">Детали платежа</param>
         /// <returns>true - если операция успешна, false - если не найден счет получателя</returns>
-        public bool TryToCredit(string bic, decimal sum, string detailes)
+        public bool TryCredit(string bic, decimal sum, string detailes)
         {
             Account account = GetAccountByBic(bic);
             bool executed = (account != null);
@@ -109,10 +109,10 @@ namespace BankSystem.Model
         public void Refund(Transaction t)
         {
             if (t.Status != TransactionStatus.Failed)
-                throw new Exception("Попытка возмещения средств по состоявшейся транзакции!");
+                throw new FraudOnRefundExeption();
 
-            if (!TryToCredit(t.SenderBic, t.Sum, "Возврат платежа (получатель не найден): " + t.Detailes))
-                throw new Exception("Клиентский счет для возврата средств отсутствует");
+            if (!TryCredit(t.SenderBic, t.Sum, "Возврат платежа (получатель не найден): " + t.Detailes))
+                throw new NonexistantAccountExeption();
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace BankSystem.Model
         {
             Account account = GetAccountByBic(bic);
             if (account == null)
-                throw new Exception("Несуществующий счет");
+                throw new NonexistantAccountExeption();
             account.Credit(sum, "Пополнение через кассу");
             OnTransactionRaised(new Transaction("00", bic, sum, "Пополнение через кассу"));
         }
@@ -159,7 +159,7 @@ namespace BankSystem.Model
             string detailes = "Закрытие счета";
             Account account = GetAccountByBic(bic);
             if (account == null)
-                throw new Exception("Несуществующий счет");
+                throw new NonexistantAccountExeption();
             account.NotifyIfRemoved();
             OnTransactionRaised(new Transaction(bic, "00", account.FullBalance(), detailes));
             this.accounts.Remove(account);

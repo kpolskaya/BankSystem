@@ -138,7 +138,7 @@ namespace BankSystem.ViewModel
         /// <summary>
         /// Формирует список счетов конкретного клиента
         /// </summary>
-        public ObservableCollection<AccountVM> CustomersAccounts 
+        public ObservableCollection<AccountVM> SelectedCustomerAccounts 
         {
             get
             {
@@ -153,12 +153,9 @@ namespace BankSystem.ViewModel
      
         public void CreateCustomer(string name, string otherName, string legalId, string phone)
         {
-            if (!Customers.Any(p => p.LegalId == legalId))
-            {
+      
                 division.CreateCustomer(name, otherName, legalId, phone);
                 this.OnPropertyChanged("Customers");
-            }
-            else throw new Exception("Такой клиент уже существует");
         }
 
         public void Put(string bic, decimal sum)
@@ -222,7 +219,7 @@ namespace BankSystem.ViewModel
             }
 
             OnPropertyChanged("Accounts");
-            OnPropertyChanged("CustomersAccounts");
+            OnPropertyChanged("SelectedCustomerAccounts");
         }
 
     }

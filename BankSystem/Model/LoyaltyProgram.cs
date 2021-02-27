@@ -16,13 +16,13 @@ namespace BankSystem.Model
     /// </summary>
     public static class LoyaltyProgram
     {
-        public class CustomersFunds : IComparable<CustomersFunds>
+        internal class CustomersFunds : IComparable<CustomersFunds>
         {
-           public decimal TotalFunds { get;  private set; }
+           internal decimal TotalFunds { get;  private set; }
 
-           public Customer Customer { get;  }
+            internal Customer Customer { get;  }
 
-           public CustomersFunds (Customer customer, decimal TotalFunds)
+            internal CustomersFunds (Customer customer, decimal TotalFunds)
            {
                 this.Customer = customer;
                 this.TotalFunds = TotalFunds;
@@ -31,6 +31,8 @@ namespace BankSystem.Model
 
             public int CompareTo(CustomersFunds obj)
             {
+                if (obj == null || obj.Customer == null)
+                    return 1;
                 if (this.TotalFunds > obj.TotalFunds)
                     return -1; 
                 if (this.TotalFunds < obj.TotalFunds)
@@ -51,7 +53,7 @@ namespace BankSystem.Model
                 foreach (var acc in d.Accounts)
                 {
                     if (customer.Id == acc.Bic.Substring(2, 8))
-                        t += acc.FullBalance();
+                        t += (decimal)acc;
                 }
                 CustomersFunds customerFunds = new CustomersFunds(customer, t);
                 CustomersFundsList.Add(customerFunds);
@@ -64,7 +66,7 @@ namespace BankSystem.Model
             System.Media.SystemSounds.Asterisk.Play();
             Debug.WriteLine($"SMS to: {Phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
             }
-            //return CustomersFundsList;
+            
             
         }
 

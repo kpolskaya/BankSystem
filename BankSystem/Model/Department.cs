@@ -61,15 +61,23 @@ namespace BankSystem.Model
         /// <param name="legalId">Паспорт/рег. номер</param>
         /// <param name="phone">Телефон</param>
         public override void CreateCustomer(string name, string otherName, string legalId, string phone) 
-        { 
-            TCustomer customer = new TCustomer
+        {
+            if (Customers.Any(p => p.LegalId == legalId))
             {
-                Name = name,
-                OtherName = otherName,
-                LegalId = legalId,
-                Phone = phone
-            };
-            this.Customers.Add(customer);
+                throw new LegalIdDuplicateExeption();
+            }
+            else
+            {
+                TCustomer customer = new TCustomer
+                {
+                    Name = name,
+                    OtherName = otherName,
+                    LegalId = legalId,
+                    Phone = phone
+                };
+                this.Customers.Add(customer);
+            }
+            
         }
         
         /// <summary>

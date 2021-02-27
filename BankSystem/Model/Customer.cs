@@ -92,7 +92,7 @@ namespace BankSystem.Model
             catch (Exception)
             {
 
-                throw new Exception("Недопустимый формат поля Id клиента");
+                throw new CustomerIdFormatException();
             }
         }
 

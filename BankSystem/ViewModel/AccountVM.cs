@@ -8,7 +8,7 @@ using BankSystem.Model;
 
 namespace BankSystem.ViewModel
 {
-    public class AccountVM : INotifyPropertyChanged, IComparable
+    public class AccountVM : INotifyPropertyChanged 
     {
         private readonly Account account;
         
@@ -63,11 +63,6 @@ namespace BankSystem.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
      
-        public int CompareTo(object obj)
-        {
-            return (Balance+Interest).CompareTo(obj);
-        }
     }
 }

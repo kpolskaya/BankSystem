@@ -84,18 +84,6 @@ namespace BankSystem.Model
         public Action Autosave;
 
         /// <summary>
-        /// Запускает программу лояльности из расширения
-        /// </summary>
-        //public void LoyalityProg() ///!!!!!!!
-      
-        //    {
-        //        (Departments[0] as Department<Entity>).LoyalityProgramExtension();
-        //        (Departments[1] as Department<Person>).LoyalityProgramExtension();
-        //        (Departments[2] as Department<Vip>).LoyalityProgramExtension();
-        //    }
-      
-
-        /// <summary>
         /// Обрабатывает транзакцию, инициированную департаментом
         /// </summary>
         /// <param name="sender">Департамент - инициатор транзакции</param>
@@ -134,7 +122,7 @@ namespace BankSystem.Model
             else if (t.Status != TransactionStatus.Failed && t.Type ==TransactionType.Transfer)     //если транзакция между счетами и подтверждена департаментом
             {
                 Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
-                if (receiver != null && receiver.TryToCredit(t.BeneficiaryBic, t.Sum, t.Detailes))  // если получилось зачислить деньги получателю
+                if (receiver != null && receiver.TryCredit(t.BeneficiaryBic, t.Sum, t.Detailes))  // если получилось зачислить деньги получателю
                     t.Status = TransactionStatus.Done;
                 else                                                                                //если не получилось
                 {
@@ -196,9 +184,9 @@ namespace BankSystem.Model
         }
 
         /// <summary>
-        /// Обновляет подписку на события департаментов после десериализации
+        /// Обновляет подписку клиентов на события по счетам после десериализации
         /// </summary>
-        public void RefreshSubscriptions()
+        private void RefreshSubscriptions()
         {
             foreach (var item in this.Departments)
             {

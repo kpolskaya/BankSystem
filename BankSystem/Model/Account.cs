@@ -65,15 +65,19 @@ namespace BankSystem.Model
         public Account ()
         { }
 
+        /// <summary>
+        /// Перегрузка явного приведения типа Account к decimal
+        /// </summary>
+        /// <param name="a">клиентский счет</param>
         public static explicit operator decimal(Account a)
         {
             return a.FullBalance();
         }
 
-        public static decimal operator +(Account a, Account b)
-        {
-            return a.FullBalance() + b.FullBalance();
-        }
+        //public static decimal operator +(Account a, Account b)
+        //{
+        //    return a.FullBalance() + b.FullBalance();
+        //}
 
         /// <summary>
         /// Операция списания средств
