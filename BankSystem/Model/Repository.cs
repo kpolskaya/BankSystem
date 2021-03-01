@@ -6,7 +6,7 @@ using BankSystemLib;
 
 namespace BankSystem.Model
 {
-    public class Repository
+    public class Repository  
     {
         public Bank bank { get; private set; } 
 
