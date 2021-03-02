@@ -54,7 +54,7 @@
     <Compile Include="Bank.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Customer.cs" />
-    <Compile Include="BankExceptioms.cs" />
+    <Compile Include="BankExceptions.cs" />
     <Compile Include="DebitAccount.cs" />
     <Compile Include="Department.cs" />
     <Compile Include="DepositAccount.cs" />

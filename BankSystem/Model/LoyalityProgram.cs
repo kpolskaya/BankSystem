@@ -10,7 +10,7 @@ namespace BankSystem.Model
     /// <summary>
     /// Программа лояльности. Выбирает клиентов с максимальным остатком на счетах в каждом департаменте и вручает подарок.
     /// </summary>
-    public static class LoyaltyProgram
+    public static class LoyalityProgram
     {
         /// <summary>
         ///  Содержит информацию о сумме средств на всех счетах данного клиента. 
