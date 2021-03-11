@@ -39,7 +39,7 @@ namespace BankSystem.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Работа программы невозможна. При чтении данных из файла возникло исключение: {ex.Message}");
+                MessageBox.Show($"Работа программы невозможна. При чтении данных из файла возникло исключение: {ex.Message}"); //нужно что-то с этим сделать
                 Application.Current.Shutdown();
             }
 
@@ -174,7 +174,7 @@ namespace BankSystem.View
 
         private void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
         {
-            pbCalculationProgress.Value = 0;
+            //pbCalculationProgress.Value = 0; //в таком виде ни на что не влияет
             
 
             BackgroundWorker worker = new BackgroundWorker();
@@ -183,13 +183,14 @@ namespace BankSystem.View
             worker.ProgressChanged += worker_ProgressChanged;
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
             worker.RunWorkerAsync(10000);
+
             void worker_DoWork(object sender1, DoWorkEventArgs e1)
             {
-                worker = sender1 as BackgroundWorker;
+                //worker = sender1 as BackgroundWorker;
 
-                InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, worker);
-                InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, worker);
-                InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, worker);
+                InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, sender1 as BackgroundWorker);
+                InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, sender1 as BackgroundWorker);
+                InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, sender1 as BackgroundWorker);
                 //(sender as BackgroundWorker).ReportProgress(progressPercentage);
 
                 System.Threading.Thread.Sleep(1000);

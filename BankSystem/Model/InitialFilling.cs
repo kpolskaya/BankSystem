@@ -25,20 +25,20 @@ namespace BankSystem.Model
                     string Phone = RandomString(12);
                     Thread.Sleep(10);
                     d.CreateCustomer(Name, OtherName, LegalId, Phone);
-                    int progressPercentage = Convert.ToInt32(((double)i / q) * 100);
+                    int progressPercentage = Convert.ToInt32(((double)i / q) * 100); //проще можно?
                     worker.ReportProgress(progressPercentage);
                 }
            
         }
 
-        internal static string RandomString(int l)
+        static string RandomString(int l)
         {
             Random RNG = new Random();
             int length = l;
             var rString = "";
             for (var i = 0; i < length; i++)
             {
-                rString += ((Byte)(RNG.Next(0, 10))).ToString();
+                rString += RNG.Next(0, 10).ToString();
             }
             return rString;
 
