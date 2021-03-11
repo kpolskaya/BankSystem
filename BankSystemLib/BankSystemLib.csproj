@@ -52,7 +52,6 @@
   <ItemGroup>
     <Compile Include="Account.cs" />
     <Compile Include="Bank.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="BankExceptions.cs" />
     <Compile Include="DebitAccount.cs" />

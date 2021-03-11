@@ -43,7 +43,7 @@
         <GroupBox Header="Структура банка" Grid.Column="0" Grid.Row="1" Width="Auto" Padding="5" >
             <StackPanel Orientation="Vertical" Width="Auto" >
 
-                <StackPanel Orientation="Vertical" Width="Auto" Height="300" VerticalAlignment="Bottom">
+                <StackPanel Orientation="Vertical" Width="Auto" Height="250" VerticalAlignment="Bottom">
 
                     <ListView x:Name="Divisions"   Grid.Column="1"   Width="Auto" Height="200" 
                               BorderBrush="Transparent" BorderThickness="0"
@@ -91,6 +91,10 @@
                     <Button Content="Программа лояльности" Width="140" Height="20" Margin="10" 
                             HorizontalAlignment="Center" Click="LoyalityProgram_Button_Click" 
                             ToolTip="Запуск программы лояльности"  />
+                    <Button Content="Начальное заполнение" Width="140" Height="20" Margin="10" 
+                            HorizontalAlignment="Center" Click="InitialFilling_Button_Click"  
+                            ToolTip="Начальное заполнение" />
+                    <ProgressBar Name="pbCalculationProgress" Height ="18" Width="250"/>
                 </StackPanel>
 
             </StackPanel >

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +18,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using BankSystem.Model;
 using BankSystem.ViewModel;
+using BankSystemLib;
 
 namespace BankSystem.View
 {
@@ -167,6 +170,42 @@ namespace BankSystem.View
         private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e)
         {
                     bank.LoyaltyProg();
+        }
+
+        private void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
+        {
+            pbCalculationProgress.Value = 0;
+            
+
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += worker_DoWork;
+            worker.ProgressChanged += worker_ProgressChanged;
+            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+            worker.RunWorkerAsync(10000);
+            void worker_DoWork(object sender1, DoWorkEventArgs e1)
+            {
+                worker = sender1 as BackgroundWorker;
+
+                InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, worker);
+                InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, worker);
+                InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, worker);
+                //(sender as BackgroundWorker).ReportProgress(progressPercentage);
+
+                System.Threading.Thread.Sleep(1000);
+            }
+
+            void worker_ProgressChanged(object sender3, ProgressChangedEventArgs e3)
+            {
+                pbCalculationProgress.Value = e3.ProgressPercentage;
+   
+            }
+
+            void worker_RunWorkerCompleted(object sender2, RunWorkerCompletedEventArgs e2)
+            {
+                MessageBox.Show("Процесс закончен");
+            }
+          
         }
     }
 }
