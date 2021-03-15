@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using System.ComponentModel;
 
 namespace BankSystemLib
 {
@@ -167,12 +168,21 @@ namespace BankSystemLib
         /// <summary>
         /// Начисляет месячные платежи и проценты по счетам клиентов
         /// </summary>
-        public void MonthlyCharge()
+        public void MonthlyCharge(BackgroundWorker worker)
         {
-            foreach (var department in Departments)
+            worker.ReportProgress(10);
+            for (int i = 0; i < 3; i++)
             {
-                department.CalculateCharges();
+                Departments[i].CalculateCharges();
+                int progressPercentage = Convert.ToInt32((((double)i+1) / 3) * 100.00); //проще можно?
+
+                worker.ReportProgress(progressPercentage);
             }
+
+            //foreach (var department in Departments)
+            //{
+            //    department.CalculateCharges();
+            //}
         }
 
 

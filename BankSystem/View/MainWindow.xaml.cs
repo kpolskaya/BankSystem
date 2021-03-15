@@ -132,7 +132,22 @@ namespace BankSystem.View
         {
             try
             {
-                bank.MonthlyCharge();
+                //Task task = new Task(bank.MonthlyCharge);
+                //task.Start();
+
+                BackgroundWorker worker = new BackgroundWorker();
+                worker.WorkerReportsProgress = true;
+                worker.DoWork += worker_DoWork;
+
+                void worker_DoWork(object o, DoWorkEventArgs e1)
+                {
+                    bank.MonthlyCharge(worker);
+                    //task.Start();
+                }
+                ProgressBar(worker);
+
+                // MessageBox.Show("Закрытие месяца завершено");
+                // bank.MonthlyCharge();
             }
             catch (Exception ex) //при автосохранении возможно исключение
             {
@@ -172,41 +187,44 @@ namespace BankSystem.View
                     bank.LoyaltyProg();
         }
 
+        
+
         private void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
         {
-            //pbCalculationProgress.Value = 0; //в таком виде ни на что не влияет
-            
 
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.DoWork += worker_DoWork;
-            worker.ProgressChanged += worker_ProgressChanged;
-            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
-            worker.RunWorkerAsync(10000);
+            
+            void worker_DoWork(object o, DoWorkEventArgs e1)
+                {
+                    InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, worker);
+                    InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, worker);
+                    InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, worker);
+                    //System.Threading.Thread.Sleep(100);
+                }
+            ProgressBar(worker);
 
-            void worker_DoWork(object sender1, DoWorkEventArgs e1)
+        }
+
+        private void ProgressBar(BackgroundWorker progressBarWorker)
+        {
+            progressBarWorker.ProgressChanged += worker_ProgressChanged;
+            progressBarWorker.RunWorkerCompleted += worker_RunWorkerCompleted;
+            progressBarWorker.RunWorkerAsync(10000);
+
+            void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
             {
-                //worker = sender1 as BackgroundWorker;
-
-                InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, sender1 as BackgroundWorker);
-                InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, sender1 as BackgroundWorker);
-                InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, sender1 as BackgroundWorker);
-                //(sender as BackgroundWorker).ReportProgress(progressPercentage);
-
-                System.Threading.Thread.Sleep(1000);
+                pbCalculationProgress.Value = e.ProgressPercentage;
             }
 
-            void worker_ProgressChanged(object sender3, ProgressChangedEventArgs e3)
+            void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
             {
-                pbCalculationProgress.Value = e3.ProgressPercentage;
-   
-            }
-
-            void worker_RunWorkerCompleted(object sender2, RunWorkerCompletedEventArgs e2)
-            {
+                Divisions.SelectedIndex = 0; // лучше,если будет выбран отдел - сразу видно, что что-то произошло
                 MessageBox.Show("Процесс закончен");
+                pbCalculationProgress.Value = 0;
             }
-          
+
         }
     }
 }

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BankSystem"
         xmlns:viewModel ="clr-namespace:BankSystem.ViewModel"
         mc:Ignorable="d"
-        Title="Банк BANK" Height="660" Width="980" x:Name="mainWindow1">
+        Title="Банк BANK" Height="680" Width="980" x:Name="mainWindow1">
    
     
     <Grid>
@@ -17,13 +17,16 @@
             <RowDefinition Height ="Auto">
 
             </RowDefinition>
+            <RowDefinition Height ="20">
+
+            </RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="0.6*"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="0.25*"></ColumnDefinition>
+            <!--<ColumnDefinition Width="0.25*"></ColumnDefinition>-->
         </Grid.ColumnDefinitions>
      
             <DockPanel Grid.Row="0" Grid.ColumnSpan="5" Height="Auto">
@@ -35,15 +38,20 @@
                     
                     <MenuItem Header="Журнал транзакций" Click="Transactions_Click" >
                     </MenuItem>
+                <MenuItem Header="Начальное заполнение">
+                    <MenuItem Header="Заполнить" Click="InitialFilling_Button_Click" />
                     
-                </Menu>
+                </MenuItem>
+
+
+            </Menu>
             </DockPanel>
        
         
         <GroupBox Header="Структура банка" Grid.Column="0" Grid.Row="1" Width="Auto" Padding="5" >
             <StackPanel Orientation="Vertical" Width="Auto" >
 
-                <StackPanel Orientation="Vertical" Width="Auto" Height="250" VerticalAlignment="Bottom">
+                <StackPanel Orientation="Vertical" Width="Auto" Height="300" VerticalAlignment="Bottom">
 
                     <ListView x:Name="Divisions"   Grid.Column="1"   Width="Auto" Height="200" 
                               BorderBrush="Transparent" BorderThickness="0"
@@ -91,15 +99,19 @@
                     <Button Content="Программа лояльности" Width="140" Height="20" Margin="10" 
                             HorizontalAlignment="Center" Click="LoyalityProgram_Button_Click" 
                             ToolTip="Запуск программы лояльности"  />
-                    <Button Content="Начальное заполнение" Width="140" Height="20" Margin="10" 
-                            HorizontalAlignment="Center" Click="InitialFilling_Button_Click"  
-                            ToolTip="Начальное заполнение" />
-                    <ProgressBar Name="pbCalculationProgress" Height ="18" Width="250"/>
+                 
+                   
                 </StackPanel>
 
             </StackPanel >
 
         </GroupBox >
+        <DockPanel Grid.Row="2" Grid.ColumnSpan="5" Height="Auto">
+            <StatusBar DockPanel.Dock="Bottom" Height="20" Width="Auto" >
+                <TextBox Name="PBtext" Width="700" />
+                <ProgressBar Name="pbCalculationProgress" Height ="10" Width="255" />
+            </StatusBar>
+        </DockPanel>
 
 
         <GridSplitter Grid.Column="1" ShowsPreview="True" Width="3"
@@ -128,8 +140,8 @@
                         <ListView.View >
 
                             <GridView>
-                                <GridViewColumn Width="100">
-                                    <GridViewColumnHeader HorizontalAlignment="Right" Width="100" Content="{Binding Header1}">
+                                <GridViewColumn Width="125">
+                                    <GridViewColumnHeader HorizontalAlignment="Right" Width="125" Content="{Binding Header1}">
                                         
                                     </GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
@@ -139,8 +151,8 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="100">
-                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="100" Content="{Binding Header2}"/>
+                                <GridViewColumn Width="125">
+                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="125" Content="{Binding Header2}"/>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Path=OtherName,  Mode=TwoWay}" HorizontalAlignment="Left"></TextBlock>
@@ -148,8 +160,8 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="100">
-                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="100" Content="{Binding Header3}">
+                                <GridViewColumn Width="125">
+                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="125" Content="{Binding Header3}">
                                         
                                     </GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
@@ -159,8 +171,8 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="130">
-                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="135"  Content="{Binding Header4}">
+                                <GridViewColumn Width="160">
+                                    <GridViewColumnHeader HorizontalAlignment="Left" Width="160"  Content="{Binding Header4}">
                                         
                                     </GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
@@ -184,19 +196,19 @@
                     <StackPanel Orientation="Horizontal" Width="Auto" 
                                 DataContext="{Binding ElementName=Divisions, Path=SelectedItem}" >
 
-                        <TextBox Text="{Binding Header1, Mode=OneWay}" Width="100" TextAlignment="Center"  />
-                        <TextBox Text="{Binding Header2, Mode=OneWay}" Width="100" TextAlignment="Center"  />
-                        <TextBox Text="{Binding Header3, Mode=OneWay}" Width="100" TextAlignment="Center" />
-                        <TextBox Text="{Binding Header4, Mode=OneWay}" Width="135" TextAlignment="Center" />
+                        <TextBox Text="{Binding Header1, Mode=OneWay}" Width="125" TextAlignment="Center"  />
+                        <TextBox Text="{Binding Header2, Mode=OneWay}" Width="125" TextAlignment="Center"  />
+                        <TextBox Text="{Binding Header3, Mode=OneWay}" Width="125" TextAlignment="Center" />
+                        <TextBox Text="{Binding Header4, Mode=OneWay}" Width="160" TextAlignment="Center" />
 
                     </StackPanel>
                     
                     <StackPanel Orientation="Horizontal" Width="Auto" Height="20"  >
               
-                        <TextBox x:Name="NewName"  Width="100" HorizontalAlignment="Left" ></TextBox>
-                        <TextBox x:Name="NewOtherName"  Width="100" HorizontalAlignment="Left"></TextBox>
-                        <TextBox x:Name="NewLegalId"  Width="100"  HorizontalAlignment="Left"></TextBox>
-                        <TextBox x:Name="NewPhone" Width="135" HorizontalAlignment="Right" 
+                        <TextBox x:Name="NewName"  Width="125" HorizontalAlignment="Left" ></TextBox>
+                        <TextBox x:Name="NewOtherName"  Width="125" HorizontalAlignment="Left"></TextBox>
+                        <TextBox x:Name="NewLegalId"  Width="125"  HorizontalAlignment="Left"></TextBox>
+                        <TextBox x:Name="NewPhone" Width="160" HorizontalAlignment="Right" 
                                  ToolTip="Только цифры!"
                                  TextChanged="TextBox_TextChanged"></TextBox>
 
@@ -212,7 +224,7 @@
         <GridSplitter Grid.Column="3" ShowsPreview="True" Width="3"
                       HorizontalAlignment="Center"  VerticalAlignment="Stretch"/>
         
-        <GroupBox Header="Список счетов" Grid.Column="4"  Grid.Row="1" Width="Auto" Padding="5">
+        <!--<GroupBox Header="Список счетов" Grid.Column="4"  Grid.Row="1" Width="Auto" Padding="5">
             
             <StackPanel Orientation="Vertical" Width="Auto" >
 
@@ -248,7 +260,7 @@
                 </StackPanel>
             </StackPanel >
 
-        </GroupBox >
+        </GroupBox >-->
 
     </Grid>
 </Window>

@@ -22,8 +22,8 @@ namespace BankSystemLib
 
         static Entity()
         {
-            Fee = 200;
-            Rate = 0.1m;
+            Fee = 2000;
+            Rate = 0.01m;
         }
 
 

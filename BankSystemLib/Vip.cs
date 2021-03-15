@@ -25,8 +25,8 @@ namespace BankSystemLib
 
         static Vip()
         {
-            Fee = 300;
-            Rate = 0.18m;
+            Fee = 3000;
+            Rate = 0.018m;
         }
 
         public Vip()

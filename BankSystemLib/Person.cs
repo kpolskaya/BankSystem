@@ -22,8 +22,8 @@ namespace BankSystemLib
 
         static Person()
         {
-            Fee = 100;
-            Rate = 0.12m;
+            Fee = 1000;
+            Rate = 0.012m;
         }
 
 
