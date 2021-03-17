@@ -19,6 +19,8 @@ using System.Windows.Threading;
 using BankSystem.Model;
 using BankSystem.ViewModel;
 using BankSystemLib;
+using System.IO;
+
 
 namespace BankSystem.View
 {
@@ -29,13 +31,14 @@ namespace BankSystem.View
     {
         Repository repository;
         BankVM bank;
-
+        static object locker = new object();
         public MainWindow()
         {
             InitializeComponent();
             try
             {
                 repository = new Repository();
+
             }
             catch (Exception ex)
             {
@@ -97,14 +100,14 @@ namespace BankSystem.View
                 MessageBox.Show("Ошибка чтения файла данных. " + ex.Message);
                 return;
             }
-            
+
             bank = new BankVM(repository.bank);
             DataContext = bank;
         }
 
         private void New_Client_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (Divisions.SelectedItem!=null 
+            if (Divisions.SelectedItem != null
                 && !String.IsNullOrEmpty(NewName.Text)
                 && !String.IsNullOrEmpty(NewOtherName.Text)
                 && !String.IsNullOrEmpty(NewLegalId.Text)
@@ -119,40 +122,38 @@ namespace BankSystem.View
 
                     MessageBox.Show(ex.Message);
                 }
-                
+
             }
             else
             {
                 MessageBox.Show("Выберите отдел и заполните все данные клиента");
                 return;
-            } 
+            }
         }
 
-        private void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e)
+        private async void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e)
         {
+
             try
             {
-                //Task task = new Task(bank.MonthlyCharge);
-                //task.Start();
-
-                BackgroundWorker worker = new BackgroundWorker();
-                worker.WorkerReportsProgress = true;
-                worker.DoWork += worker_DoWork;
-
-                void worker_DoWork(object o, DoWorkEventArgs e1)
-                {
-                    bank.MonthlyCharge(worker);
-                    //task.Start();
-                }
-                ProgressBar(worker);
-
-                // MessageBox.Show("Закрытие месяца завершено");
-                // bank.MonthlyCharge();
+                await DoMonthlyCharge();
+              
             }
             catch (Exception ex) //при автосохранении возможно исключение
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+
+        private async Task DoMonthlyCharge()
+        {
+
+            var progress = new Progress<int>(ReportProgress);
+            await Task.Factory.StartNew(() => bank.MonthlyCharge(progress));
+
+            MessageBox.Show("Закрытие месяца выполнено");
+            pbCalculationProgress.Value = 0;
         }
 
         /// <summary>
@@ -178,53 +179,75 @@ namespace BankSystem.View
                 ((TextBox)sender).Text = s;
 
                 ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
-        
+
             }
         }
 
         private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e)
         {
-                    bank.LoyaltyProg();
+            bank.LoyaltyProg();
         }
 
-        
+       
+        //private async void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    MonthlyCharge.IsEnabled = false;
+        //    LoyalityProgram.IsEnabled = false;
+        //    await DoFilling();
+           
+        //}
 
         private void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
         {
-
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.DoWork += worker_DoWork;
-            
-            void worker_DoWork(object o, DoWorkEventArgs e1)
-                {
-                    InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, worker);
-                    InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, worker);
-                    InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, worker);
-                    //System.Threading.Thread.Sleep(100);
-                }
-            ProgressBar(worker);
+            MonthlyCharge.IsEnabled = false;
+            LoyalityProgram.IsEnabled = false;
+            DoFilling();
 
         }
-
-        private void ProgressBar(BackgroundWorker progressBarWorker)
+        private void DoFilling()
         {
-            progressBarWorker.ProgressChanged += worker_ProgressChanged;
-            progressBarWorker.RunWorkerCompleted += worker_RunWorkerCompleted;
-            progressBarWorker.RunWorkerAsync(10000);
-
-            void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+            var progress = new Progress<int>(ReportProgress);
+            Task[] tasks = new Task[3];
+            tasks[0] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, progress));
+            tasks[1] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, progress));
+            tasks[2] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, progress));
+            Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
-                pbCalculationProgress.Value = e.ProgressPercentage;
-            }
+                MonthlyCharge.IsEnabled = true;
+                LoyalityProgram.IsEnabled = true;
+                MessageBox.Show("Начальное заполнение закончено");
+            }));
 
-            void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-            {
-                Divisions.SelectedIndex = 0; // лучше,если будет выбран отдел - сразу видно, что что-то произошло
-                MessageBox.Show("Процесс закончен");
-                pbCalculationProgress.Value = 0;
-            }
+            pbCalculationProgress.Value = 0;
+        }
+
+        //private async Task DoFilling()
+        //{
+        //    var progress = new Progress<int>(ReportProgress);
+
+        //    await Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, progress));
+        //    await Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, progress));
+        //    await Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, progress));
+        //    this.Dispatcher.Invoke(() =>
+        //    {
+        //      MonthlyCharge.IsEnabled = true;
+        //      LoyalityProgram.IsEnabled = true;
+        //    });
+
+        //  MessageBox.Show("Начальное заполнение закончено");
+        //    pbCalculationProgress.Value = 0;
+        //}
+
+        private void ReportProgress(int value)
+        {
+            pbCalculationProgress.Value = ConvertToPercentage(value, 100);
 
         }
+
+        private double ConvertToPercentage(int value, int count)
+        {
+            return (double)value * 100 / count;
+        }
+
     }
 }

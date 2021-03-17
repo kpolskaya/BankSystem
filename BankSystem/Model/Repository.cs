@@ -25,10 +25,10 @@ namespace BankSystem.Model
         /// </summary>
         public void SerializeJsonBank()
         {
-            var settings = new JsonSerializerSettings 
-            { 
-                  TypeNameHandling = TypeNameHandling.All,
-                  Formatting = Formatting.Indented
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                Formatting = Formatting.Indented
             };
 
             var text = JsonConvert.SerializeObject(bank, settings);
@@ -51,12 +51,12 @@ namespace BankSystem.Model
         {
             string text;
             text = File.ReadAllText("Bank.json");
-            
+
             JsonSerializerSettings jss = new JsonSerializerSettings();
             jss.TypeNameHandling = TypeNameHandling.All;
             this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
-            
-            bank.Autosave = SerializeJsonBank;
+
+            //bank.Autosave = SerializeJsonBank;
         }
     }
 }

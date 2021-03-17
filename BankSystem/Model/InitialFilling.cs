@@ -17,13 +17,12 @@ namespace BankSystem.Model
             return Enum.GetValues(typeof(T)).Cast<T>();
         }
 
-        public static void InitialFillingExtension<TCustomer>(this Department<TCustomer> d, int q, BackgroundWorker worker) where TCustomer : Customer, new()
+        public static void InitialFillingExtension<TCustomer>(this Department<TCustomer> d, int q, IProgress<int> progress) where TCustomer : Customer, new()
         {
            
            
                 for (int i = 0; i < q; i++)
                 {
-                    
                     string Name =$"N{d.Id}{i}";
                     string OtherName = $"NN{d.Id}{i}";
                     string LegalId = RandomString(8);
@@ -31,11 +30,8 @@ namespace BankSystem.Model
                     string Phone = RandomString(12);
                     Thread.Sleep(10);
                     d.CreateCustomer(Name, OtherName, LegalId, Phone);
-                       
-                    
-                    int progressPercentage = Convert.ToInt32(Decimal.Round(i / q) * 30); //проще можно?
+                    progress.Report(i);
 
-                    worker.ReportProgress(progressPercentage);
                 }
 
             for (int i = 0; i < q; i++)
@@ -43,9 +39,7 @@ namespace BankSystem.Model
                 foreach (var AccountType in GetEnumValues<AccountType>())
                 {
                     d.OpenAccount(AccountType, d.Customers[i]);
-                    int progressPercentage = Convert.ToInt32(((double)i / q) * 60); //проще можно?
-
-                    worker.ReportProgress(progressPercentage);
+                    progress.Report(i);
 
                 }
             }
@@ -55,11 +49,7 @@ namespace BankSystem.Model
                 Random RNG = new Random();
                 Thread.Sleep(15);
                 d.Put(d.Accounts[i].Bic, RNG.Next(0, 10000)*100);
-                
-                int progressPercentage = Convert.ToInt32(((double)i / (3*q)) * 100); //проще можно?
-
-                worker.ReportProgress(progressPercentage);
-
+                progress.Report(i/3);
             }
 
         }

@@ -140,9 +140,9 @@ namespace BankSystemLib
             }
             this.TransactionHistory.Add(t);
 
-            Autosave?.Invoke();
+            //Autosave?.Invoke();
         }
-
+        //
         /// <summary>
         /// Вызов кода при изменении статей баланса
         /// </summary>
@@ -168,21 +168,16 @@ namespace BankSystemLib
         /// <summary>
         /// Начисляет месячные платежи и проценты по счетам клиентов
         /// </summary>
-        public void MonthlyCharge(BackgroundWorker worker)
+        public void MonthlyCharge(IProgress<int> progress)
         {
-            worker.ReportProgress(10);
+          
             for (int i = 0; i < 3; i++)
             {
                 Departments[i].CalculateCharges();
-                int progressPercentage = Convert.ToInt32((((double)i+1) / 3) * 100.00); //проще можно?
-
-                worker.ReportProgress(progressPercentage);
+                progress.Report(34+i*33);
+               
             }
-
-            //foreach (var department in Departments)
-            //{
-            //    department.CalculateCharges();
-            //}
+           
         }
 
 

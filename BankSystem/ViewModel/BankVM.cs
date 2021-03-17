@@ -65,9 +65,9 @@ namespace BankSystem.ViewModel
         /// <summary>
         ///  Начисляет ежемесячные платежи и проценты по клиентским счетам
         /// </summary>
-        public void MonthlyCharge(BackgroundWorker worker)
+        public void MonthlyCharge(IProgress<int> progress)
         {
-            bank.MonthlyCharge(worker);
+            bank.MonthlyCharge(progress);
             OnPropertyChanged("ClientsFunds");
             OnPropertyChanged("Capital");
         }
