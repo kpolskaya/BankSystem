@@ -32,6 +32,13 @@ namespace BankSystem.View
         Repository repository;
         BankVM bank;
         static object locker = new object();
+
+        public static int qEntity = 2;
+        public static int qPerson = 2;
+        public static int qVip = 1;
+        public static int qTotal = qEntity + qPerson + qVip;
+        public static int pbProgress;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -206,11 +213,12 @@ namespace BankSystem.View
         }
         private void DoFilling()
         {
+            pbCalculationProgress.Maximum = qTotal;
             var progress = new Progress<int>(ReportProgress);
             Task[] tasks = new Task[3];
-            tasks[0] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, progress));
-            tasks[1] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, progress));
-            tasks[2] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, progress));
+            tasks[0] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, qEntity, progress, qTotal));
+            tasks[1] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, qPerson, progress, qTotal));
+            tasks[2] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, qVip, progress, qTotal));
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 MonthlyCharge.IsEnabled = true;
@@ -218,7 +226,7 @@ namespace BankSystem.View
                 MessageBox.Show("Начальное заполнение закончено");
             }));
 
-            pbCalculationProgress.Value = 0;
+            //pbCalculationProgress.Value = 0;
         }
 
         //private async Task DoFilling()
@@ -240,8 +248,9 @@ namespace BankSystem.View
 
         private void ReportProgress(int value)
         {
-            pbCalculationProgress.Value = ConvertToPercentage(value, 100);
-
+            pbProgress = value++;
+            // pbCalculationProgress.Value = ConvertToPercentage(value, qTotal);
+            pbCalculationProgress.Value = pbProgress;
         }
 
         private double ConvertToPercentage(int value, int count)

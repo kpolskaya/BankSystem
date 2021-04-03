@@ -219,13 +219,22 @@ namespace BankSystemLib
         /// <returns>Сумму остатков по всем клиентским счетам</returns>
         public decimal ClientsFunds()
         {
-            decimal total = 0;
-            foreach (var item in this.accounts)
+            try
             {
-                total += (decimal)item;
+                decimal total = 0;
+                foreach (var item in this.accounts)
+                {
+                    total += (decimal)item;
 
+                }
+                return total;
             }
-            return total;
+            catch (System.InvalidOperationException)
+            {
+
+                return 0;
+            }
+           
         }
 
 
