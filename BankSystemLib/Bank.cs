@@ -168,13 +168,13 @@ namespace BankSystemLib
         /// <summary>
         /// Начисляет месячные платежи и проценты по счетам клиентов
         /// </summary>
-        public void MonthlyCharge(IProgress<int> progress)
+        public void MonthlyCharge(/*IProgress<int> progress*/)
         {
           
             for (int i = 0; i < 3; i++)
             {
                 Departments[i].CalculateCharges();
-                progress.Report(34+i*33);
+                //progress.Report(34+i*33);
                
             }
            

@@ -189,7 +189,7 @@
                 </StackPanel>
                 
                 <StackPanel Orientation="Vertical" Width="Auto">
-                    <Button Content="Добавить клиента" Width="120" 
+                    <Button Name="NewClient"  Content="Добавить клиента" Width="120" 
                             Height="20" Margin="5" HorizontalAlignment="Left" 
                             Click="New_Client_Button_Click"  />
                     

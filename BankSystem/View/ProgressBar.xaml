@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BankSystem.View"
         mc:Ignorable="d"
-        Title="Начальное заполнение базы клиентов банка" Height="100" Width="400">
+        Title="Восстановление базы клиентов банка" Height="100" Width="400">
     <Grid Margin="20">
-        <ProgressBar  Minimum="0" Maximum="100"  Name="pbStatus" />
+        <ProgressBar  Minimum="0" Maximum="100"  Name="pbStatus"  />
     </Grid>
 </Window>

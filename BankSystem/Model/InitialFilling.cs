@@ -17,7 +17,7 @@ namespace BankSystem.Model
             return Enum.GetValues(typeof(T)).Cast<T>();
         }
 
-        public static void InitialFillingExtension<TCustomer>(this Department<TCustomer> d, int q, IProgress<int> progress) where TCustomer : Customer, new()
+        public static void InitialFillingExtension<TCustomer>(this Department<TCustomer> d, int q/*, IProgress<int> progress*/) where TCustomer : Customer, new()
         {
            
            
@@ -25,12 +25,12 @@ namespace BankSystem.Model
                 {
                     string Name =$"N{d.Id}{i}";
                     string OtherName = $"NN{d.Id}{i}";
-                    string LegalId = RandomString(8);
+                    string LegalId = RandomString(8/*, d.Id, i*/);
                     Thread.Sleep(10);
-                    string Phone = RandomString(12);
+                    string Phone = RandomString(12/*, d.Id, i*/);
                     Thread.Sleep(10);
                     d.CreateCustomer(Name, OtherName, LegalId, Phone);
-                    progress.Report(i);
+                    //progress.Report(i);
 
                 }
 
@@ -39,7 +39,7 @@ namespace BankSystem.Model
                 foreach (var AccountType in GetEnumValues<AccountType>())
                 {
                     d.OpenAccount(AccountType, d.Customers[i]);
-                    progress.Report(i);
+                    //progress.Report(i);
 
                 }
             }
@@ -49,7 +49,7 @@ namespace BankSystem.Model
                 Random RNG = new Random();
                 Thread.Sleep(15);
                 d.Put(d.Accounts[i].Bic, RNG.Next(0, 10000)*100);
-                progress.Report(i/3);
+               //progress.Report(i/3);
             }
 
         }
@@ -66,6 +66,14 @@ namespace BankSystem.Model
             return rString;
 
         }
+
+        //static string RandomString(int l, string id, int i)
+        //{
+        //    int length = l;
+        //    string r = new string('0',l-3);
+        //    var rString = $"{id}{r}{i}";
+        //    return rString;
+        //}
 
     }
 }

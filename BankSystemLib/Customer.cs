@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace BankSystemLib
 {
@@ -98,11 +99,11 @@ namespace BankSystemLib
         /// </summary>
         /// <param name="account">Счет операции</param>
         /// <param name="message">Сообщение</param>
-        public virtual void SendMessage(Account account, string message)
+        public async virtual void SendMessage(Account account, string message)
         {
-            System.Media.SystemSounds.Asterisk.Play();
-            Debug.WriteLine($"SMS to: {Phone} subj: Движение по счету {account.Bic} " +
-                            $"message: {message}");
+            await Task.Run(() => System.Media.SystemSounds.Asterisk.Play());
+            await Task.Run(() => Debug.WriteLine($"SMS to: {Phone} subj: Движение по счету {account.Bic} " +
+                            $"message: {message}"));
         }
 
     }

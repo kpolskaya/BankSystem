@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using BankSystem.Model;
 using BankSystem.ViewModel;
+using BankSystem.View;
 using BankSystemLib;
 using System.IO;
 
@@ -32,26 +33,30 @@ namespace BankSystem.View
         Repository repository;
         BankVM bank;
         static object locker = new object();
-
-        public static int qEntity = 2;
-        public static int qPerson = 2;
-        public static int qVip = 1;
-        public static int qTotal = qEntity + qPerson + qVip;
-        public static int pbProgress;
+        public static bool FlagInitialFilling = false;
+        public static int qEntity = 1000;
+        public static int qPerson = 1000;
+        public static int qVip = 1000;
+       // public static int qTotal = qEntity + qPerson + qVip;
+       // public static int pbProgress;
 
         public MainWindow()
         {
             InitializeComponent();
-            try
-            {
-                repository = new Repository();
+            //try
+            //{
+            //    repository = new Repository();
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Работа программы невозможна. При чтении данных из файла возникло исключение: {ex.Message}"); //нужно что-то с этим сделать
-                Application.Current.Shutdown();
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Работа программы невозможна. При чтении данных из файла возникло исключение: {ex.Message}"); //нужно что-то с этим сделать
+            //    Application.Current.Shutdown();
+            //}
+            
+            repository = new Repository();
+            //подписки на события, которые генерит репозиторий...
+
 
             bank = new BankVM(repository.bank);
             DataContext = bank;
@@ -67,6 +72,7 @@ namespace BankSystem.View
             if (Customers.SelectedItem != null)
             {
                 CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem);
+                newWindow.Owner = this;
                 await Task.Delay(100);
                 newWindow.ShowDialog();
                 bank.ClearSelectedCustomer();
@@ -79,11 +85,17 @@ namespace BankSystem.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Serialize_Button_Click(object sender, RoutedEventArgs e)
+        private async void Serialize_Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                repository.SerializeJsonBank();
+                pbCalculationProgress.IsIndeterminate = true;
+                this.IsHitTestVisible = false;
+                await Task.Run(() => repository.SerializeJsonBank());
+                pbCalculationProgress.IsIndeterminate = false;
+                pbCalculationProgress.Value = 0;
+                MessageBox.Show("Файл сохранен");
+                this.IsHitTestVisible = true;
             }
             catch (Exception ex)
             {
@@ -96,11 +108,20 @@ namespace BankSystem.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Deserialize_Button_Click(object sender, RoutedEventArgs e)
+        private async void Deserialize_Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                repository.DeserializeJsonBank();
+                pbCalculationProgress.IsIndeterminate = true;
+                this.IsHitTestVisible = false;
+                //PbOpen();
+
+
+                await Task.Run(() => repository.DeserializeJsonBank());
+                pbCalculationProgress.IsIndeterminate = false;
+                pbCalculationProgress.Value = 0;
+                MessageBox.Show("Файл прочитан");
+                this.IsHitTestVisible = true;
             }
             catch (Exception ex)
             {
@@ -112,6 +133,7 @@ namespace BankSystem.View
             DataContext = bank;
         }
 
+        
         private void New_Client_Button_Click(object sender, RoutedEventArgs e)
         {
             if (Divisions.SelectedItem != null
@@ -143,8 +165,9 @@ namespace BankSystem.View
 
             try
             {
+                pbCalculationProgress.IsIndeterminate = true;
                 await DoMonthlyCharge();
-              
+                
             }
             catch (Exception ex) //при автосохранении возможно исключение
             {
@@ -156,11 +179,12 @@ namespace BankSystem.View
         private async Task DoMonthlyCharge()
         {
 
-            var progress = new Progress<int>(ReportProgress);
-            await Task.Factory.StartNew(() => bank.MonthlyCharge(progress));
-
-            MessageBox.Show("Закрытие месяца выполнено");
+            //var progress = new Progress<int>(ReportProgress);
+            await Task.Factory.StartNew(() => bank.MonthlyCharge(/*progress*/));
+            pbCalculationProgress.IsIndeterminate = false;
             pbCalculationProgress.Value = 0;
+            MessageBox.Show("Закрытие месяца выполнено");
+            
         }
 
         /// <summary>
@@ -190,9 +214,12 @@ namespace BankSystem.View
             }
         }
 
-        private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e)
+        private async void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e)
         {
-            bank.LoyaltyProg();
+            pbCalculationProgress.IsIndeterminate = true;
+            await Task.Run(()=>bank.LoyaltyProg());
+            pbCalculationProgress.IsIndeterminate = false;
+            MessageBox.Show("Призы по программе лояльности вручены");
         }
 
        
@@ -206,24 +233,27 @@ namespace BankSystem.View
 
         private void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
         {
-            MonthlyCharge.IsEnabled = false;
-            LoyalityProgram.IsEnabled = false;
+            this.IsHitTestVisible = false;
+            FlagInitialFilling = true;
+            pbCalculationProgress.IsIndeterminate = true;
             DoFilling();
 
         }
         private void DoFilling()
         {
-            pbCalculationProgress.Maximum = qTotal;
-            var progress = new Progress<int>(ReportProgress);
+           
+            //var progress = new Progress<int>(ReportProgress);
             Task[] tasks = new Task[3];
-            tasks[0] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, qEntity, progress, qTotal));
-            tasks[1] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, qPerson, progress, qTotal));
-            tasks[2] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, qVip, progress, qTotal));
+            tasks[0] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, qEntity/*, progress*/));
+            tasks[1] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, qPerson/*, progress*/));
+            tasks[2] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, qVip/*, progress*/));
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
-                MonthlyCharge.IsEnabled = true;
-                LoyalityProgram.IsEnabled = true;
+                pbCalculationProgress.IsIndeterminate = false;
+                this.IsHitTestVisible = true;
+                FlagInitialFilling = false;
                 MessageBox.Show("Начальное заполнение закончено");
+                pbCalculationProgress.Value = 0;
             }));
 
             //pbCalculationProgress.Value = 0;
@@ -246,17 +276,17 @@ namespace BankSystem.View
         //    pbCalculationProgress.Value = 0;
         //}
 
-        private void ReportProgress(int value)
-        {
-            pbProgress = value++;
-            // pbCalculationProgress.Value = ConvertToPercentage(value, qTotal);
-            pbCalculationProgress.Value = pbProgress;
-        }
+        //private void ReportProgress(int value)
+        //{
+           
+        //     pbCalculationProgress.Value = ConvertToPercentage(value, 100);
+            
+        //}
 
-        private double ConvertToPercentage(int value, int count)
-        {
-            return (double)value * 100 / count;
-        }
+        //private double ConvertToPercentage(int value, int count)
+        //{
+        //    return (double)value * 100 / count;
+        //}
 
     }
 }

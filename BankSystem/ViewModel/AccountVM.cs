@@ -30,7 +30,8 @@ namespace BankSystem.ViewModel
         public AccountVM(Account Account)
         {
             this.account = Account;
-            this.account.Movement += AccountMovement;
+            if (View.MainWindow.FlagInitialFilling == false)
+            this.account.Movement += AccountMovement; 
         }
 
         private void AccountMovement(Account sender, string message)
