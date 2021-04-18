@@ -99,10 +99,10 @@ namespace BankSystemLib
         /// </summary>
         /// <param name="account">Счет операции</param>
         /// <param name="message">Сообщение</param>
-        public async virtual void SendMessage(Account account, string message)
+        public  virtual void SendMessage(Account account, string message)
         {
-            await Task.Run(() => System.Media.SystemSounds.Asterisk.Play());
-            await Task.Run(() => Debug.WriteLine($"SMS to: {Phone} subj: Движение по счету {account.Bic} " +
+            Task.Run(() => System.Media.SystemSounds.Asterisk.Play());
+            Task.Run(() => Debug.WriteLine($"SMS to: {Phone} subj: Движение по счету {account.Bic} " +
                             $"message: {message}"));
         }
 
