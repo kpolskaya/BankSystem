@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using System.ComponentModel;
+using System.Collections.Concurrent;
 
 namespace BankSystemLib
 {
@@ -30,17 +31,26 @@ namespace BankSystemLib
         public ObservableCollection<Division> Departments { get; private set; }
         [DataMember]
         public string Name { get; private set; }
-        [DataMember]
-        public ObservableCollection<Transaction> TransactionHistory { get; private set; }
 
+        private ConcurrentBag<Transaction> transactionHistory; //потокобезопасная коллекция с историей транзакций
+
+        
+        //public ObservableCollection<Transaction> TransactionHistory //TODO не нужен здесь ObservableCollection 
+        //{ 
+        //    get { return new ObservableCollection<Transaction>((transactionHistory)); } 
+        //} // создать приватную concurrent collection и перейти в свойство через  ICollection
+
+        public List<Transaction> TransactionHistory 
+        {
+            get { return new List<Transaction>(transactionHistory); }  
+        }
 
         [JsonConstructor]
-        public Bank(string Name, ObservableCollection<Division> Departments, ObservableCollection<Transaction> TransactionHistory,
-                    decimal Cash, decimal Profit)
+        public Bank(string Name, ObservableCollection<Division> Departments, decimal Cash, decimal Profit)
         {
             this.Name = Name;
             this.Departments = Departments;
-            this.TransactionHistory = TransactionHistory;
+            this.transactionHistory = new ConcurrentBag<Transaction>();
             this.Cash = Cash;
             this.Profit = Profit;
             foreach (var item in this.Departments) //подписка на эвенты каждого департамента
@@ -48,7 +58,6 @@ namespace BankSystemLib
                 item.TransactionRaised += ProcessPayment;
             }
             RefreshSubscriptions();
-
         }
 
         public Bank(string Name)
@@ -68,8 +77,7 @@ namespace BankSystemLib
                 item.TransactionRaised += ProcessPayment;
             }
 
-            this.TransactionHistory = new ObservableCollection<Transaction>();
-
+            this.transactionHistory = new ConcurrentBag<Transaction>();
         }
 
         /// <summary>
@@ -107,7 +115,6 @@ namespace BankSystemLib
                 {
                     Profit -= t.Sum;
                     OnBalanceChanged("Profit");
-
                 }
 
                 if (t.SenderBic == "00") // внесение денег клиентом
@@ -121,14 +128,14 @@ namespace BankSystemLib
             else if (t.Status != TransactionStatus.Failed && t.Type == TransactionType.Transfer)     //если транзакция между счетами и подтверждена департаментом
             {
                 Division receiver = GetDepartmentByBic(t.BeneficiaryBic);
-                if (receiver != null && receiver.TryCredit(t.BeneficiaryBic, t.Sum, t.Detailes))  // если получилось зачислить деньги получателю
+                if (receiver != null && receiver.TryCredit(t.BeneficiaryBic, t.Sum, t.Detailes))     // если получилось зачислить деньги получателю
                     t.Status = TransactionStatus.Done;
-                else                                                                                //если не получилось
+                else                                                                                 //если не получилось
                 {
                     t.Status = TransactionStatus.Failed;
                     try
                     {
-                        sender.Refund(t);                                                            // то нужно вернуть деньги отправителю
+                        sender.Refund(t);                                                           // то нужно вернуть деньги отправителю
                     }
                     catch (Exception)
                     {
@@ -138,7 +145,7 @@ namespace BankSystemLib
                     }
                 }
             }
-            this.TransactionHistory.Add(t);
+            this.transactionHistory.Add(t);
 
             //Autosave?.Invoke();
         }
@@ -168,18 +175,14 @@ namespace BankSystemLib
         /// <summary>
         /// Начисляет месячные платежи и проценты по счетам клиентов
         /// </summary>
-        public void MonthlyCharge(/*IProgress<int> progress*/)
+        public void MonthlyCharge()
         {
           
             for (int i = 0; i < 3; i++)
             {
                 Departments[i].CalculateCharges();
-                //progress.Report(34+i*33);
-               
             }
-           
         }
-
 
         /// <summary>
         /// Сумма денег на клиентских счетах (обязательства банка перед клиентами)

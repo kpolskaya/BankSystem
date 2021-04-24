@@ -63,7 +63,7 @@ namespace BankSystemLib
         /// <param name="phone">Телефон</param>
         public override void CreateCustomer(string name, string otherName, string legalId, string phone)
         {
-            if (Customers.Any(p => p.LegalId == legalId)) //оптимизировать!
+            if (Customers.Any(p => p.LegalId == legalId)) // возможно нужно оптимизировать
             {
                 throw new LegalIdDuplicateExeption();
             }

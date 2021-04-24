@@ -42,10 +42,12 @@ namespace BankSystem.Model
             }
         }
 
-        internal static void SendInvitation(string phone)
+        internal static void SendInvitation(string phone) //TODO Переделать с учетом спамбота
         {
+            //--Debug--
             System.Media.SystemSounds.Asterisk.Play();
             Debug.WriteLine($"SMS to: {phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
+            //--Debug--
         }
 
         public static void LoyaltyProgramExtension<TCustomer>(this Department<TCustomer> d) where TCustomer : Customer, new()

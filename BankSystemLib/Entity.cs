@@ -26,12 +26,10 @@ namespace BankSystemLib
             Rate = 0.01m;
         }
 
-
         public Entity()
         {
 
         }
-
 
         public Entity(string Name, string FormOfOwnership, string LegalId, string Phone)
             : base(Name, FormOfOwnership, LegalId, Phone)

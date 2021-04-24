@@ -34,9 +34,9 @@ namespace BankSystem.View
         BankVM bank;
         static object locker = new object();
         public static bool FlagInitialFilling = false;
-        public static int qEntity = 1000;
-        public static int qPerson = 1000;
-        public static int qVip = 1000;
+        public static int qEntity = 10000;
+        public static int qPerson = 10000;
+        public static int qVip = 10000;
        // public static int qTotal = qEntity + qPerson + qVip;
        // public static int pbProgress;
 

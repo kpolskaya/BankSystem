@@ -159,7 +159,8 @@ namespace BankSystemLib
         /// <param name="message">Сообщение владельцу счета</param>
         protected virtual void OnMovement(string message)
         {
-            Movement?.Invoke(this, message);
+            var m = message;
+            Movement?.Invoke(this, m);
         }
 
     }

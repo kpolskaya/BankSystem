@@ -101,9 +101,10 @@ namespace BankSystemLib
         /// <param name="message">Сообщение</param>
         public  virtual void SendMessage(Account account, string message)
         {
-            Task.Run(() => System.Media.SystemSounds.Asterisk.Play());
-            Task.Run(() => Debug.WriteLine($"SMS to: {Phone} subj: Движение по счету {account.Bic} " +
-                            $"message: {message}"));
+            string smsText = $"SMS to: {Phone} subj: Движение по счету {account.Bic} " +
+                      $"message: {message}";
+            
+            SpamBot.MessageQueue.Enqueue(smsText);
         }
 
     }

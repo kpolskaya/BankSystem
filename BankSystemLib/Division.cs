@@ -200,8 +200,8 @@ namespace BankSystemLib
         /// <param name="t">параметры транзакции</param>
         protected virtual void OnTransactionRaised(Transaction t)
         {
-
-            TransactionRaised?.Invoke(this, t);
+            var transaction = t;
+            TransactionRaised?.Invoke(this, transaction);
         }
 
         /// <summary>
