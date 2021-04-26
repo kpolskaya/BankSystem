@@ -32,14 +32,14 @@
             <DockPanel Grid.Row="0" Grid.ColumnSpan="5" Height="Auto">
                 <Menu DockPanel.Dock="Left">
                     <MenuItem Header="Файл">
-                        <MenuItem Header="Открыть" Click="Deserialize_Button_Click" />
-                        <MenuItem Header="Сохранить..." Click ="Serialize_Button_Click" />
+                        <MenuItem x:Name="OpenFile" Header="Открыть" Click="Deserialize_Button_Click" />
+                        <MenuItem x:Name="SaveFile" Header="Сохранить..." Click ="Serialize_Button_Click" />
                     </MenuItem>
                     
                     <MenuItem Header="Журнал транзакций" Click="Transactions_Click" >
                     </MenuItem>
                 <MenuItem Header="Начальное заполнение">
-                    <MenuItem Header="Заполнить" Click="InitialFilling_Button_Click" />
+                    <MenuItem x:Name="InitialFilling" Header="Заполнить" Click="InitialFilling_Button_Click" />
                     
                 </MenuItem>
 

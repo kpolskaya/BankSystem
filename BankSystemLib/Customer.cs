@@ -55,7 +55,9 @@ namespace BankSystemLib
 
         public Customer()
         {
-            this.Id = NextId().ToString("00000000"); 
+            //this.Id = NextId().ToString("00000000");
+            this.Id = Guid.NewGuid().ToString().Substring(0, 8);
+
         }
 
         public Customer (string Name, string OtherName, string LegalId, string Phone)
@@ -64,7 +66,8 @@ namespace BankSystemLib
             this.OtherName = OtherName;
             this.LegalId = LegalId;
             this.Phone = Phone;
-            this.Id = NextId().ToString("00000000");
+            //this.Id = NextId().ToString("00000000");
+            this.Id = Guid.NewGuid().ToString().Substring(0, 8);
         }
 
         /// <summary>
@@ -81,17 +84,23 @@ namespace BankSystemLib
             this.OtherName = OtherName;
             this.LegalId = LegalId;
             this.Phone = Phone;
-            try
-            {
-                uint id = uint.Parse(Id);
-                this.Id = id.ToString("00000000");
-                SetLastId(id);
-            }
-            catch (Exception)
-            {
-
+            
+            if (Id.Length != 8)
                 throw new CustomerIdFormatException();
-            }
+            else
+                this.Id = Id;
+
+            //try
+            //{
+            //    uint id = uint.Parse(Id);
+            //    this.Id = id.ToString("00000000");
+            //    SetLastId(id);
+            //}
+            //catch (Exception)
+            //{
+
+            //    throw new CustomerIdFormatException();
+            //}
         }
 
         /// <summary>

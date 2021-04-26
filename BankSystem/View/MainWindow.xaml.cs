@@ -32,13 +32,10 @@ namespace BankSystem.View
     {
         Repository repository;
         BankVM bank;
-        static object locker = new object();
-        public static bool FlagInitialFilling = false;
-        public static int qEntity = 10000;
-        public static int qPerson = 10000;
-        public static int qVip = 10000;
-       // public static int qTotal = qEntity + qPerson + qVip;
-       // public static int pbProgress;
+        public static bool FlagInputRestriction = false;
+        static int qEntity = 10000;
+        static int qPerson = 10000;
+        static int qVip = 10000;
 
         public MainWindow()
         {
@@ -67,13 +64,15 @@ namespace BankSystem.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private  void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e) 
         {
-            if (Customers.SelectedItem != null)
+            if (Customers.SelectedItem != null & FlagInputRestriction != true)
             {
-                CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem);
-                newWindow.Owner = this;
-                await Task.Delay(100);
+                CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem)
+                {
+                    Owner = this
+                };
+                Thread.Sleep(100);// это зачем-то нужно
                 newWindow.ShowDialog();
                 bank.ClearSelectedCustomer();
             }
@@ -90,12 +89,12 @@ namespace BankSystem.View
             try
             {
                 pbCalculationProgress.IsIndeterminate = true;
-                this.IsHitTestVisible = false;
+                InputRestriction();
                 await Task.Run(() => repository.SerializeJsonBank());
                 pbCalculationProgress.IsIndeterminate = false;
                 pbCalculationProgress.Value = 0;
                 MessageBox.Show("Файл сохранен");
-                this.IsHitTestVisible = true;
+                EndInputRestriction();
             }
             catch (Exception ex)
             {
@@ -113,15 +112,12 @@ namespace BankSystem.View
             try
             {
                 pbCalculationProgress.IsIndeterminate = true;
-                this.IsHitTestVisible = false;
-                //PbOpen();
-
-
+                InputRestriction();
                 await Task.Run(() => repository.DeserializeJsonBank());
                 pbCalculationProgress.IsIndeterminate = false;
                 pbCalculationProgress.Value = 0;
                 MessageBox.Show("Файл прочитан");
-                this.IsHitTestVisible = true;
+                EndInputRestriction();
             }
             catch (Exception ex)
             {
@@ -160,39 +156,47 @@ namespace BankSystem.View
             }
         }
 
-        private async void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e)
+        private async void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e) 
         {
 
-            try
-            {
-                pbCalculationProgress.IsIndeterminate = true;
-                await DoMonthlyCharge();
-                
-            }
-            catch (Exception ex) //при автосохранении возможно исключение
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
+            pbCalculationProgress.IsIndeterminate = true;
 
-
-        private async Task DoMonthlyCharge()
-        {
-
-            //var progress = new Progress<int>(ReportProgress);
-            await Task.Factory.StartNew(() => bank.MonthlyCharge(/*progress*/));
+            await Task.Run(() => bank.MonthlyCharge()); // Нужно сделать закрытие месяца awaitable!
             pbCalculationProgress.IsIndeterminate = false;
             pbCalculationProgress.Value = 0;
             MessageBox.Show("Закрытие месяца выполнено");
-            
+
+
+            //try
+            //{
+            //    pbCalculationProgress.IsIndeterminate = true;
+            //    await DoMonthlyCharge();
+
+            //}
+            //catch (Exception ex) //при автосохранении возможно исключение
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
+
+
+        //private async Task DoMonthlyCharge()
+        //{
+        //    pbCalculationProgress.IsIndeterminate = true;
+
+        //    await Task.Run(() => bank.MonthlyCharge()); //Можно же просто Task.Run - тут только один процесс вроде? Нужно сделать закрытие месяца awaitable!
+        //    pbCalculationProgress.IsIndeterminate = false;
+        //    pbCalculationProgress.Value = 0;
+        //    MessageBox.Show("Закрытие месяца выполнено");
+            
+        //}
 
         /// <summary>
         /// Открытие окна истории транзакций
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Transactions_Click(object sender, RoutedEventArgs e)
+        private void Transactions_Click(object sender, RoutedEventArgs e) //TODO решить проблему с изменением списка транзакций во время просмотра!
         {
             Transactions tWindow = new Transactions(repository.bank);
             tWindow.ShowDialog();
@@ -233,60 +237,59 @@ namespace BankSystem.View
 
         private void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
         {
-            this.IsHitTestVisible = false;
-            FlagInitialFilling = true;
+            InputRestriction();
             pbCalculationProgress.IsIndeterminate = true;
-            DoFilling();
-
-        }
-        private void DoFilling()
-        {
-           
-            //var progress = new Progress<int>(ReportProgress);
             Task[] tasks = new Task[3];
-            tasks[0] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, qEntity/*, progress*/));
-            tasks[1] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, qPerson/*, progress*/));
-            tasks[2] = Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, qVip/*, progress*/));
+            tasks[0] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[0] as Department<Entity>, qEntity));
+            tasks[1] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[1] as Department<Person>, qPerson));
+            tasks[2] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[2] as Department<Vip>, qVip));
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 pbCalculationProgress.IsIndeterminate = false;
-                this.IsHitTestVisible = true;
-                FlagInitialFilling = false;
+                EndInputRestriction();
                 MessageBox.Show("Начальное заполнение закончено");
                 pbCalculationProgress.Value = 0;
             }));
-
-            //pbCalculationProgress.Value = 0;
         }
 
-        //private async Task DoFilling()
-        //{
-        //    var progress = new Progress<int>(ReportProgress);
+ 
 
-        //    await Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[0] as Department<Entity>, 100, progress));
-        //    await Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[1] as Department<Person>, 100, progress));
-        //    await Task.Factory.StartNew(() => InitialFilling.InitialFillingExtension(repository.bank.Departments[2] as Department<Vip>, 100, progress));
-        //    this.Dispatcher.Invoke(() =>
+        //private void DoFilling()
+        //{
+        //    Task[] tasks = new Task[3];
+        //    tasks[0] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[0] as Department<Entity>, qEntity));
+        //    tasks[1] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[1] as Department<Person>, qPerson));
+        //    tasks[2] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[2] as Department<Vip>, qVip));
+        //    Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
         //    {
-        //      MonthlyCharge.IsEnabled = true;
-        //      LoyalityProgram.IsEnabled = true;
-        //    });
-
-        //  MessageBox.Show("Начальное заполнение закончено");
-        //    pbCalculationProgress.Value = 0;
+        //        pbCalculationProgress.IsIndeterminate = false;
+        //        EndInputRestriction();
+        //        MessageBox.Show("Начальное заполнение закончено");
+        //        pbCalculationProgress.Value = 0;
+        //    }));
         //}
 
-        //private void ReportProgress(int value)
-        //{
-           
-        //     pbCalculationProgress.Value = ConvertToPercentage(value, 100);
-            
-        //}
+        private void InputRestriction()//TODO один метод, который принимал бы bool 
+        {
+            MonthlyCharge.IsEnabled = false;
+            LoyalityProgram.IsEnabled = false;
+            NewClient.IsEnabled = false;
+            OpenFile.IsEnabled = false;
+            SaveFile.IsEnabled = false;
+            InitialFilling.IsEnabled = false;
+            FlagInputRestriction = true;
+        }
 
-        //private double ConvertToPercentage(int value, int count)
-        //{
-        //    return (double)value * 100 / count;
-        //}
+        private void EndInputRestriction()
+        {
+            MonthlyCharge.IsEnabled = true;
+            LoyalityProgram.IsEnabled = true;
+            NewClient.IsEnabled = true;
+            OpenFile.IsEnabled = true;
+            SaveFile.IsEnabled = true;
+            InitialFilling.IsEnabled = true;
+            FlagInputRestriction = false;
+        }
 
     }
 }

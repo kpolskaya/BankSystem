@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-
+using System.Collections;
 
 namespace BankSystemLib
 {
@@ -33,7 +33,7 @@ namespace BankSystemLib
     [KnownType(typeof(DebitAccount))]
     [KnownType(typeof(DepositAccount))]
     [KnownType(typeof(DepositAccountСapitalized))]
-    public abstract class Account
+    public abstract class Account 
     {
         /// <summary>
         /// Номер счета
@@ -78,11 +78,7 @@ namespace BankSystemLib
             return a.FullBalance();
         }
 
-        //public static decimal operator +(Account a, Account b)
-        //{
-        //    return a.FullBalance() + b.FullBalance();
-        //}
-
+        
         /// <summary>
         /// Операция списания средств
         /// </summary>
@@ -162,7 +158,6 @@ namespace BankSystemLib
             var m = message;
             Movement?.Invoke(this, m);
         }
-
     }
 }
 

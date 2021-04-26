@@ -32,17 +32,13 @@ namespace BankSystemLib
         [DataMember]
         public string Name { get; private set; }
 
-        private ConcurrentBag<Transaction> transactionHistory; //потокобезопасная коллекция с историей транзакций
+        //private ConcurrentBag<Transaction> transactionHistory; //потокобезопасная коллекция с историей транзакций TODO нужна очередь транзакций! а сами транзакции сохраняются в одном потоке в ROOColl
 
-        
-        //public ObservableCollection<Transaction> TransactionHistory //TODO не нужен здесь ObservableCollection 
-        //{ 
-        //    get { return new ObservableCollection<Transaction>((transactionHistory)); } 
-        //} // создать приватную concurrent collection и перейти в свойство через  ICollection
+        private Collection<Transaction> transactionHistory;
 
-        public List<Transaction> TransactionHistory 
+        public ReadOnlyCollection<Transaction> TransactionHistory  
         {
-            get { return new List<Transaction>(transactionHistory); }  
+            get; // { return new List<Transaction>(transactionHistory); }  
         }
 
         [JsonConstructor]
@@ -50,13 +46,18 @@ namespace BankSystemLib
         {
             this.Name = Name;
             this.Departments = Departments;
-            this.transactionHistory = new ConcurrentBag<Transaction>();
+            //this.transactionHistory = new ConcurrentBag<Transaction>();
+            this.transactionHistory = new Collection<Transaction>();
+            this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
             this.Cash = Cash;
             this.Profit = Profit;
-            foreach (var item in this.Departments) //подписка на эвенты каждого департамента
-            {
-                item.TransactionRaised += ProcessPayment;
-            }
+
+            Processing.Pay = ProcessPayment; // Даем процессинговому ценрту метод обработки платежей
+
+            //foreach (var item in this.Departments) //подписка на эвенты каждого департамента
+            //{
+            //    item.TransactionRaised += ProcessPayment;
+            //}
             RefreshSubscriptions();
         }
 
@@ -72,12 +73,17 @@ namespace BankSystemLib
 
             this.Cash = 1_000_000; //собственный капитал при открытии
 
-            foreach (var item in this.Departments) //подписка на эвенты каждого департамента
-            {
-                item.TransactionRaised += ProcessPayment;
-            }
+            Processing.Pay = ProcessPayment; 
 
-            this.transactionHistory = new ConcurrentBag<Transaction>();
+            //foreach (var item in this.Departments) //подписка на эвенты каждого департамента
+            //{
+            //    item.TransactionRaised += ProcessPayment;
+            //}
+
+            //this.transactionHistory = new ConcurrentBag<Transaction>();
+            this.transactionHistory = new Collection<Transaction>();
+            this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
+
         }
 
         /// <summary>
@@ -88,14 +94,15 @@ namespace BankSystemLib
         /// <summary>
         /// Делегат для запуска автосохранения
         /// </summary>
-        public Action Autosave;
+        public Action Autosave; //TODO!!!
 
         /// <summary>
         /// Обрабатывает транзакцию, инициированную департаментом
         /// </summary>
         /// <param name="sender">Департамент - инициатор транзакции</param>
         /// <param name="t">Параметры транзакции</param>
-        private void ProcessPayment(Division sender, Transaction t)
+        private void ProcessPayment(Transaction t)
+
         {
             if (t.Type == TransactionType.Internal)
             {
@@ -135,7 +142,7 @@ namespace BankSystemLib
                     t.Status = TransactionStatus.Failed;
                     try
                     {
-                        sender.Refund(t);                                                           // то нужно вернуть деньги отправителю
+                        GetDepartmentByBic(t.SenderBic).Refund(t);                                   // то нужно вернуть деньги отправителю
                     }
                     catch (Exception)
                     {
@@ -175,10 +182,10 @@ namespace BankSystemLib
         /// <summary>
         /// Начисляет месячные платежи и проценты по счетам клиентов
         /// </summary>
-        public void MonthlyCharge()
+        public void MonthlyCharge() // сделать ёё awaitable и на три потока?
         {
           
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Departments.Count; i++)
             {
                 Departments[i].CalculateCharges();
             }

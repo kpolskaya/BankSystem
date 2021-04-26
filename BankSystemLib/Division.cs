@@ -14,7 +14,7 @@ namespace BankSystemLib
     /// </summary>
     /// <param name="sender">Департамен, инициирующий транзакцию</param>
     /// <param name="t">Параметры транзакции</param>
-    public delegate void TransactionHandler(Division sender, Transaction t);
+    public delegate void TransactionHandler(Division sender, Transaction t); //не нужен!!!
 
     /// <summary>
     /// Абстрактный класс для департаментов банка
@@ -35,11 +35,12 @@ namespace BankSystemLib
         /// <summary>
         /// Публичный список счетов департамента
         /// </summary>
-        public ReadOnlyObservableCollection<Account> Accounts { get { return new ReadOnlyObservableCollection<Account>(this.accounts); } }
+        public ReadOnlyObservableCollection<Account> Accounts { get; private set; }
 
         public Division()
         {
-
+            this.accounts = new ObservableCollection<Account>();
+            this.Accounts = new ReadOnlyObservableCollection<Account>(accounts);
         }
 
         public Division(string Id, string Name)
@@ -47,6 +48,7 @@ namespace BankSystemLib
             this.Id = Id;
             this.Name = Name;
             this.accounts = new ObservableCollection<Account>();
+            this.Accounts = new ReadOnlyObservableCollection<Account>(accounts);
         }
 
         /// <summary>
@@ -130,7 +132,8 @@ namespace BankSystemLib
             if (account == null)
                 throw new NonexistantAccountExeption();
             account.Credit(sum, "Пополнение через кассу");
-            OnTransactionRaised(new Transaction("00", bic, sum, "Пополнение через кассу"));
+            //OnTransactionRaised(new Transaction("00", bic, sum, "Пополнение через кассу"));
+            Processing.Transactions.Enqueue(new Transaction("00", bic, sum, "Пополнение через кассу"));
         }
 
         /// <summary>
@@ -145,7 +148,8 @@ namespace BankSystemLib
             Account account = GetAccountByBic(bic);
             bool executed = (account != null && account.Debit(sum, detailes));
             if (executed)
-                OnTransactionRaised(new Transaction(bic, "00", sum, detailes));
+                //OnTransactionRaised(new Transaction(bic, "00", sum, detailes));
+                Processing.Transactions.Enqueue(new Transaction(bic, "00", sum, detailes));
             return executed;
         }
 
@@ -160,7 +164,7 @@ namespace BankSystemLib
             if (account == null)
                 throw new NonexistantAccountExeption();
             account.NotifyIfRemoved();
-            OnTransactionRaised(new Transaction(bic, "00", account.FullBalance(), detailes));
+            Processing.Transactions.Enqueue(new Transaction(bic, "00", account.FullBalance(), detailes));
             this.accounts.Remove(account);
         }
 
@@ -185,20 +189,20 @@ namespace BankSystemLib
                 t = new Transaction(senderBic, beneficiaryBic, sum, detailes + " -- Отказано в операции", TransactionType.Transfer);
                 t.Status = TransactionStatus.Failed;
             }
-            OnTransactionRaised(t);
+            Processing.Transactions.Enqueue(t);
         }
 
         /// <summary>
         /// Событие при инициации транзакции
         /// </summary>
-        public event TransactionHandler TransactionRaised;
+        public event TransactionHandler TransactionRaised; //не нужен
 
         /// <summary>
         /// Вызов кода обработчика события транзакции
         /// </summary>
         /// <param name="sender">Инициатор транзакции</param>
         /// <param name="t">параметры транзакции</param>
-        protected virtual void OnTransactionRaised(Transaction t)
+        protected virtual void OnTransactionRaised(Transaction t) //не нужна!!!
         {
             var transaction = t;
             TransactionRaised?.Invoke(this, transaction);
@@ -217,7 +221,7 @@ namespace BankSystemLib
         /// Средства на счетах клиентов департамента
         /// </summary>
         /// <returns>Сумму остатков по всем клиентским счетам</returns>
-        public decimal ClientsFunds()
+        public decimal ClientsFunds() //что-то как-то непонятно про исключение тут - переделать (исключение - в цикл - и зачем оно вообще тут?)
         {
             try
             {

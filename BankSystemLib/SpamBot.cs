@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
 
 namespace BankSystemLib
 {
@@ -24,7 +25,7 @@ namespace BankSystemLib
         /// </summary>
         public static bool OnLine { get; private set; }
 
-        
+        static Task spam;
 
         static string path;
 
@@ -33,12 +34,11 @@ namespace BankSystemLib
             MessageQueue = new ConcurrentQueue<string>();
             path = @"messagelog.txt";
             OnLine = false;
-            Task spamAsync = new Task(mySched);
-            spamAsync.Start();
-           // Start();
+            spam = new Task(Schedule);
+            spam.Start();
         }
 
-        public static void Start()
+        public static void Start() //заприватить?
         {
             if (!OnLine)
             {
@@ -47,7 +47,7 @@ namespace BankSystemLib
             }
         }
 
-        public static void Stop()
+        public static void Stop() // нужно что-то с этим делать
         {
             //if (OnLine)
             //{
@@ -55,41 +55,57 @@ namespace BankSystemLib
             //}
         }
 
-        private static void mySched()
+        /// <summary>
+        /// Простой планировщик работы бота
+        /// </summary>
+        private static void Schedule()
         {
             while (true)
             {
                 Thread.Sleep(10000);
-                Start();
+                if (!OnLine)
+                {
+                    OnLine = true;
+                    SendThemAsync();
+                }
             }
         }
 
         private static async void SendThemAsync()
         {
-            string message;
-            StreamWriter logWriter = new StreamWriter(path, true);
-            int blockSize = 10000;
-
             if (OnLine)
             {
-                int count = 1;
+                Debug.WriteLine("SpamBot started");
+                //string message;
+                //StreamWriter logWriter = new StreamWriter(path, true);
+                int blockSize = 10000;
+                int count = 0;
                 string block = "";
 
-                while (!MessageQueue.IsEmpty  && count <= blockSize)
+                while (!MessageQueue.IsEmpty  && count < blockSize)
                 {
-                    if (!MessageQueue.TryDequeue(out message))
+                    if (MessageQueue.TryDequeue(out string message))
                     {
-                        message = "<FAILED MESSAGE>";
+                        block += (message + "\n");
+                        
                     }
-                    block += (message + "\n");
+                    else
+                    {
+                        block += "<REQUEST FAILED\n>";
+                    }
                     count++;
                 }
-                using (logWriter)
+
+                if (count > 0) //есть что писать
                 {
-                    await logWriter.WriteAsync(block);
+                    Debug.WriteLine("Sending messages...");
+                    using (var logWriter = new StreamWriter(path, true))
+                        await logWriter.WriteAsync(block);
                 }
 
+                //logWriter.Dispose();
                 OnLine = false;
+                Debug.WriteLine("SpamBot stopped");
             }
         }
     }

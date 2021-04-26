@@ -37,7 +37,6 @@ namespace BankSystem.ViewModel
             }
         }
 
-
         private Type typeOfCustomer; 
 
         public DivisionVM(Division Department)
@@ -70,7 +69,8 @@ namespace BankSystem.ViewModel
             } 
 
             this.Accounts = new ObservableCollection<AccountVM>(); 
-            foreach (var item in this.division.Accounts)
+            
+            foreach (var item in this.division.Accounts) 
             {
                 this.Accounts.Add(new AccountVM(item));
             }
@@ -115,11 +115,16 @@ namespace BankSystem.ViewModel
         /// <summary>
         /// Выбранный пользователем клиент
         /// </summary>
-        public CustomerVM SelectedCustomer
+        public CustomerVM SelectedCustomer //ОПТИМИЗИРОВАТ!!!
         {
             get
             {
-                return Customers.FirstOrDefault(e => e.IsSelected);
+                //List<CustomerVM> listcvm = new List<CustomerVM>(Customers);
+                //listcvm.Find(c => c.IsSelected);
+                return
+                    Customers.Where(c => c.IsSelected).FirstOrDefault();
+
+                    //Customers.FirstOrDefault(e => e.IsSelected);
             }
 
         }
@@ -131,7 +136,7 @@ namespace BankSystem.ViewModel
         {
             get
             {
-                return Accounts.FirstOrDefault(e => e.IsSelected);
+                return SelectedCustomerAccounts.FirstOrDefault(e => e.IsSelected); //замена Accounts на SelectedCustomerA...
             }
         }
 
@@ -212,7 +217,11 @@ namespace BankSystem.ViewModel
         /// <param name="e"></param>
         private void RereadAcconts(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Accounts = new ObservableCollection<AccountVM>();
+            foreach (var item in Accounts)
+            {
+                item.Subscribe(false); //перед сбросом списка счетов нужно отписать VM-представления от событий оригиналов.
+            }
+            Accounts = new ObservableCollection<AccountVM>(); //КОРЕНЬ ЗЛА!!! Нужно по-другому синхронизировать списки
             foreach (var item in division.Accounts)
             {
                 this.Accounts.Add(new AccountVM(item));

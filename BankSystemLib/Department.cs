@@ -47,9 +47,9 @@ namespace BankSystemLib
             this.Customers = new ObservableCollection<TCustomer>();
         }
 
-        public Department()
+        public Department() : base()
         {
-
+            this.Customers = new ObservableCollection<TCustomer>();
         }
 
         // логика, которая зависит от типа клиента...
@@ -108,12 +108,14 @@ namespace BankSystemLib
                 {
                     decimal interest = account.ChargeInterest(this.Rate);
                     if (interest > 0)
-                        OnTransactionRaised(new Transaction("99", account.Bic, interest, "Начисление процентов"));
+                        //OnTransactionRaised(new Transaction("99", account.Bic, interest, "Начисление процентов"));
+                        Processing.Transactions.Enqueue(new Transaction("99", account.Bic, interest, "Начисление процентов"));
                 }
 
                 else
                     if (account.Debit(Fee, "Плата за обслуживание"))
-                    OnTransactionRaised(new Transaction(account.Bic, "99", this.Fee, "Плата за обслуживание"));
+                    //OnTransactionRaised(new Transaction(account.Bic, "99", this.Fee, "Плата за обслуживание"));
+                    Processing.Transactions.Enqueue(new Transaction(account.Bic, "99", this.Fee, "Плата за обслуживание"));
             }
         }
 

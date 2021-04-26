@@ -13,7 +13,7 @@ namespace BankSystem.ViewModel
     {
         private readonly Customer customer;
         public string Id { get { return this.customer.Id; } }
-
+ 
         public string Name
         {
             get
@@ -83,7 +83,7 @@ namespace BankSystem.ViewModel
 
         public CustomerVM(Customer Customer)
         {
-            this.customer = Customer;
+                this.customer = Customer;
         }
 
      

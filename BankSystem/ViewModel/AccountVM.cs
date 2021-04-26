@@ -17,29 +17,25 @@ namespace BankSystem.ViewModel
         /// </summary>
         public string Message { get; set; }
         public string Bic { get { return this.account.Bic; } }
-        public decimal Balance 
-        {
-            get
-            {
-                return this.account.Balance;
-            }
-        }
+        public decimal Balance { get { return this.account.Balance; } }
         public AccountType Type { get { return this.account.Type; } }
         public decimal Interest { get { return this.account.AccruedInterest; } }
         
         public AccountVM(Account Account)
         {
             this.account = Account;
-            if (View.MainWindow.FlagInitialFilling == false)
-            this.account.Movement += AccountMovement; 
+            //if (View.MainWindow.InitFilling == false)  // все запутано нужно разбираться
+            Subscribe(true); 
         }
 
         private void AccountMovement(Account sender, string message)
         {
-           
-            OnPropertyChanged("Balance");
-            this.Message = message;
-            OnPropertyChanged("Message");
+            {
+                OnPropertyChanged("Balance");
+                this.Message = message;
+                OnPropertyChanged("Message");
+            }    
+               
         }
 
         private bool isSelected;
@@ -57,7 +53,11 @@ namespace BankSystem.ViewModel
             }
         }
 
-
+        public void Subscribe( bool f) // не лучшее решение (временно)
+        {
+           if (f) this.account.Movement += AccountMovement;
+           else this.account.Movement -= AccountMovement;
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         void OnPropertyChanged(string propertyName)

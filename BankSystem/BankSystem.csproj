@@ -87,7 +87,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\InitialFilling.cs" />
+    <Compile Include="Model\InitialFillingExtention.cs" />
     <Compile Include="Model\LoyalityProgram.cs" />
     <Compile Include="View\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>

@@ -102,14 +102,6 @@ namespace BankSystem.ViewModel
             (bank.Departments[2] as Department<Vip>).LoyaltyProgramExtension();
 
         }
-
-        //public void InitialFil(int q)
-        //{
-
-        //    (bank.Departments[0] as Department<Entity>).InitialFillingExtension(q);
-        //    (bank.Departments[1] as Department<Person>).InitialFillingExtension(q);
-        //    (bank.Departments[2] as Department<Vip>).InitialFillingExtension(q);
-
-        //}
+    
     }
 }
