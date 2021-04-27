@@ -192,9 +192,9 @@ namespace BankSystem.View
                 {
                     Clipboard.SetText(((TextBlock)sender).Text);
                 }
-                catch (Exception )
+                catch (Exception)
                 {
-                    MessageBox.Show("Ошибка");
+                    MessageBox.Show("Ошибка буфера обмена");
                     return;
                 }
             }

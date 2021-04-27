@@ -33,9 +33,9 @@ namespace BankSystem.View
         Repository repository;
         BankVM bank;
         public static bool FlagInputRestriction = false;
-        static int qEntity = 10000;
-        static int qPerson = 10000;
-        static int qVip = 10000;
+        static int qEntity = 1000;
+        static int qPerson = 1000;
+        static int qVip = 1000;
 
         public MainWindow()
         {
@@ -66,7 +66,7 @@ namespace BankSystem.View
         /// <param name="e"></param>
         private  void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e) 
         {
-            if (Customers.SelectedItem != null & FlagInputRestriction != true)
+            if ( Customers.SelectedItem != null & !FlagInputRestriction )
             {
                 CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem)
                 {
@@ -198,7 +198,7 @@ namespace BankSystem.View
         /// <param name="e"></param>
         private void Transactions_Click(object sender, RoutedEventArgs e) //TODO решить проблему с изменением списка транзакций во время просмотра!
         {
-            Transactions tWindow = new Transactions(repository.bank);
+            Transactions tWindow = new Transactions(DataContext);
             tWindow.ShowDialog();
         }
 

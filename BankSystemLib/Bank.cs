@@ -73,7 +73,7 @@ namespace BankSystemLib
 
             this.Cash = 1_000_000; //собственный капитал при открытии
 
-            Processing.Pay = ProcessPayment; 
+            Processing.Pay = ProcessPayment;
 
             //foreach (var item in this.Departments) //подписка на эвенты каждого департамента
             //{

@@ -37,7 +37,7 @@ namespace BankSystemLib
         {
             while (true)
             {
-                Thread.Sleep(60000);
+                Thread.Sleep(10000);
                 if (!isActive)                      
                 {
                     isActive = true;

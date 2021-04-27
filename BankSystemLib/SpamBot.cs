@@ -13,7 +13,7 @@ namespace BankSystemLib
     /// <summary>
     /// Робот для рассылки сообщений клиентам банка
     /// </summary>
-    public static class SpamBot
+    internal static class SpamBot
     {
         /// <summary>
         /// Очередь сообщений на отправку
@@ -29,25 +29,30 @@ namespace BankSystemLib
 
         static string path;
 
+        static string fileName;
+
         static SpamBot()
         {
             MessageQueue = new ConcurrentQueue<string>();
-            path = @"messagelog.txt";
+            if (!Directory.Exists(@"log"))
+                Directory.CreateDirectory(@"log");
+            path = @"log\";
+            fileName = $@"{Guid.NewGuid()}.log";
             OnLine = false;
             spam = new Task(Schedule);
             spam.Start();
         }
 
-        public static void Start() //заприватить?
+        private static void Start() 
         {
-            if (!OnLine)
-            {
-                OnLine = true;
-                SendThemAsync();
-            }
+            //if (!OnLine)
+            //{
+            //    OnLine = true;
+            //    SendThemAsync();
+            //}
         }
 
-        public static void Stop() // нужно что-то с этим делать
+        private static void Stop() // нужно что-то с этим делать
         {
             //if (OnLine)
             //{
@@ -81,6 +86,8 @@ namespace BankSystemLib
                 int blockSize = 10000;
                 int count = 0;
                 string block = "";
+                if (File.Exists(path + fileName) && (new FileInfo(path + fileName)).Length > 10000000)
+                    fileName = $@"{Guid.NewGuid()}.log";
 
                 while (!MessageQueue.IsEmpty  && count < blockSize)
                 {
@@ -99,7 +106,7 @@ namespace BankSystemLib
                 if (count > 0) //есть что писать
                 {
                     Debug.WriteLine("Sending messages...");
-                    using (var logWriter = new StreamWriter(path, true))
+                    using (var logWriter = new StreamWriter(path + fileName, true))
                         await logWriter.WriteAsync(block);
                 }
 

@@ -61,7 +61,7 @@ namespace BankSystem.Model
 
             for (int i = 0; i < amt*3; i++)
             {
-                dept.Put(dept.Accounts[i].Bic, rnd.Next(0, 10000)*100);
+                dept.Put(dept.Accounts[i].Bic, rnd.Next(100, 10001)*100);
             }
         }
 
