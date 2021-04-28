@@ -83,6 +83,14 @@ namespace BankSystem.ViewModel
         /// </summary>
         private void RereadCustomers(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (this.Customers !=null)
+            {
+                foreach (var item in this.Customers)
+                {
+                    item.SelectionChanged -= SetSelectedCustomer;
+                }
+            }
+            
             switch (typeOfCustomer.Name)
             {
                 case "Entity":
@@ -109,23 +117,31 @@ namespace BankSystem.ViewModel
                     this.Customers = new ObservableCollection<CustomerVM>();
                     break;
             }
+            foreach (var item in this.Customers)
+            {
+                item.SelectionChanged += SetSelectedCustomer;
+            }
         }
 
+        private void SetSelectedCustomer(CustomerVM customer, EventArgs e)
+        {
+            this.SelectedCustomer = customer;
+        }
       
         /// <summary>
         /// Выбранный пользователем клиент
         /// </summary>
         public CustomerVM SelectedCustomer //ОПТИМИЗИРОВАТ!!!
         {
-            get
-            {
-                //List<CustomerVM> listcvm = new List<CustomerVM>(Customers);
-                //listcvm.Find(c => c.IsSelected);
-                return
-                    Customers.Where(c => c.IsSelected).FirstOrDefault();
+            get; private set;
 
-                    //Customers.FirstOrDefault(e => e.IsSelected);
-            }
+            //get
+            //{
+            //    return
+            //        Customers.Where(c => c.IsSelected).FirstOrDefault();
+
+            //        //Customers.FirstOrDefault(e => e.IsSelected);
+            //}
 
         }
 
@@ -136,7 +152,7 @@ namespace BankSystem.ViewModel
         {
             get
             {
-                return SelectedCustomerAccounts.FirstOrDefault(e => e.IsSelected); //замена Accounts на SelectedCustomerA...
+                return SelectedCustomerAccounts.FirstOrDefault(e => e.IsSelected); //замена Accounts на SelectedCustomerA... не факт что быстрее
             }
         }
 

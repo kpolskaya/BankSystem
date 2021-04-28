@@ -9,6 +9,7 @@ using BankSystemLib;
 
 namespace BankSystem.ViewModel
 {
+    public delegate void SelectionChangedEventHandler(CustomerVM sender, EventArgs e);
     public class CustomerVM : INotifyPropertyChanged
     {
         private readonly Customer customer;
@@ -98,12 +99,21 @@ namespace BankSystem.ViewModel
                 {
                     this.isSelected = value;
                     this.OnPropertyChanged("IsSelected");
+                    
+                    if (isSelected)
+                        this.OnSelectionChanged();
                 }
             }
         }
 
+        public event SelectionChangedEventHandler SelectionChanged;
+        private void OnSelectionChanged()
+        {
+            SelectionChanged?.Invoke(this, new EventArgs());
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
-        void OnPropertyChanged(string propertyName)
+        private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

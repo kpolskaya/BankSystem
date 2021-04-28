@@ -128,7 +128,8 @@
                               Width="Auto" Height="500" BorderBrush="Transparent" 
                               BorderThickness="0"
                               DataContext ="{Binding ElementName=Divisions, Path=SelectedItem}" 
-                              ItemsSource="{Binding Customers}" SelectionChanged="Customers_SelectionChanged"  >
+                              ItemsSource="{Binding Customers}"  MouseLeftButtonUp="CustomerLeftBtnClick" >
+                        <!-- убрано SelectionChanged="Customers_SelectionChanged"-->
 
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">

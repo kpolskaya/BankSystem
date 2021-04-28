@@ -33,9 +33,9 @@ namespace BankSystem.View
         Repository repository;
         BankVM bank;
         public static bool FlagInputRestriction = false;
-        static int qEntity = 1000;
-        static int qPerson = 1000;
-        static int qVip = 1000;
+        static int qEntity = 10000;
+        static int qPerson = 10000;
+        static int qVip = 10000;
 
         public MainWindow()
         {
@@ -64,7 +64,7 @@ namespace BankSystem.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private  void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e) 
+        private  void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e) // этот метод будет переписан и его нужно будет удалить!!!
         {
             if ( Customers.SelectedItem != null & !FlagInputRestriction )
             {
@@ -74,10 +74,25 @@ namespace BankSystem.View
                 };
                 Thread.Sleep(100);// это зачем-то нужно
                 newWindow.ShowDialog();
-                bank.ClearSelectedCustomer();
+                bank.ClearSelectedCustomer(); //вот тоже непонятно 
             }
             return;
         }
+
+        private void CustomerLeftBtnClick(object sender, RoutedEventArgs e)
+        {
+            if (Customers.SelectedItem != null & !FlagInputRestriction)
+            {
+                CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem)
+                {
+                    Owner = this
+                };
+                newWindow.ShowDialog();
+            }
+            return;
+        }
+
+
 
         /// <summary>
         /// Сохранение данных
@@ -157,7 +172,7 @@ namespace BankSystem.View
         }
 
         private async void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e) 
-        {
+        {                                                                                   //запрет проводок по счетам?
 
             pbCalculationProgress.IsIndeterminate = true;
 
@@ -218,7 +233,7 @@ namespace BankSystem.View
             }
         }
 
-        private async void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e)
+        private async void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e) // долго работает. Изменение коллекций в это время повлечёт крах (наверное) блокировка? оптимизация?
         {
             pbCalculationProgress.IsIndeterminate = true;
             await Task.Run(()=>bank.LoyaltyProg());
