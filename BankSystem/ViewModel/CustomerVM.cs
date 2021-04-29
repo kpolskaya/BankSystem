@@ -9,7 +9,7 @@ using BankSystemLib;
 
 namespace BankSystem.ViewModel
 {
-    public delegate void SelectionChangedEventHandler(CustomerVM sender, EventArgs e);
+    public delegate void SelectionChangedEventHandler(object sender, EventArgs e);
     public class CustomerVM : INotifyPropertyChanged
     {
         private readonly Customer customer;

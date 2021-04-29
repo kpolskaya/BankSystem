@@ -123,15 +123,15 @@ namespace BankSystem.ViewModel
             }
         }
 
-        private void SetSelectedCustomer(CustomerVM customer, EventArgs e)
+        private void SetSelectedCustomer(object customer, EventArgs e)
         {
-            this.SelectedCustomer = customer;
+            this.SelectedCustomer = customer as CustomerVM;
         }
       
         /// <summary>
         /// Выбранный пользователем клиент
         /// </summary>
-        public CustomerVM SelectedCustomer //ОПТИМИЗИРОВАТ!!!
+        public CustomerVM SelectedCustomer 
         {
             get; private set;
 
@@ -237,7 +237,7 @@ namespace BankSystem.ViewModel
             {
                 item.Subscribe(false); //перед сбросом списка счетов нужно отписать VM-представления от событий оригиналов.
             }
-            Accounts = new ObservableCollection<AccountVM>(); //КОРЕНЬ ЗЛА!!! Нужно по-другому синхронизировать списки
+            Accounts = new ObservableCollection<AccountVM>(); 
             foreach (var item in division.Accounts)
             {
                 this.Accounts.Add(new AccountVM(item));

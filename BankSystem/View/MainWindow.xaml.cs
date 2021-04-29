@@ -64,9 +64,9 @@ namespace BankSystem.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private  void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e) // этот метод будет переписан и его нужно будет удалить!!!
+        private  void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e) // этот метод переписан и его нужно будет удалить!!!
         {
-            if ( Customers.SelectedItem != null & !FlagInputRestriction )
+            if ( Customers.SelectedItem != null && !FlagInputRestriction )
             {
                 CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem)
                 {
@@ -79,9 +79,14 @@ namespace BankSystem.View
             return;
         }
 
+        /// <summary>
+        /// Открывает окно информации о выбранном клиенте
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CustomerLeftBtnClick(object sender, RoutedEventArgs e)
         {
-            if (Customers.SelectedItem != null & !FlagInputRestriction)
+            if (Customers.SelectedItem != null && !FlagInputRestriction)
             {
                 CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem)
                 {
@@ -176,7 +181,7 @@ namespace BankSystem.View
 
             pbCalculationProgress.IsIndeterminate = true;
 
-            await Task.Run(() => bank.MonthlyCharge()); // Нужно сделать закрытие месяца awaitable!
+            await Task.Run(() => bank.MonthlyCharge()); 
             pbCalculationProgress.IsIndeterminate = false;
             pbCalculationProgress.Value = 0;
             MessageBox.Show("Закрытие месяца выполнено");
