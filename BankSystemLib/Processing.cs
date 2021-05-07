@@ -17,18 +17,21 @@ namespace BankSystemLib
         /// <summary>
         /// Очередь поднятых транзакций
         /// </summary>
-        public static ConcurrentQueue<Transaction> Transactions { get; set; }
+        public static ConcurrentQueue<Transaction> TransactionsQueue { get; set; }
 
         public static Action<Transaction> Pay;
 
         private static Task process;
 
-        private static bool isActive;
+        /// <summary>
+        /// Показывает, происходит ли в данный момент обработка платежей
+        /// </summary>
+        public static bool IsActive { get; private set; }
 
         static Processing()
         {
-            Transactions = new ConcurrentQueue<Transaction>();
-            isActive = false;
+            TransactionsQueue = new ConcurrentQueue<Transaction>();
+            IsActive = false;
             process = new Task (Schedule);
             process.Start();
         }
@@ -38,21 +41,21 @@ namespace BankSystemLib
             while (true)
             {
                 Thread.Sleep(10000);
-                if (!isActive)                      
+                if (!IsActive && !TransactionsQueue.IsEmpty)                      
                 {
-                    isActive = true;
-                    DoProcessingAsync();
+                    IsActive = true;
+                    _ = DoProcessingAsync();
                 }
             }
         }
 
-        private static async void DoProcessingAsync()
+        private static async Task DoProcessingAsync()
         {
-            if (isActive)
+            if (IsActive)
             {
                 Debug.WriteLine("Processing started");
                 await Task.Run(() => ProsessQueue());
-                isActive = false;
+                IsActive = false;
                 Debug.WriteLine("Processing stopped");
             }
         }
@@ -60,11 +63,9 @@ namespace BankSystemLib
         private static void ProsessQueue()
         {
             Transaction t;
-            while (!Transactions.IsEmpty)
+            while (!TransactionsQueue.IsEmpty)
             {
-                if (Transactions.TryDequeue(out t)) Pay(t);
-
-                else throw new Exception("Какая-то проблема с очередью транзакций");
+                if (TransactionsQueue.TryDequeue(out t)) Pay(t);
             }
         }
     }

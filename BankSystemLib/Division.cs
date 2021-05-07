@@ -133,7 +133,7 @@ namespace BankSystemLib
                 throw new NonexistantAccountExeption();
             account.Credit(sum, "Пополнение через кассу");
             //OnTransactionRaised(new Transaction("00", bic, sum, "Пополнение через кассу"));
-            Processing.Transactions.Enqueue(new Transaction("00", bic, sum, "Пополнение через кассу"));
+            Processing.TransactionsQueue.Enqueue(new Transaction("00", bic, sum, "Пополнение через кассу"));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace BankSystemLib
             bool executed = (account != null && account.Debit(sum, detailes));
             if (executed)
                 //OnTransactionRaised(new Transaction(bic, "00", sum, detailes));
-                Processing.Transactions.Enqueue(new Transaction(bic, "00", sum, detailes));
+                Processing.TransactionsQueue.Enqueue(new Transaction(bic, "00", sum, detailes));
             return executed;
         }
 
@@ -164,7 +164,7 @@ namespace BankSystemLib
             if (account == null)
                 throw new NonexistantAccountExeption();
             account.NotifyIfRemoved();
-            Processing.Transactions.Enqueue(new Transaction(bic, "00", account.FullBalance(), detailes));
+            Processing.TransactionsQueue.Enqueue(new Transaction(bic, "00", account.FullBalance(), detailes));
             this.accounts.Remove(account);
         }
 
@@ -189,7 +189,7 @@ namespace BankSystemLib
                 t = new Transaction(senderBic, beneficiaryBic, sum, detailes + " -- Отказано в операции", TransactionType.Transfer);
                 t.Status = TransactionStatus.Failed;
             }
-            Processing.Transactions.Enqueue(t);
+            Processing.TransactionsQueue.Enqueue(t);
         }
 
         /// <summary>

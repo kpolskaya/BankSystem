@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BankSystem"
         xmlns:viewModel ="clr-namespace:BankSystem.ViewModel"
+        Closing="DataWindow_Closing"  
         mc:Ignorable="d"
         Title="Банк BANK" Height="680" Width="980" x:Name="mainWindow1">
    
@@ -14,10 +15,10 @@
             <RowDefinition Height ="20">         
                 
             </RowDefinition>
-            <RowDefinition Height ="Auto">
+            <RowDefinition Height ="*">
 
             </RowDefinition>
-            <RowDefinition Height ="20">
+            <RowDefinition Height ="40">
 
             </RowDefinition>
         </Grid.RowDefinitions>
@@ -107,9 +108,9 @@
 
         </GroupBox >
         <DockPanel Grid.Row="2" Grid.ColumnSpan="5" Height="Auto">
-            <StatusBar DockPanel.Dock="Bottom" Height="20" Width="Auto" >
-                <TextBox Name="PBtext" Width="700" />
-                <ProgressBar Name="pbCalculationProgress" Height ="10" Width="255" />
+            <StatusBar DockPanel.Dock="Bottom" Height="30" Width="Auto" >
+                <TextBox Name="PBtext" Width="700" Height ="20" VerticalAlignment="Top" />
+                <ProgressBar Name="pbCalculationProgress" Height ="20" Width="255" />
             </StatusBar>
         </DockPanel>
 

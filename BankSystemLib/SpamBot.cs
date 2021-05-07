@@ -13,12 +13,12 @@ namespace BankSystemLib
     /// <summary>
     /// Робот для рассылки сообщений клиентам банка
     /// </summary>
-    internal static class SpamBot
+    public static class SpamBot // сделала паблик чтобы проверить очередь на закрытие
     {
         /// <summary>
         /// Очередь сообщений на отправку
         /// </summary>
-        public static ConcurrentQueue<string> MessageQueue;
+        public static ConcurrentQueue<string> MessageQueue { get; set; }
 
         /// <summary>
         /// Возвращает значение, указывающее, работает ли в данный момент рассылка сообщений
@@ -27,7 +27,7 @@ namespace BankSystemLib
 
         static Task spam;
 
-        static string path;
+        static string folder;
 
         static string fileName;
 
@@ -36,7 +36,7 @@ namespace BankSystemLib
             MessageQueue = new ConcurrentQueue<string>();
             if (!Directory.Exists(@"log"))
                 Directory.CreateDirectory(@"log");
-            path = @"log\";
+            folder = @"log\";
             fileName = $@"{Guid.NewGuid()}.log";
             OnLine = false;
             spam = new Task(Schedule);
@@ -67,50 +67,55 @@ namespace BankSystemLib
         {
             while (true)
             {
-                Thread.Sleep(10000);
-                if (!OnLine)
+                Thread.Sleep(3000);
+                if (!OnLine && !MessageQueue.IsEmpty)
                 {
                     OnLine = true;
-                    SendThemAsync();
+                    _ = SendThemAsync(); // так можно вместо Task sendThemAll = SendThemAsync(); если сам объект Task никак не будет использоваться
                 }
             }
         }
 
-        private static async void SendThemAsync()
+        private static async Task SendThemAsync()
         {
             if (OnLine)
             {
                 Debug.WriteLine("SpamBot started");
-                //string message;
-                //StreamWriter logWriter = new StreamWriter(path, true);
+
                 int blockSize = 10000;
                 int count = 0;
-                string block = "";
-                if (File.Exists(path + fileName) && (new FileInfo(path + fileName)).Length > 10000000)
+                StringBuilder block = new StringBuilder("", 100000); //существенно быстрее при многократной конкатенации, чем String
+
+                if (File.Exists(folder + fileName) && (new FileInfo(folder + fileName)).Length > 10000000)
                     fileName = $@"{Guid.NewGuid()}.log";
+
+                var logStream = 
+                    new FileStream(folder + fileName, 
+                    FileMode.Append, 
+                    FileAccess.Write, FileShare.Read, 
+                    bufferSize: 4096, useAsync: true);
+                Debug.WriteLine($"There is {MessageQueue.Count} messages in the queue.");
+                Debug.WriteLine("Creating block...");
 
                 while (!MessageQueue.IsEmpty  && count < blockSize)
                 {
                     if (MessageQueue.TryDequeue(out string message))
                     {
-                        block += (message + "\n");
-                        
+                        block.Append($"{message}\n");
+                        count++;
                     }
-                    else
-                    {
-                        block += "<REQUEST FAILED\n>";
-                    }
-                    count++;
+
                 }
 
                 if (count > 0) //есть что писать
                 {
+                    Debug.WriteLine($"There is {count} messages in the block.");
                     Debug.WriteLine("Sending messages...");
-                    using (var logWriter = new StreamWriter(path + fileName, true))
-                        await logWriter.WriteAsync(block);
+                    using (var logWriter = new StreamWriter(logStream))               
+                        await logWriter.WriteAsync(block.ToString());
                 }
 
-                //logWriter.Dispose();
+                logStream.Dispose();
                 OnLine = false;
                 Debug.WriteLine("SpamBot stopped");
             }

@@ -96,14 +96,19 @@ namespace BankSystem.ViewModel
         /// <summary>
         /// 
         /// </summary>
-        public void LoyaltyProg()
-        {
+        //public void LoyaltyProg()
+        //{
+        //    Task[] tasks = new Task[3];
+        //    tasks[0] = Task.Run(() => (bank.Departments[0] as Department<Entity>).LoyaltyProgramExtension());
+        //    tasks[1] = Task.Run(() => (bank.Departments[1] as Department<Person>).LoyaltyProgramExtension());
+        //    tasks[2] = Task.Run(() => (bank.Departments[2] as Department<Vip>).LoyaltyProgramExtension());
+           
 
-            (bank.Departments[0] as Department<Entity>).LoyaltyProgramExtension();
-            (bank.Departments[1] as Department<Person>).LoyaltyProgramExtension();
-            (bank.Departments[2] as Department<Vip>).LoyaltyProgramExtension();
+        //    //(bank.Departments[0] as Department<Entity>).LoyaltyProgramExtension();
+        //    //(bank.Departments[1] as Department<Person>).LoyaltyProgramExtension();
+        //    //(bank.Departments[2] as Department<Vip>).LoyaltyProgramExtension();
 
-        }
+        //}
     
     }
 }

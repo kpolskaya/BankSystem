@@ -160,21 +160,20 @@ namespace BankSystem.View
         /// <param name="e"></param>
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (Regex.IsMatch(((TextBox)sender).Text, @"[^\d,]") || Regex.IsMatch(((TextBox)sender).Text, @"(\d*,\d{2})\d+") || Regex.IsMatch(((TextBox)sender).Text, @"(\d*[,]\d*)[,].*")) 
             {
-                string s = Regex.Replace(((TextBox)sender).Text, @"[^\d,]", "");
-                ((TextBox)sender).Text = s;
-               
-                ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
-                try
-                {
-                   Convert.ToDecimal(string.Format("{0:.##}", s));
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("Недопустимый формат");
-                    return;
-                }
+                MyWindow w = new MyWindow("Ошибка ввода",800);
+                w.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //а нужно ли выводить окно по поводу 3-го символа после запятой?
+                w.ShowDialog();
+
             }
+            string s = Regex.Replace(((TextBox)sender).Text, @"[^\d,]", ""); // вот этот блок всегда выполняется, джаже если нет ошибок
+            s = Regex.Replace((s), @"(\d*,\d{2})\d+", @"$1");
+            s = Regex.Replace((s), @"(\d*[,]\d*)[,].*", @"$1");
+
+            ((TextBox)sender).Text = s;
+
+            ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
         }
 
         /// <summary>

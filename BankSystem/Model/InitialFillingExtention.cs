@@ -65,16 +65,16 @@ namespace BankSystem.Model
             }
         }
 
-        private static string RandomNumString(int l)
-        {
-            int length = l;
-            var rString = "";
-            for (var i = 0; i < length; i++)
-            {
-                rString += rnd.Next(0, 10).ToString();
-            }
-            return rString;
-        }
+        //private static string RandomNumString(int l)
+        //{
+        //    int length = l;
+        //    var rString = "";
+        //    for (var i = 0; i < length; i++)
+        //    {
+        //        rString += rnd.Next(0, 10).ToString();
+        //    }
+        //    return rString;
+        //}
 
     }
 }

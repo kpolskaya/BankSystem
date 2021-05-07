@@ -144,11 +144,11 @@ namespace BankSystemLib
                     {
                         GetDepartmentByBic(t.SenderBic).Refund(t);                                   // то нужно вернуть деньги отправителю
                     }
-                    catch (Exception)
+                    catch (Exception  ex)
                     {
                         Profit += t.Sum;                                                            // если не смогли вернуть деньги клиенту, зачисляем в прибыль банка
                         OnBalanceChanged("Profit");
-                        t.Detailes += " - не удалось вернуть отправителю";
+                        t.Detailes = " Получатель не найден, вернуть не удалось - " + ex.Message;
                     }
                 }
             }
