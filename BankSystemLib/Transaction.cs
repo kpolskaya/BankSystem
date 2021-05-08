@@ -33,25 +33,27 @@ namespace BankSystemLib
     {
         
         public string Id { get; private set; }
+
+        public DateTime TimeStamp { get; }
+        
         /// <summary>
         /// Счет отправителя
         /// </summary>
-        
         public string SenderBic { get; private set; }
+        
         /// <summary>
         /// Счет получателя
         /// </summary>
-       
         public string BeneficiaryBic { get; private set; }
+
         /// <summary>
         /// Сумма тразакции
         /// </summary>
-        
         public decimal Sum { get; private set; }
+
         /// <summary>
         /// Детали платежа
         /// </summary>
-        
         public string Detailes { get; set; }
        
         public TransactionType Type { get; private set; }
@@ -60,6 +62,7 @@ namespace BankSystemLib
 
         public Transaction(string Id, string SenderBic, string BeneficiaryBic, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
         {
+            this.TimeStamp = DateTime.UtcNow;
             this.Id = Id;
             this.SenderBic = SenderBic;
             this.BeneficiaryBic = BeneficiaryBic;
@@ -76,5 +79,6 @@ namespace BankSystemLib
         {
 
         }
+              
     }
 }

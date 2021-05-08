@@ -56,6 +56,7 @@
     <Compile Include="Account.cs" />
     <Compile Include="AsyncObservableCollection.cs" />
     <Compile Include="Bank.cs" />
+    <Compile Include="ByOrder.cs" />
     <Compile Include="Customer.cs" />
     <Compile Include="BankExceptions.cs" />
     <Compile Include="DebitAccount.cs" />

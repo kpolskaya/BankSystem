@@ -33,9 +33,9 @@ namespace BankSystemLib
         [DataMember]
         public string Name { get; private set; }
         
-        private Collection<Transaction> transactionHistory;
+        public SortedSet<Transaction> TransactionHistory;
 
-        public ReadOnlyCollection<Transaction> TransactionHistory  { get; }
+        //public ReadOnlyCollection<Transaction> TransactionHistory  { get; }
 
         [JsonConstructor]
         public Bank(string Name, ObservableCollection<Division> Departments, decimal Cash, decimal Profit)
@@ -43,8 +43,8 @@ namespace BankSystemLib
             this.Name = Name;
             this.Departments = Departments;
             //this.transactionHistory = new ConcurrentBag<Transaction>();
-            this.transactionHistory = new Collection<Transaction>();
-            this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
+            this.TransactionHistory = new SortedSet<Transaction>(new ByOrder());
+            //this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
             this.Cash = Cash;
             this.Profit = Profit;
             Processing.Pay = ProcessPayment; // Даем процессинговому ценрту метод обработки платежей
@@ -62,8 +62,8 @@ namespace BankSystemLib
             };
             this.Cash = 1_000_000; //собственный капитал при открытии
             Processing.Pay = ProcessPayment;
-            this.transactionHistory = new Collection<Transaction>();
-            this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
+            this.TransactionHistory = new SortedSet<Transaction>(new ByOrder());
+            //this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace BankSystemLib
                     }
                 }
             }
-            this.transactionHistory.Add(t);
+            this.TransactionHistory.Add(t);
 
             //Autosave?.Invoke();
         }
@@ -207,7 +207,10 @@ namespace BankSystemLib
             var stream = new StreamReader(fileStream);
             string js = await stream.ReadToEndAsync();
             stream.Close();
-            this.transactionHistory = JsonConvert.DeserializeObject<Collection<Transaction>>(js);
+            SortedSet<Transaction> ts = JsonConvert.DeserializeObject<SortedSet<Transaction>>(js);
+
+
+            //this.transactionHistory = JsonConvert.DeserializeObject<Collection<Transaction>>(js);
         }
 
         public async Task SaveTransactionsAsync(string path)
@@ -218,7 +221,7 @@ namespace BankSystemLib
                 FileAccess.Write, FileShare.ReadWrite,
                 bufferSize: 4096, useAsync: true);
 
-            string js = JsonConvert.SerializeObject(this.transactionHistory);
+            string js = JsonConvert.SerializeObject(this.TransactionHistory);
 
             var stream = new StreamWriter(fileStream);
             await stream.WriteAsync(js);
