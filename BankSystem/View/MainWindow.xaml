@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BankSystem"
         xmlns:viewModel ="clr-namespace:BankSystem.ViewModel"
+        xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
         Closing="DataWindow_Closing"  
         mc:Ignorable="d"
         Title="Банк BANK" Height="680" Width="980" x:Name="mainWindow1">
@@ -35,7 +36,8 @@
                     <MenuItem Header="Файл">
                         <MenuItem x:Name="OpenFile" Header="Открыть" Click="Deserialize_Button_Click" />
                         <MenuItem x:Name="SaveFile" Header="Сохранить..." Click ="Serialize_Button_Click" />
-                    </MenuItem>
+                    <MenuItem x:Name="SaveHistry" Header="Сохранить историю" Click="SaveHistry_Click" />
+                </MenuItem>
                     
                     <MenuItem Header="Журнал транзакций" Click="Transactions_Click" >
                     </MenuItem>

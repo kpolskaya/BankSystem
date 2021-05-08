@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using System.ComponentModel;
 using System.Collections.Concurrent;
+using System.IO;
 
 namespace BankSystemLib
 {
@@ -31,15 +32,10 @@ namespace BankSystemLib
         public ObservableCollection<Division> Departments { get; private set; }
         [DataMember]
         public string Name { get; private set; }
-
-        //private ConcurrentBag<Transaction> transactionHistory; //потокобезопасная коллекция с историей транзакций TODO нужна очередь транзакций! а сами транзакции сохраняются в одном потоке в ROOColl
-
+        
         private Collection<Transaction> transactionHistory;
 
-        public ReadOnlyCollection<Transaction> TransactionHistory  
-        {
-            get; // { return new List<Transaction>(transactionHistory); }  
-        }
+        public ReadOnlyCollection<Transaction> TransactionHistory  { get; }
 
         [JsonConstructor]
         public Bank(string Name, ObservableCollection<Division> Departments, decimal Cash, decimal Profit)
@@ -51,13 +47,7 @@ namespace BankSystemLib
             this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
             this.Cash = Cash;
             this.Profit = Profit;
-
             Processing.Pay = ProcessPayment; // Даем процессинговому ценрту метод обработки платежей
-
-            //foreach (var item in this.Departments) //подписка на эвенты каждого департамента
-            //{
-            //    item.TransactionRaised += ProcessPayment;
-            //}
             RefreshSubscriptions();
         }
 
@@ -70,20 +60,10 @@ namespace BankSystemLib
                 new Department<Person>("02", "Отдел по работе с физическими лицами"),
                 new Department<Vip>("03", "Отдел по работе с VIP клиентами")
             };
-
             this.Cash = 1_000_000; //собственный капитал при открытии
-
             Processing.Pay = ProcessPayment;
-
-            //foreach (var item in this.Departments) //подписка на эвенты каждого департамента
-            //{
-            //    item.TransactionRaised += ProcessPayment;
-            //}
-
-            //this.transactionHistory = new ConcurrentBag<Transaction>();
             this.transactionHistory = new Collection<Transaction>();
             this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
-
         }
 
         /// <summary>
@@ -214,6 +194,35 @@ namespace BankSystemLib
             {
                 item.RefreshSubscriptions();
             }
+        }
+
+        public async Task LoadTransactionsAsync( string path)
+        {
+            var fileStream =
+                new FileStream(path,
+                FileMode.Append,
+                FileAccess.Read, FileShare.ReadWrite,
+                bufferSize: 4096, useAsync: true);
+
+            var stream = new StreamReader(fileStream);
+            string js = await stream.ReadToEndAsync();
+            stream.Close();
+            this.transactionHistory = JsonConvert.DeserializeObject<Collection<Transaction>>(js);
+        }
+
+        public async Task SaveTransactionsAsync(string path)
+        {
+            var fileStream =
+                new FileStream(path,
+                FileMode.Append,
+                FileAccess.Write, FileShare.ReadWrite,
+                bufferSize: 4096, useAsync: true);
+
+            string js = JsonConvert.SerializeObject(this.transactionHistory);
+
+            var stream = new StreamWriter(fileStream);
+            await stream.WriteAsync(js);
+            stream.Close();
         }
     }
 }

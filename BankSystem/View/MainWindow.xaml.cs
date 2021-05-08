@@ -23,6 +23,7 @@ using BankSystemLib;
 using System.IO;
 
 
+
 namespace BankSystem.View
 {
     
@@ -251,7 +252,7 @@ namespace BankSystem.View
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 pbCalculationProgress.IsIndeterminate = false;
-                InputRestriction(true);
+                InputRestriction(true);                                                         //почему true тут? а где false?
                 MessageBox.Show("Программа лояльности закончена. Призы вручены.");
                 pbCalculationProgress.Value = 0;
             }));
@@ -342,7 +343,7 @@ namespace BankSystem.View
             e.Cancel = false;
         }
 
-        private void OnWindowClosing() //надо еще установить запрет на все действия, а то закрытие растянется на долго
+        private void OnWindowClosing() //а можно что-то наделать пока программа закрывается?
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -362,6 +363,11 @@ namespace BankSystem.View
             {
                 Application.Current.Shutdown();
             });
+        }
+
+        private void SaveHistry_Click(object sender, RoutedEventArgs e)
+        {
+            repository.SaveTransactionsHistory();
         }
     }
 }

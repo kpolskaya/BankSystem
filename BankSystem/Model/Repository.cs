@@ -14,12 +14,18 @@ namespace BankSystem.Model
     {
         public Bank bank { get; private set; }
 
+        public string HistoryFolder { get; private set; }
+        public string HistoryFileName { get; private set; }
+
         public Repository()
         {
             //if (File.Exists("Bank.json"))
             //    DeserializeJsonBank();
             //else
             //    this.bank = new Bank("Банк");
+
+            this.HistoryFileName = @"transactions.json";
+            this.HistoryFolder = @"transactions\";
 
             this.bank = new Bank("Банк");
             bank.Autosave = SerializeJsonBank;  //код, который нужно вызывать классу Bank для автосохранения
@@ -96,7 +102,15 @@ namespace BankSystem.Model
         //public void ReportProgress(bool value) //АП Закомментил 
         //{
         //  // View.ProgressBar.pbStatus.IsIndeterminate = value;
-          
+
         //}
+
+        public void SaveTransactionsHistory()
+        {
+            if (!Directory.Exists(HistoryFolder))
+                Directory.CreateDirectory(HistoryFolder);
+            Task saveHistoryAsync = this.bank.SaveTransactionsAsync(HistoryFolder + HistoryFileName);
+        }
+
     }
 }
