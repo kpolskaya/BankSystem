@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using System.ComponentModel;
 using System.Collections.Concurrent;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace BankSystemLib
 {
@@ -196,29 +197,29 @@ namespace BankSystemLib
             }
         }
 
-        public async Task LoadTransactionsAsync( string path)
+        private async Task LoadTransactionsAsync(string path)
         {
             var fileStream =
                 new FileStream(path,
-                FileMode.Append,
+                FileMode.Open,
                 FileAccess.Read, FileShare.ReadWrite,
                 bufferSize: 4096, useAsync: true);
 
             var stream = new StreamReader(fileStream);
             string js = await stream.ReadToEndAsync();
             stream.Close();
-            SortedSet<Transaction> ts = JsonConvert.DeserializeObject<SortedSet<Transaction>>(js);
 
-
-            //this.transactionHistory = JsonConvert.DeserializeObject<Collection<Transaction>>(js);
+            List<Transaction> ts = new List<Transaction>();
+            ts = JsonConvert.DeserializeObject<List<Transaction>>(js);
+            this.TransactionHistory.UnionWith(ts);
         }
 
-        public async Task SaveTransactionsAsync(string path)
+        private async Task SaveTransactionsAsync(string path)
         {
             var fileStream =
                 new FileStream(path,
-                FileMode.Append,
-                FileAccess.Write, FileShare.ReadWrite,
+                FileMode.Create,
+                FileAccess.Write, FileShare.Read,
                 bufferSize: 4096, useAsync: true);
 
             string js = JsonConvert.SerializeObject(this.TransactionHistory);
@@ -226,6 +227,52 @@ namespace BankSystemLib
             var stream = new StreamWriter(fileStream);
             await stream.WriteAsync(js);
             stream.Close();
+        }
+
+        public async Task UniteTrahsactions(string path)
+        {
+            string folder = Path.GetDirectoryName(path);
+
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            else if (File.Exists(path))
+            {
+                Task load = LoadTransactionsAsync(path);
+                await load;
+            }
+
+            Task save = SaveTransactionsAsync(path);
+            await save;
+
+
+            //var fileStream =
+            //   new FileStream(path,
+            //   FileMode.Open,
+            //   FileAccess.Read, FileShare.ReadWrite,
+            //   bufferSize: 4096, useAsync: true);
+
+            //var sr = new StreamReader(fileStream);
+            //string js = await sr.ReadToEndAsync();
+            //sr.Close();
+
+            //List<Transaction> ts = new List<Transaction>();
+            //ts = JsonConvert.DeserializeObject<List<Transaction>>(js);
+            //this.TransactionHistory.UnionWith(ts);
+
+            //fileStream =
+            //    new FileStream(path,
+            //    FileMode.Create,
+            //    FileAccess.Write, FileShare.Read,
+            //    bufferSize: 4096, useAsync: true);
+
+            //js = JsonConvert.SerializeObject(this.TransactionHistory);
+
+            //var sw = new StreamWriter(fileStream);
+            //await sw.WriteAsync(js);
+            //sw.Close();
+
         }
     }
 }

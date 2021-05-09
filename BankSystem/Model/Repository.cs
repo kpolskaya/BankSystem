@@ -46,11 +46,7 @@ namespace BankSystem.Model
             try
             {
                 using (StreamWriter streamWriter = new StreamWriter("Bank.json"))
-
-                    //File.WriteAllText("Bank.json", text);
                     streamWriter.Write(text);
-
-                //streamWriter.Close();
             }
             catch (Exception)
             {
@@ -59,58 +55,36 @@ namespace BankSystem.Model
             }
         }
 
-
-        /// <summary>
-        /// Восстановление информации из файла .json
-        /// </summary>
-        //public async void DeserializeJsonBank() //ВОЗМОЖНО ТУТ НАДО НАПИСАТЬ НЕ void А Task???
-        //{
-            
-        //    //Поубирать все окна и прочую Xamlовскую муть и вставить проверку существования файла
-        //    //и либо вызывать код загрузки из файла в новом потоке, либо кидать Exception
-        //    //события поднимать, наверное, в коде загрузки, но можно и тут?
-            
-        //    //BankSystem.View.MainWindow.PbOpen();
-        //   // View.ProgressBar pbWindow = new View.ProgressBar();
-        //    //pbWindow.Show();
-
-
-        //    //var progress = new Progress<bool>(ReportProgress);
-
-        //    await Task.Factory.StartNew(() => Deserialiation(progress)); //а можно Task.Run ?
-
-        //    //pbWindow.Close();
-
-
-
-        //    //bank.Autosave = SerializeJsonBank;
-        //}
-
         public void DeserializeJsonBank()
         {
-            //progress.Report(true);
             string text;
             using (StreamReader streamReader = new StreamReader("Bank.json"))
-                //text = File.ReadAllText("Bank.json");
                 text = streamReader.ReadToEnd();
+
             JsonSerializerSettings jss = new JsonSerializerSettings();
             jss.TypeNameHandling = TypeNameHandling.All;
             this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
-           // progress.Report(false);
         }
 
-        //public void ReportProgress(bool value) //АП Закомментил 
-        //{
-        //  // View.ProgressBar.pbStatus.IsIndeterminate = value;
+        public void UniteTransactions()
+        {
+            _ = this.bank.UniteTrahsactions(HistoryFolder + HistoryFileName);
+        }
 
+
+        //public void SaveTransactionsHistory()
+        //{
+        //    if (!Directory.Exists(HistoryFolder))
+        //        Directory.CreateDirectory(HistoryFolder);
+        //    Task saveHistoryAsync = this.bank.SaveTransactionsAsync(HistoryFolder + HistoryFileName);
         //}
 
-        public void SaveTransactionsHistory()
-        {
-            if (!Directory.Exists(HistoryFolder))
-                Directory.CreateDirectory(HistoryFolder);
-            Task saveHistoryAsync = this.bank.SaveTransactionsAsync(HistoryFolder + HistoryFileName);
-        }
+        //public void LoadTransactionHistory()
+        //{
+        //    Task loadHistoryAsync;
+        //    if (File.Exists(HistoryFolder + HistoryFileName))
+        //        loadHistoryAsync = this.bank.LoadTransactionsAsync(HistoryFolder + HistoryFileName);
+        //}
 
     }
 }

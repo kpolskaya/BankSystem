@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace BankSystemLib
 {
@@ -34,7 +35,7 @@ namespace BankSystemLib
         
         public string Id { get; private set; }
 
-        public DateTime TimeStamp { get; }
+        public DateTime TimeStamp { get; private set; }
         
         /// <summary>
         /// Счет отправителя
@@ -59,7 +60,8 @@ namespace BankSystemLib
         public TransactionType Type { get; private set; }
         
         public TransactionStatus Status { get; set; }
-
+        
+        
         public Transaction(string Id, string SenderBic, string BeneficiaryBic, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
         {
             this.TimeStamp = DateTime.UtcNow;
@@ -75,10 +77,19 @@ namespace BankSystemLib
         public Transaction()
         { }
         public Transaction(string SenderBic, string BeneficiaryBic, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
-            : this(Guid.NewGuid().ToString().Substring(0, 4) + DateTime.Now.ToLongTimeString(), SenderBic, BeneficiaryBic, Sum, Detailes, Type)
+            : this(Guid.NewGuid().ToString().Substring(0, 8), SenderBic, BeneficiaryBic, Sum, Detailes, Type)
         {
 
         }
-              
+
+        [JsonConstructor]
+        public Transaction(string Id,  string SenderBic, string BeneficiaryBic, decimal Sum, string Detailes, TransactionType Type, DateTime TimeStamp)
+            :this(Id, SenderBic, BeneficiaryBic, Sum, Detailes, Type)
+            
+        {
+            this.TimeStamp = TimeStamp;
+            
+        }
+
     }
 }

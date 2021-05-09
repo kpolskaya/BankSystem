@@ -365,9 +365,10 @@ namespace BankSystem.View
             });
         }
 
-        private void SaveHistry_Click(object sender, RoutedEventArgs e)
+        private void SyncHistory_Click(object sender, RoutedEventArgs e)
         {
-            repository.SaveTransactionsHistory();
+            repository.UniteTransactions();
         }
+
     }
 }
