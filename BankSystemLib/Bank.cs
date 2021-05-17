@@ -54,9 +54,7 @@ namespace BankSystemLib
         {
             this.Name = Name;
             this.Departments = Departments;
-            //this.transactionHistory = new ConcurrentBag<Transaction>();
             this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
-            //this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
             this.Cash = Cash;
             this.Profit = Profit;
             Processing.Pay = ProcessPayment; // Даем процессинговому ценрту метод обработки платежей
@@ -75,7 +73,6 @@ namespace BankSystemLib
             this.Cash = 1_000_000; //собственный капитал при открытии
             Processing.Pay = ProcessPayment;
             this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
-            //this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
         }
 
         /// <summary>
@@ -222,8 +219,9 @@ namespace BankSystemLib
             var stream = new StreamReader(fileStream);
             string js;
             js = await stream.ReadToEndAsync();
+            stream.Close();
 
-            List<Transaction> ts = new List<Transaction>();
+            IEnumerable<Transaction> ts = new List<Transaction>();
             try
             {
                 ts = JsonConvert.DeserializeObject<List<Transaction>>(js);

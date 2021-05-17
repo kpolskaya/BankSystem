@@ -35,11 +35,22 @@ namespace BankSystem.View
 
         Repository repository;
         BankVM bank;
-        public static bool NoClose { get { return (FlagInputRestriction || !Processing.TransactionsQueue.IsEmpty || !SpamBot.MessageQueue.IsEmpty || SpamBot.OnLine || Processing.IsActive); } }
-        public static bool FlagInputRestriction = false;
-        static int qEntity = 1000;
-        static int qPerson = 1000;
-        static int qVip = 1000;
+
+        bool noClose 
+        { 
+            get 
+            { 
+                return (inputRestricted 
+                    || !Processing.TransactionsQueue.IsEmpty 
+                    || !SpamBot.MessageQueue.IsEmpty 
+                    || SpamBot.OnLine || Processing.IsActive); 
+            } 
+        }
+
+        bool inputRestricted = false;
+        int qEntity = 1000;
+        int qPerson = 1000;
+        int qVip = 1000;
 
         public MainWindow()
         {
@@ -61,27 +72,7 @@ namespace BankSystem.View
             bank = new BankVM(repository.bank);
             DataContext = bank;
         }
-
-        /// <summary>
-        /// Открывает окно информации о выбранном клиенте
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Customers_SelectionChanged(object sender, SelectionChangedEventArgs e) // этот метод переписан и его нужно будет удалить!!!
-        {
-            if (Customers.SelectedItem != null && !FlagInputRestriction)
-            {
-                CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem)
-                {
-                    Owner = this
-                };
-                Thread.Sleep(100);// это зачем-то нужно
-                newWindow.ShowDialog();
-                bank.ClearSelectedCustomer(); //вот тоже непонятно 
-            }
-            return;
-        }
-
+ 
         /// <summary>
         /// Открывает окно информации о выбранном клиенте
         /// </summary>
@@ -89,9 +80,9 @@ namespace BankSystem.View
         /// <param name="e"></param>
         private void CustomerLeftBtnClick(object sender, RoutedEventArgs e)
         {
-            if (Customers.SelectedItem != null && !FlagInputRestriction)
+            if (Customers.SelectedItem != null && !inputRestricted)
             {
-                CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem)
+                CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem) //datacontext нужен для вывода транзакций
                 {
                     Owner = this
                 };
@@ -99,8 +90,6 @@ namespace BankSystem.View
             }
             return;
         }
-
-
 
         /// <summary>
         /// Сохранение данных
@@ -112,12 +101,12 @@ namespace BankSystem.View
             try
             {
                 pbCalculationProgress.IsIndeterminate = true;
-                InputRestriction(false);
+                SetInputRestrictions(true);
                 await Task.Run(() => repository.SerializeJsonBank());
                 pbCalculationProgress.IsIndeterminate = false;
                 pbCalculationProgress.Value = 0;
                 MessageBox.Show("Файл сохранен");
-                InputRestriction(true);
+                SetInputRestrictions(false);
             }
             catch (Exception ex)
             {
@@ -135,12 +124,12 @@ namespace BankSystem.View
             try
             {
                 pbCalculationProgress.IsIndeterminate = true;
-                InputRestriction(false);
+                SetInputRestrictions(true);
                 await Task.Run(() => repository.DeserializeJsonBank());
                 pbCalculationProgress.IsIndeterminate = false;
                 pbCalculationProgress.Value = 0;
                 MessageBox.Show("Файл прочитан");
-                InputRestriction(true);
+                SetInputRestrictions(false);
             }
             catch (Exception ex)
             {
@@ -167,7 +156,6 @@ namespace BankSystem.View
                 }
                 catch (Exception ex)
                 {
-
                     MessageBox.Show(ex.Message);
                 }
 
@@ -188,38 +176,15 @@ namespace BankSystem.View
             pbCalculationProgress.IsIndeterminate = false;
             pbCalculationProgress.Value = 0;
             MessageBox.Show("Закрытие месяца выполнено");
-
-
-            //try
-            //{
-            //    pbCalculationProgress.IsIndeterminate = true;
-            //    await DoMonthlyCharge();
-
-            //}
-            //catch (Exception ex) //при автосохранении возможно исключение
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
         }
 
-
-        //private async Task DoMonthlyCharge()
-        //{
-        //    pbCalculationProgress.IsIndeterminate = true;
-
-        //    await Task.Run(() => bank.MonthlyCharge()); //Можно же просто Task.Run - тут только один процесс вроде? Нужно сделать закрытие месяца awaitable!
-        //    pbCalculationProgress.IsIndeterminate = false;
-        //    pbCalculationProgress.Value = 0;
-        //    MessageBox.Show("Закрытие месяца выполнено");
-
-        //}
 
         /// <summary>
         /// Открытие окна истории транзакций
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Transactions_Click(object sender, RoutedEventArgs e) //TODO решить проблему с изменением списка транзакций во время просмотра!
+        private void Transactions_Click(object sender, RoutedEventArgs e) //Перенести в окно клиента
         {
             Transactions tWindow = new Transactions(DataContext);
             tWindow.ShowDialog();
@@ -230,7 +195,7 @@ namespace BankSystem.View
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e) //Где наш замечательный метод????
         {
             {
                 string s = Regex.Replace(((TextBox)sender).Text, @"[^\d]", "");
@@ -243,8 +208,8 @@ namespace BankSystem.View
 
         private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e) // долго работает. Изменение коллекций в это время повлечёт крах (наверное) блокировка? оптимизация?
         {
+            SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
-            // Task.Run(()=>bank.LoyaltyProg());
             Task[] tasks = new Task[3];
             tasks[0] = Task.Run(() => (repository.bank.Departments[0] as Department<Entity>).LoyaltyProgramExtension());
             tasks[1] = Task.Run(() => (repository.bank.Departments[1] as Department<Person>).LoyaltyProgramExtension());
@@ -252,77 +217,46 @@ namespace BankSystem.View
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 pbCalculationProgress.IsIndeterminate = false;
-                InputRestriction(true);                                                         //почему true тут? а где false?
+                SetInputRestrictions(false);
                 MessageBox.Show("Программа лояльности закончена. Призы вручены.");
                 pbCalculationProgress.Value = 0;
             }));
         }
 
 
-        //private async void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    MonthlyCharge.IsEnabled = false;
-        //    LoyalityProgram.IsEnabled = false;
-        //    await DoFilling();
-
-        //}
-
         private void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
         {
-            InputRestriction(false);
+            SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
             Task[] tasks = new Task[3];
             tasks[0] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[0] as Department<Entity>, qEntity));
             tasks[1] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[1] as Department<Person>, qPerson));
             tasks[2] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[2] as Department<Vip>, qVip));
+          
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 pbCalculationProgress.IsIndeterminate = false;
-                InputRestriction(true);
+                SetInputRestrictions(false);
                 MessageBox.Show("Начальное заполнение закончено");
                 pbCalculationProgress.Value = 0;
             }));
         }
 
-
-
-        //private void DoFilling()
-        //{
-        //    Task[] tasks = new Task[3];
-        //    tasks[0] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[0] as Department<Entity>, qEntity));
-        //    tasks[1] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[1] as Department<Person>, qPerson));
-        //    tasks[2] = Task.Factory.StartNew(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[2] as Department<Vip>, qVip));
-        //    Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
-        //    {
-        //        pbCalculationProgress.IsIndeterminate = false;
-        //        InputRestriction(true);
-        //        MessageBox.Show("Начальное заполнение закончено");
-        //        pbCalculationProgress.Value = 0;
-        //    }));
-        //}
-
-        private void InputRestriction(bool flag)
+        private void SetInputRestrictions(bool flag)
         {
-            MonthlyCharge.IsEnabled = flag;
-            LoyalityProgram.IsEnabled = flag;
-            NewClient.IsEnabled = flag;
-            OpenFile.IsEnabled = flag;
-            SaveFile.IsEnabled = flag;
-            InitialFilling.IsEnabled = flag;
-            FlagInputRestriction = !flag;
+            MonthlyCharge.IsEnabled = !flag;
+            LoyalityProgram.IsEnabled = !flag;
+            NewClient.IsEnabled = !flag;
+            OpenFile.IsEnabled = !flag;
+            SaveFile.IsEnabled = !flag;
+            InitialFilling.IsEnabled = !flag;
+            inputRestricted = flag;
         }
 
-        //private void SetCanClose()
-        //{
-
-        //    NoClose = (FlagInputRestriction /*|| !Processing.Transactions.IsEmpty*/ || !SpamBot.MessageQueue.IsEmpty || SpamBot.OnLine || Processing.IsActive);//сделать поле вместо метода
-
-        //}
-
-        void DataWindow_Closing(object sender, CancelEventArgs e)
+        private void DataWindow_Closing(object sender, CancelEventArgs e)
         {
 
-            if (NoClose)
+            if (noClose)
             {
 
                 MessageBoxResult result =
@@ -343,19 +277,20 @@ namespace BankSystem.View
             e.Cancel = false;
         }
 
-        private void OnWindowClosing() //а можно что-то наделать пока программа закрывается?
+        private void OnWindowClosing()
         {
+            SetInputRestrictions(true);
             this.Dispatcher.Invoke(() =>
             {
                 PBtext.Text = "Программа закрывается. Подождите. ";
                 MyWindow w = new MyWindow("Идет сохранение данных", 1000);
                 w.Owner = this;
-                w.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+                w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 w.ShowDialog();
               
             });
          
-            while (NoClose)
+            while (noClose)
             {
             }
             

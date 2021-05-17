@@ -14,6 +14,9 @@ namespace BankSystem.Model
     {
         public Bank bank { get; private set; }
 
+        private bool isBusy;
+        public bool IsBusy { get; } // написать getter
+
         public string HistoryFolder { get; private set; }
         public string HistoryFileName { get; private set; }
 
@@ -28,6 +31,7 @@ namespace BankSystem.Model
             this.HistoryFolder = @"transactions\";
 
             this.bank = new Bank("Банк");
+            this.isBusy = false;
             bank.Autosave = SerializeJsonBank;  //код, который нужно вызывать классу Bank для автосохранения
         }
 
