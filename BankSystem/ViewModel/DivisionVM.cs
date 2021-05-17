@@ -152,7 +152,7 @@ namespace BankSystem.ViewModel
         {
             get
             {
-                return SelectedCustomerAccounts.FirstOrDefault(e => e.IsSelected); //замена Accounts на SelectedCustomerA... не факт что быстрее
+                return SelectedCustomerAccounts.FirstOrDefault(e => e.IsSelected); 
             }
         }
 
@@ -170,7 +170,6 @@ namespace BankSystem.ViewModel
                     );
             }
         }
-
      
         public void CreateCustomer(string name, string otherName, string legalId, string phone)
         {
@@ -248,7 +247,5 @@ namespace BankSystem.ViewModel
         }
 
     }
-
-
      
 }

@@ -74,7 +74,7 @@ namespace BankSystemLib
             this.Type = Type;
         }
 
-        public Transaction()
+        public Transaction() //добавить сравнение кредит-дебит-время
         { }
         public Transaction(string SenderBic, string BeneficiaryBic, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
             : this(Guid.NewGuid().ToString().Substring(0, 8), SenderBic, BeneficiaryBic, Sum, Detailes, Type)

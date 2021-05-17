@@ -14,7 +14,7 @@ namespace BankSystem.ViewModel
     {
         public ObservableCollection<DivisionVM> Departments { get; set; }
 
-        public IEnumerable<Transaction> TransactionHistory { get { return bank.TransactionHistory as IEnumerable<Transaction>; } }
+        public List<Transaction> TransactionHistory { get { return bank.TransactionHistory.ToList(); } }  
 
         private readonly Bank bank;
         /// <summary>
@@ -41,7 +41,7 @@ namespace BankSystem.ViewModel
             {
                 this.Departments.Add(new DivisionVM(item));
             }
-            bank.BankBalanceChanged += UpdateTarget;  //подписка на изменения статей баланса
+            bank.BankBalanceChanged += UpdateBalanceView;  //подписка на изменения статей баланса
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace BankSystem.ViewModel
         /// <summary>
         /// Сброс значения выбранного пользователем клиента
         /// </summary>
-        public void ClearSelectedCustomer()
+        public void ClearSelectedCustomer()                                         //зачем нужна???
         {
             if (SelectedItem != null && SelectedItem.SelectedCustomer != null)
                 SelectedItem.SelectedCustomer.IsSelected = false;
@@ -67,9 +67,9 @@ namespace BankSystem.ViewModel
         /// <summary>
         ///  Начисляет ежемесячные платежи и проценты по клиентским счетам
         /// </summary>
-        public void MonthlyCharge(/*IProgress<int> progress*/)
+        public void MonthlyCharge()
         {
-            bank.MonthlyCharge(/*progress*/);
+            bank.MonthlyCharge();
             OnPropertyChanged("ClientsFunds");
             OnPropertyChanged("Capital");
         }
@@ -86,29 +86,12 @@ namespace BankSystem.ViewModel
         /// Обновляет значения полей банковского баланса
         /// </summary>
         /// <param name="name"></param>
-        private void UpdateTarget (string name)
+        private void UpdateBalanceView (string name)
         {
             OnPropertyChanged(name);
             if (name == "Cash")
                 OnPropertyChanged("ClientsFunds"); //меняются оба поля
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        //public void LoyaltyProg()
-        //{
-        //    Task[] tasks = new Task[3];
-        //    tasks[0] = Task.Run(() => (bank.Departments[0] as Department<Entity>).LoyaltyProgramExtension());
-        //    tasks[1] = Task.Run(() => (bank.Departments[1] as Department<Person>).LoyaltyProgramExtension());
-        //    tasks[2] = Task.Run(() => (bank.Departments[2] as Department<Vip>).LoyaltyProgramExtension());
-           
-
-        //    //(bank.Departments[0] as Department<Entity>).LoyaltyProgramExtension();
-        //    //(bank.Departments[1] as Department<Person>).LoyaltyProgramExtension();
-        //    //(bank.Departments[2] as Department<Vip>).LoyaltyProgramExtension();
-
-        //}
-    
     }
 }

@@ -365,9 +365,19 @@ namespace BankSystem.View
             });
         }
 
-        private void SyncHistory_Click(object sender, RoutedEventArgs e)
+        private async void SyncHistory_Click(object sender, RoutedEventArgs e)
         {
-            repository.UniteTransactions();
+
+            try
+            {
+                var t = repository.UniteTransactionsAsync();
+                await t;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message); 
+            }
+ 
         }
 
     }

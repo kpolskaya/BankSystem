@@ -87,8 +87,6 @@ namespace BankSystem.ViewModel
                 this.customer = Customer;
         }
 
-     
-
         private bool isSelected;
         public bool IsSelected
         {
@@ -117,7 +115,6 @@ namespace BankSystem.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
        
         public Customer GetCustomer()
         {

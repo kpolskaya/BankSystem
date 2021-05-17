@@ -33,10 +33,21 @@ namespace BankSystemLib
         public ObservableCollection<Division> Departments { get; private set; }
         [DataMember]
         public string Name { get; private set; }
-        
-        public SortedSet<Transaction> TransactionHistory;
 
-        //public ReadOnlyCollection<Transaction> TransactionHistory  { get; }
+        private object historyLocker = new object(); //кажется, что lock в данном случае оптимальное решение, чтобы не терять эффективный sortedset
+        
+        private SortedSet<Transaction> transactionHistory;
+
+        public SortedSet<Transaction> TransactionHistory
+        {
+            get
+            {
+                lock(historyLocker)
+                {
+                    return transactionHistory;
+                }
+            }
+        }
 
         [JsonConstructor]
         public Bank(string Name, ObservableCollection<Division> Departments, decimal Cash, decimal Profit)
@@ -44,7 +55,7 @@ namespace BankSystemLib
             this.Name = Name;
             this.Departments = Departments;
             //this.transactionHistory = new ConcurrentBag<Transaction>();
-            this.TransactionHistory = new SortedSet<Transaction>(new ByOrder());
+            this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
             //this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
             this.Cash = Cash;
             this.Profit = Profit;
@@ -63,7 +74,7 @@ namespace BankSystemLib
             };
             this.Cash = 1_000_000; //собственный капитал при открытии
             Processing.Pay = ProcessPayment;
-            this.TransactionHistory = new SortedSet<Transaction>(new ByOrder());
+            this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
             //this.TransactionHistory = new ReadOnlyCollection<Transaction>(transactionHistory);
         }
 
@@ -133,7 +144,10 @@ namespace BankSystemLib
                     }
                 }
             }
-            this.TransactionHistory.Add(t);
+            lock (historyLocker)
+            {
+                this.transactionHistory.Add(t);
+            }
 
             //Autosave?.Invoke();
         }
@@ -206,12 +220,22 @@ namespace BankSystemLib
                 bufferSize: 4096, useAsync: true);
 
             var stream = new StreamReader(fileStream);
-            string js = await stream.ReadToEndAsync();
-            stream.Close();
+            string js;
+            js = await stream.ReadToEndAsync();
 
             List<Transaction> ts = new List<Transaction>();
-            ts = JsonConvert.DeserializeObject<List<Transaction>>(js);
-            this.TransactionHistory.UnionWith(ts);
+            try
+            {
+                ts = JsonConvert.DeserializeObject<List<Transaction>>(js);
+                lock (historyLocker)
+                {
+                    this.transactionHistory.UnionWith(ts);
+                }
+            }
+            catch (Exception)
+            {
+                throw new FileErrorException();
+            }
         }
 
         private async Task SaveTransactionsAsync(string path)
@@ -222,14 +246,23 @@ namespace BankSystemLib
                 FileAccess.Write, FileShare.Read,
                 bufferSize: 4096, useAsync: true);
 
-            string js = JsonConvert.SerializeObject(this.TransactionHistory);
+            string js;
+            lock (historyLocker)
+            {
+                js = JsonConvert.SerializeObject(this.transactionHistory);
+            }
 
             var stream = new StreamWriter(fileStream);
-            await stream.WriteAsync(js);
+                await stream.WriteAsync(js);
             stream.Close();
         }
 
-        public async Task UniteTrahsactions(string path)
+        /// <summary>
+        /// Объединяет транзакции в памяти с историй транзакций в файле и перезаписывает файл истории
+        /// </summary>
+        /// <param name="path">путь к файлу с историей транзакций</param>
+        /// <returns></returns>
+        public async Task UniteTransactionsAsync(string path)
         {
             string folder = Path.GetDirectoryName(path);
 
@@ -239,40 +272,11 @@ namespace BankSystemLib
             }
             else if (File.Exists(path))
             {
-                Task load = LoadTransactionsAsync(path);
-                await load;
+                await LoadTransactionsAsync(path);
             }
 
-            Task save = SaveTransactionsAsync(path);
-            await save;
-
-
-            //var fileStream =
-            //   new FileStream(path,
-            //   FileMode.Open,
-            //   FileAccess.Read, FileShare.ReadWrite,
-            //   bufferSize: 4096, useAsync: true);
-
-            //var sr = new StreamReader(fileStream);
-            //string js = await sr.ReadToEndAsync();
-            //sr.Close();
-
-            //List<Transaction> ts = new List<Transaction>();
-            //ts = JsonConvert.DeserializeObject<List<Transaction>>(js);
-            //this.TransactionHistory.UnionWith(ts);
-
-            //fileStream =
-            //    new FileStream(path,
-            //    FileMode.Create,
-            //    FileAccess.Write, FileShare.Read,
-            //    bufferSize: 4096, useAsync: true);
-
-            //js = JsonConvert.SerializeObject(this.TransactionHistory);
-
-            //var sw = new StreamWriter(fileStream);
-            //await sw.WriteAsync(js);
-            //sw.Close();
-
+            await SaveTransactionsAsync(path);
+ 
         }
     }
 }

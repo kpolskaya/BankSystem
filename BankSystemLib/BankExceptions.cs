@@ -39,9 +39,9 @@ namespace BankSystemLib
         }
     }
 
-    public class SaveDataErrorException : Exception
+    public class FileErrorException : Exception
     {
-        public SaveDataErrorException() : base("Ошибка сохранения данных в файл")
+        public FileErrorException() : base("Файл поврежден или отсутствует доступ")
         {
 
         }

@@ -51,7 +51,7 @@ namespace BankSystem.Model
             catch (Exception)
             {
 
-                throw new SaveDataErrorException();
+                throw new FileErrorException();
             }
         }
 
@@ -66,25 +66,14 @@ namespace BankSystem.Model
             this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
         }
 
-        public void UniteTransactions()
+        /// <summary>
+        /// Объединяет транзакции в памяти с историй транзакций в файле и перезаписывает файл истории
+        /// </summary>
+        /// <returns></returns>
+        public async Task UniteTransactionsAsync()
         {
-            _ = this.bank.UniteTrahsactions(HistoryFolder + HistoryFileName);
+                await this.bank.UniteTransactionsAsync(HistoryFolder + HistoryFileName);
         }
-
-
-        //public void SaveTransactionsHistory()
-        //{
-        //    if (!Directory.Exists(HistoryFolder))
-        //        Directory.CreateDirectory(HistoryFolder);
-        //    Task saveHistoryAsync = this.bank.SaveTransactionsAsync(HistoryFolder + HistoryFileName);
-        //}
-
-        //public void LoadTransactionHistory()
-        //{
-        //    Task loadHistoryAsync;
-        //    if (File.Exists(HistoryFolder + HistoryFileName))
-        //        loadHistoryAsync = this.bank.LoadTransactionsAsync(HistoryFolder + HistoryFileName);
-        //}
 
     }
 }
