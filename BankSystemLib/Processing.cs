@@ -32,7 +32,7 @@ namespace BankSystemLib
         {
             TransactionsQueue = new ConcurrentQueue<Transaction>();
             IsActive = false;
-            process = new Task (Schedule);
+            process = new Task(Schedule);
             process.Start();
         }
 
@@ -44,7 +44,7 @@ namespace BankSystemLib
                 if (!IsActive && !TransactionsQueue.IsEmpty)                      
                 {
                     IsActive = true;
-                    _ = DoProcessingAsync();
+                    _ = DoProcessingAsync(); 
                 }
             }
         }

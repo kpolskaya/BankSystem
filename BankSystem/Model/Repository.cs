@@ -12,33 +12,41 @@ namespace BankSystem.Model
 {
     public class Repository
     {
-        public Bank bank { get; private set; }
+        public Bank Bank { get; private set; }
 
         private bool isBusy;
-        public bool IsBusy { get; } // написать getter
+        /// <summary>
+        /// Показывает состояние процессов, связанных с файловыми операциями
+        /// или обработкой платежей
+        /// </summary>
+        public bool IsBusy 
+        { 
+            get
+            {
+                return isBusy || SpamBot.OnLine
+                    || !SpamBot.MessageQueue.IsEmpty
+                    || Processing.IsActive
+                    || !Processing.TransactionsQueue.IsEmpty;
+            }
+        } 
 
-        public string HistoryFolder { get; private set; }
-        public string HistoryFileName { get; private set; }
+        public string HistoryFolder { get; set; }
+        public string HistoryFileName { get; set; }
+        public string BankDataPath { get; set; }
 
         public Repository()
         {
-            //if (File.Exists("Bank.json"))
-            //    DeserializeJsonBank();
-            //else
-            //    this.bank = new Bank("Банк");
-
             this.HistoryFileName = @"transactions.json";
             this.HistoryFolder = @"transactions\";
-
-            this.bank = new Bank("Банк");
+            this.BankDataPath = @"Bank.json";
+            this.Bank = new Bank("Банк");
             this.isBusy = false;
-            bank.Autosave = SerializeJsonBank;  //код, который нужно вызывать классу Bank для автосохранения
         }
 
         /// <summary>
-        /// Сохранение информации в json
+        /// Сохранение структуры банка в json
         /// </summary>
-        public void SerializeJsonBank()
+        public async Task SaveBankAsync()
         {
             var settings = new JsonSerializerSettings
             {
@@ -46,28 +54,54 @@ namespace BankSystem.Model
                 Formatting = Formatting.Indented
             };
 
-            var text = JsonConvert.SerializeObject(bank, settings);
+            isBusy = true;
+            var text = JsonConvert.SerializeObject(Bank, settings);
+            var fileStream =
+                new FileStream(BankDataPath,
+                FileMode.Create,
+                FileAccess.Write, FileShare.Read,
+                bufferSize: 4096, useAsync: true);
+
+            StreamWriter streamWriter = new StreamWriter(fileStream);
+                await streamWriter.WriteAsync(text);
+            streamWriter.Close();
+            fileStream.Dispose();
+            isBusy = false;
+        }
+
+        /// <summary>
+        /// Загрузка стркуктуры банка из json
+        /// </summary>
+        /// <returns></returns>
+        public async Task LoadBankAsync()
+        {
+            string text;
+            var fileStream =
+                new FileStream(BankDataPath,
+                FileMode.Open,
+                FileAccess.Read, FileShare.Read,
+                bufferSize: 4096, useAsync: true);
+            isBusy = true;
+            StreamReader streamReader = new StreamReader(fileStream);
+                text = await streamReader.ReadToEndAsync();
+            streamReader.Close();
+            fileStream.Dispose();
             try
             {
-                using (StreamWriter streamWriter = new StreamWriter("Bank.json"))
-                    streamWriter.Write(text);
+                JsonSerializerSettings jss = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                this.Bank = JsonConvert.DeserializeObject<Bank>(text, jss);
             }
             catch (Exception)
             {
-
                 throw new FileErrorException();
             }
-        }
-
-        public void DeserializeJsonBank()
-        {
-            string text;
-            using (StreamReader streamReader = new StreamReader("Bank.json"))
-                text = streamReader.ReadToEnd();
-
-            JsonSerializerSettings jss = new JsonSerializerSettings();
-            jss.TypeNameHandling = TypeNameHandling.All;
-            this.bank = Newtonsoft.Json.JsonConvert.DeserializeObject<Bank>(text, jss);
+            finally
+            {
+                isBusy = false;
+            }
         }
 
         /// <summary>
@@ -76,8 +110,7 @@ namespace BankSystem.Model
         /// <returns></returns>
         public async Task UniteTransactionsAsync()
         {
-                await this.bank.UniteTransactionsAsync(HistoryFolder + HistoryFileName);
+                await this.Bank.UniteTransactionsAsync(HistoryFolder + HistoryFileName);
         }
-
     }
 }

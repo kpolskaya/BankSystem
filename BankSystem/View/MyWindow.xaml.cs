@@ -35,11 +35,11 @@ namespace BankSystem.View
         {
             System.Timers.Timer t = new System.Timers.Timer();
             t.Interval = showtime;
-            t.Elapsed += new ElapsedEventHandler(t_Elapsed);
+            t.Elapsed += new ElapsedEventHandler(TElapsed);
             t.Start();
         }
 
-        void t_Elapsed(object sender, ElapsedEventArgs e)
+        void TElapsed(object sender, ElapsedEventArgs e)
         {
             this.Dispatcher.Invoke(new Action(() =>
             {

@@ -12,25 +12,6 @@ namespace BankSystemLib
     [KnownType(typeof(Vip))]
     public  class Customer 
     {
-        //public static Random random;
-        static uint lastId;
-        static Customer()
-        {
-            lastId = 0;
-            //random = new Random();
-        }
-
-        static uint NextId()
-        {
-            return ++lastId;
-        }
-
-        static void SetLastId(uint id)
-        {
-            if (lastId < id)
-                lastId = id;
-        }
-
         [DataMember]
         public string Id { get; private set; }
         /// <summary>
@@ -55,9 +36,7 @@ namespace BankSystemLib
 
         public Customer()
         {
-            //this.Id = NextId().ToString("00000000");
             this.Id = Guid.NewGuid().ToString().Substring(0, 8);
-
         }
 
         public Customer (string Name, string OtherName, string LegalId, string Phone)
@@ -66,12 +45,11 @@ namespace BankSystemLib
             this.OtherName = OtherName;
             this.LegalId = LegalId;
             this.Phone = Phone;
-            //this.Id = NextId().ToString("00000000");
             this.Id = Guid.NewGuid().ToString().Substring(0, 8);
         }
 
         /// <summary>
-        /// Конструктор необходим для правильной нумерации клиентов после восстановления из .json
+        /// Конструктор необходим для восстановления из .json
         /// </summary>
         /// <param name="Id"></param>
         /// <param name="Name"></param>
@@ -90,17 +68,6 @@ namespace BankSystemLib
             else
                 this.Id = Id;
 
-            //try
-            //{
-            //    uint id = uint.Parse(Id);
-            //    this.Id = id.ToString("00000000");
-            //    SetLastId(id);
-            //}
-            //catch (Exception)
-            //{
-
-            //    throw new CustomerIdFormatException();
-            //}
         }
 
         /// <summary>

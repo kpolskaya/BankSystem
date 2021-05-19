@@ -13,7 +13,7 @@ namespace BankSystemLib
     /// <summary>
     /// Робот для рассылки сообщений клиентам банка
     /// </summary>
-    public static class SpamBot // сделала паблик чтобы проверить очередь на закрытие
+    public static class SpamBot 
     {
         /// <summary>
         /// Очередь сообщений на отправку
@@ -111,8 +111,9 @@ namespace BankSystemLib
                 {
                     Debug.WriteLine($"There is {count} messages in the block.");
                     Debug.WriteLine("Sending messages...");
-                    using (var logWriter = new StreamWriter(logStream))               
+                    var logWriter = new StreamWriter(logStream);               
                         await logWriter.WriteAsync(block.ToString());
+                    logWriter.Close();
                 }
 
                 logStream.Dispose();

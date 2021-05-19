@@ -64,6 +64,7 @@ namespace BankSystemLib
         public Bank(string Name)
         {
             this.Name = Name;
+            this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
             this.Departments = new ObservableCollection<Division>
             {
                 new Department<Entity>("01", "Отдел по работе с юридическими лицами"),
@@ -72,7 +73,6 @@ namespace BankSystemLib
             };
             this.Cash = 1_000_000; //собственный капитал при открытии
             Processing.Pay = ProcessPayment;
-            this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace BankSystemLib
         /// <summary>
         /// Делегат для запуска автосохранения
         /// </summary>
-        public Action Autosave; //TODO!!!
+        //public Action Autosave; //TODO!!!
 
         /// <summary>
         /// Обрабатывает транзакцию, инициированную департаментом
@@ -213,15 +213,16 @@ namespace BankSystemLib
             var fileStream =
                 new FileStream(path,
                 FileMode.Open,
-                FileAccess.Read, FileShare.ReadWrite,
+                FileAccess.Read, FileShare.Read,
                 bufferSize: 4096, useAsync: true);
 
             var stream = new StreamReader(fileStream);
             string js;
             js = await stream.ReadToEndAsync();
             stream.Close();
+            fileStream.Dispose();
 
-            IEnumerable<Transaction> ts = new List<Transaction>();
+            IEnumerable<Transaction> ts; 
             try
             {
                 ts = JsonConvert.DeserializeObject<List<Transaction>>(js);
@@ -253,6 +254,7 @@ namespace BankSystemLib
             var stream = new StreamWriter(fileStream);
                 await stream.WriteAsync(js);
             stream.Close();
+            fileStream.Dispose();
         }
 
         /// <summary>

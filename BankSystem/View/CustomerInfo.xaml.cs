@@ -162,12 +162,14 @@ namespace BankSystem.View
         {
             if (Regex.IsMatch(((TextBox)sender).Text, @"[^\d,]") || Regex.IsMatch(((TextBox)sender).Text, @"(\d*,\d{2})\d+") || Regex.IsMatch(((TextBox)sender).Text, @"(\d*[,]\d*)[,].*")) 
             {
-                MyWindow w = new MyWindow("Ошибка ввода",800);
-                w.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen; //а нужно ли выводить окно по поводу 3-го символа после запятой?
-                w.ShowDialog();
+                MyWindow w = new MyWindow("Ошибка ввода", 800)
+                {
+                    WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen
+                };
+                w.ShowDialog();                                                             //а нужно ли выводить окно по поводу 3-го символа после запятой?
 
             }
-            string s = Regex.Replace(((TextBox)sender).Text, @"[^\d,]", ""); // вот этот блок всегда выполняется, джаже если нет ошибок
+            string s = Regex.Replace(((TextBox)sender).Text, @"[^\d,]", "");                // вот этот блок всегда выполняется, джаже если нет ошибок
             s = Regex.Replace((s), @"(\d*,\d{2})\d+", @"$1");
             s = Regex.Replace((s), @"(\d*[,]\d*)[,].*", @"$1");
 

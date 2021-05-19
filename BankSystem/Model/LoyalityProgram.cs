@@ -28,7 +28,6 @@ namespace BankSystem.Model
                 this.TotalFunds = TotalFunds;
             }
 
-
             public int CompareTo(CustomersFunds obj)
             {
                 if (obj == null)
@@ -44,13 +43,10 @@ namespace BankSystem.Model
 
         internal static void SendInvitation(string phone) //TODO Переделать с учетом спамбота
         {
-            //--Debug--
-            System.Media.SystemSounds.Asterisk.Play();
-            Debug.WriteLine($"SMS to: {phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
-            //--Debug--
+            SpamBot.MessageQueue.Enqueue($"SMS to: {phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
         }
 
-        public static void LoyaltyProgramExtension<TCustomer>(this Department<TCustomer> d) where TCustomer : Customer, new()
+        public static void LoyalityProgramExtension<TCustomer>(this Department<TCustomer> d) where TCustomer : Customer, new()
         {
             List<CustomersFunds> CustomersFundsList = new List<CustomersFunds>();
 
@@ -72,6 +68,5 @@ namespace BankSystem.Model
                 SendInvitation(CustomersFundsList[0].Customer.Phone);
             }
         }
-           
     }
 }

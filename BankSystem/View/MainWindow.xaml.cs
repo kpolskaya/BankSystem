@@ -21,29 +21,25 @@ using BankSystem.ViewModel;
 using BankSystem.View;
 using BankSystemLib;
 using System.IO;
+using System.Diagnostics;
 
 
 
 namespace BankSystem.View
 {
-    
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-
         Repository repository;
         BankVM bank;
 
-        bool noClose 
+        bool NoClose 
         { 
             get 
-            { 
-                return (inputRestricted 
-                    || !Processing.TransactionsQueue.IsEmpty 
-                    || !SpamBot.MessageQueue.IsEmpty 
-                    || SpamBot.OnLine || Processing.IsActive); 
+            {
+                return (inputRestricted || repository.IsBusy); //а надо ли проверять флаг inputRestricted ?
             } 
         }
 
@@ -55,21 +51,9 @@ namespace BankSystem.View
         public MainWindow()
         {
             InitializeComponent();
-            //try
-            //{
-            //    repository = new Repository();
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Работа программы невозможна. При чтении данных из файла возникло исключение: {ex.Message}"); //нужно что-то с этим сделать
-            //    Application.Current.Shutdown();
-            //}
-
             repository = new Repository();
-            //подписки на события, которые генерит репозиторий...
-
-            bank = new BankVM(repository.bank);
+ 
+            bank = new BankVM(repository.Bank);
             DataContext = bank;
         }
  
@@ -98,19 +82,22 @@ namespace BankSystem.View
         /// <param name="e"></param>
         private async void Serialize_Button_Click(object sender, RoutedEventArgs e)
         {
+            pbCalculationProgress.IsIndeterminate = true;
+            SetInputRestrictions(true);
             try
             {
-                pbCalculationProgress.IsIndeterminate = true;
-                SetInputRestrictions(true);
-                await Task.Run(() => repository.SerializeJsonBank());
-                pbCalculationProgress.IsIndeterminate = false;
-                pbCalculationProgress.Value = 0;
+                await repository.SaveBankAsync();
                 MessageBox.Show("Файл сохранен");
-                SetInputRestrictions(false);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                pbCalculationProgress.IsIndeterminate = false;
+                pbCalculationProgress.Value = 0;
+                SetInputRestrictions(false);
             }
         }
 
@@ -121,24 +108,25 @@ namespace BankSystem.View
         /// <param name="e"></param>
         private async void Deserialize_Button_Click(object sender, RoutedEventArgs e)
         {
+            pbCalculationProgress.IsIndeterminate = true;
+            SetInputRestrictions(true);
             try
             {
-                pbCalculationProgress.IsIndeterminate = true;
-                SetInputRestrictions(true);
-                await Task.Run(() => repository.DeserializeJsonBank());
-                pbCalculationProgress.IsIndeterminate = false;
-                pbCalculationProgress.Value = 0;
+                await repository.LoadBankAsync();
+                bank = new BankVM(repository.Bank);
+                DataContext = bank;
                 MessageBox.Show("Файл прочитан");
-                SetInputRestrictions(false);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка чтения файла данных. " + ex.Message);
-                return;
+                MessageBox.Show(ex.Message);
             }
-
-            bank = new BankVM(repository.bank);
-            DataContext = bank;
+            finally
+            {
+                pbCalculationProgress.IsIndeterminate = false;
+                pbCalculationProgress.Value = 0;
+                SetInputRestrictions(false);
+            }
         }
 
 
@@ -158,7 +146,6 @@ namespace BankSystem.View
                 {
                     MessageBox.Show(ex.Message);
                 }
-
             }
             else
             {
@@ -168,16 +155,15 @@ namespace BankSystem.View
         }
 
         private async void MonthlyCharge_Button_Click(object sender, RoutedEventArgs e)
-        {                                                                                   //запрет проводок по счетам?
-
+        {
+            SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
-
             await Task.Run(() => bank.MonthlyCharge());
             pbCalculationProgress.IsIndeterminate = false;
             pbCalculationProgress.Value = 0;
+            SetInputRestrictions(false);
             MessageBox.Show("Закрытие месяца выполнено");
         }
-
 
         /// <summary>
         /// Открытие окна истории транзакций
@@ -211,15 +197,15 @@ namespace BankSystem.View
             SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
             Task[] tasks = new Task[3];
-            tasks[0] = Task.Run(() => (repository.bank.Departments[0] as Department<Entity>).LoyaltyProgramExtension());
-            tasks[1] = Task.Run(() => (repository.bank.Departments[1] as Department<Person>).LoyaltyProgramExtension());
-            tasks[2] = Task.Run(() => (repository.bank.Departments[2] as Department<Vip>).LoyaltyProgramExtension());
+            tasks[0] = Task.Run(() => (repository.Bank.Departments[0] as Department<Entity>).LoyalityProgramExtension());
+            tasks[1] = Task.Run(() => (repository.Bank.Departments[1] as Department<Person>).LoyalityProgramExtension());
+            tasks[2] = Task.Run(() => (repository.Bank.Departments[2] as Department<Vip>).LoyalityProgramExtension());
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 pbCalculationProgress.IsIndeterminate = false;
                 SetInputRestrictions(false);
-                MessageBox.Show("Программа лояльности закончена. Призы вручены.");
                 pbCalculationProgress.Value = 0;
+                MessageBox.Show("Программа лояльности закончена. Призы вручены.");
             }));
         }
 
@@ -229,16 +215,16 @@ namespace BankSystem.View
             SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
             Task[] tasks = new Task[3];
-            tasks[0] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[0] as Department<Entity>, qEntity));
-            tasks[1] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[1] as Department<Person>, qPerson));
-            tasks[2] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.bank.Departments[2] as Department<Vip>, qVip));
+            tasks[0] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.Bank.Departments[0] as Department<Entity>, qEntity));
+            tasks[1] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.Bank.Departments[1] as Department<Person>, qPerson));
+            tasks[2] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.Bank.Departments[2] as Department<Vip>, qVip));
           
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 pbCalculationProgress.IsIndeterminate = false;
                 SetInputRestrictions(false);
-                MessageBox.Show("Начальное заполнение закончено");
                 pbCalculationProgress.Value = 0;
+                MessageBox.Show("Начальное заполнение закончено");
             }));
         }
 
@@ -255,10 +241,8 @@ namespace BankSystem.View
 
         private void DataWindow_Closing(object sender, CancelEventArgs e)
         {
-
-            if (noClose)
+            if (NoClose)
             {
-
                 MessageBoxResult result =
                 MessageBox.Show(
                        "Завершение программы. Выйти без сохранения?",
@@ -268,11 +252,9 @@ namespace BankSystem.View
                 if (result == MessageBoxResult.No)
                 {
                     e.Cancel = true;
-
                     Task.Run(OnWindowClosing);
                     return;
                 }
-
             }
             e.Cancel = false;
         }
@@ -283,16 +265,15 @@ namespace BankSystem.View
             this.Dispatcher.Invoke(() =>
             {
                 PBtext.Text = "Программа закрывается. Подождите. ";
-                MyWindow w = new MyWindow("Идет сохранение данных", 1000);
-                w.Owner = this;
-                w.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                MyWindow w = new MyWindow("Идет сохранение данных", 1000)
+                {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen
+                };
                 w.ShowDialog();
-              
             });
          
-            while (noClose)
-            {
-            }
+            while (NoClose) { Task.Delay(100); }
             
             this.Dispatcher.Invoke(() =>
             {
@@ -300,9 +281,17 @@ namespace BankSystem.View
             });
         }
 
+        /// <summary>
+        ///  Синхронизирует журнал транзакций в памяти с файлом истории
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void SyncHistory_Click(object sender, RoutedEventArgs e)
         {
-
+            pbCalculationProgress.IsIndeterminate = true;
+            int count = bank.TransactionHistory.Count;
+            var ts = new Stopwatch();
+            ts.Start();
             try
             {
                 var t = repository.UniteTransactionsAsync();
@@ -312,8 +301,19 @@ namespace BankSystem.View
             {
                 MessageBox.Show(ex.Message); 
             }
- 
-        }
+            finally
+            {
+                pbCalculationProgress.IsIndeterminate = false;
+                pbCalculationProgress.Value = 0;
+            }
 
+            ts.Stop();
+            MessageBox.Show(
+                $"Журнал транзакций синхронизирован.\n" +
+                $"Было {count} записей, стало {bank.TransactionHistory.Count} записей.\n" +
+                $"Понадобилось {ts.Elapsed.Seconds} секунд."
+              
+                );
+        }
     }
 }
