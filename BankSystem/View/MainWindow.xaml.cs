@@ -235,6 +235,7 @@ namespace BankSystem.View
             NewClient.IsEnabled = !flag;
             OpenFile.IsEnabled = !flag;
             SaveFile.IsEnabled = !flag;
+            SyncHistory.IsEnabled = !flag;
             InitialFilling.IsEnabled = !flag;
             inputRestricted = flag;
         }
@@ -290,6 +291,7 @@ namespace BankSystem.View
         {
             pbCalculationProgress.IsIndeterminate = true;
             int count = bank.TransactionHistory.Count;
+            SyncHistory.IsEnabled = false;
             var ts = new Stopwatch();
             ts.Start();
             try
@@ -305,15 +307,14 @@ namespace BankSystem.View
             {
                 pbCalculationProgress.IsIndeterminate = false;
                 pbCalculationProgress.Value = 0;
+                SyncHistory.IsEnabled = true;
             }
 
             ts.Stop();
             MessageBox.Show(
                 $"Журнал транзакций синхронизирован.\n" +
                 $"Было {count} записей, стало {bank.TransactionHistory.Count} записей.\n" +
-                $"Понадобилось {ts.Elapsed.Seconds} секунд."
-              
-                );
+                $"Понадобилось {ts.Elapsed.Seconds} секунд.");
         }
     }
 }

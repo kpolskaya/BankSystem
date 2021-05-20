@@ -34,6 +34,8 @@ namespace BankSystemLib
         [DataMember]
         public string Name { get; private set; }
 
+        public bool IsBusy { get; private set; }
+
         private object historyLocker = new object(); //кажется, что lock в данном случае оптимальное решение, чтобы не терять эффективный sortedset
         
         private SortedSet<Transaction> transactionHistory;
@@ -57,6 +59,7 @@ namespace BankSystemLib
             this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
             this.Cash = Cash;
             this.Profit = Profit;
+            IsBusy = false;
             Processing.Pay = ProcessPayment; // Даем процессинговому ценрту метод обработки платежей
             RefreshSubscriptions();
         }
@@ -71,6 +74,8 @@ namespace BankSystemLib
                 new Department<Person>("02", "Отдел по работе с физическими лицами"),
                 new Department<Vip>("03", "Отдел по работе с VIP клиентами")
             };
+
+            IsBusy = false;
             this.Cash = 1_000_000; //собственный капитал при открытии
             Processing.Pay = ProcessPayment;
         }
@@ -264,6 +269,7 @@ namespace BankSystemLib
         /// <returns></returns>
         public async Task UniteTransactionsAsync(string path)
         {
+            IsBusy = true;
             string folder = Path.GetDirectoryName(path);
 
             if (!Directory.Exists(folder))
@@ -276,7 +282,7 @@ namespace BankSystemLib
             }
 
             await SaveTransactionsAsync(path);
- 
+            IsBusy = false;
         }
     }
 }

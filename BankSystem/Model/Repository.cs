@@ -26,7 +26,8 @@ namespace BankSystem.Model
                 return isBusy || SpamBot.OnLine
                     || !SpamBot.MessageQueue.IsEmpty
                     || Processing.IsActive
-                    || !Processing.TransactionsQueue.IsEmpty;
+                    || !Processing.TransactionsQueue.IsEmpty
+                    || Bank.IsBusy;
             }
         } 
 
