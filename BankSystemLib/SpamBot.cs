@@ -116,7 +116,7 @@ namespace BankSystemLib
                     logWriter.Close();
                 }
 
-                logStream.Dispose();
+                logStream.Close();
                 OnLine = false;
                 Debug.WriteLine("SpamBot stopped");
             }

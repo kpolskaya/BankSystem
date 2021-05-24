@@ -10,6 +10,9 @@ using System.ComponentModel;
 using System.Collections.Concurrent;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.IO.Compression;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
 
 namespace BankSystemLib
 {
@@ -219,18 +222,22 @@ namespace BankSystemLib
                 new FileStream(path,
                 FileMode.Open,
                 FileAccess.Read, FileShare.Read,
-                bufferSize: 4096, useAsync: true);
+                bufferSize: 102400, useAsync: true);
 
             var stream = new StreamReader(fileStream);
             string js;
+            Debug.WriteLine("Reading file...");
             js = await stream.ReadToEndAsync();
             stream.Close();
-            fileStream.Dispose();
+            fileStream.Close();
 
-            IEnumerable<Transaction> ts; 
+            IEnumerable<Transaction> ts;
+            Debug.WriteLine("Parsing JSON string...");
             try
             {
-                ts = JsonConvert.DeserializeObject<List<Transaction>>(js);
+                ts = JsonConvert.DeserializeObject<List<Transaction>>(js));
+
+                Debug.WriteLine("Uniting Records...");
                 lock (historyLocker)
                 {
                     this.transactionHistory.UnionWith(ts);
@@ -248,18 +255,21 @@ namespace BankSystemLib
                 new FileStream(path,
                 FileMode.Create,
                 FileAccess.Write, FileShare.Read,
-                bufferSize: 4096, useAsync: true);
+                bufferSize: 102400, useAsync: true);
 
             string js;
+            Debug.WriteLine("Creating JSON string...");
+
             lock (historyLocker)
             {
                 js = JsonConvert.SerializeObject(this.transactionHistory);
             }
 
+            Debug.WriteLine("Writing file...");
             var stream = new StreamWriter(fileStream);
-                await stream.WriteAsync(js);
+            await stream.WriteAsync(js);
             stream.Close();
-            fileStream.Dispose();
+            fileStream.Close();
         }
 
         /// <summary>

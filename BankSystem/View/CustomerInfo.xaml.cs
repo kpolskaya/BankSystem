@@ -23,10 +23,12 @@ namespace BankSystem.View
     public partial class CustomerInfo : Window
     {
         DivisionVM department;
+        BankVM bank;
        
-        public CustomerInfo(object DataContext) 
+        public CustomerInfo(object MainDataContext) 
         {
-            this.DataContext = DataContext;
+            this.bank = (MainDataContext as BankVM);
+            this.DataContext = bank.SelectedItem;
             InitializeComponent();
             department = this.DataContext as DivisionVM;
         }
@@ -199,6 +201,18 @@ namespace BankSystem.View
                     return;
                 }
             }
+        }
+
+        private void Statement_Click(object sender, RoutedEventArgs e)
+        {
+            if (AccountsList.SelectedItem != null)
+            {
+                Transactions tWindow = new Transactions(bank, AccountsList.SelectedItem as AccountVM);
+                tWindow.ShowDialog();
+            }
+            else
+                MessageBox.Show("Выберите счет");
+
         }
     }
 }

@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BankSystem.View"
         mc:Ignorable="d"
-        Title="Transactions" Height="450" Width="800">
+        Title="Transactions" Height="450" Width="800"
+        Name ="transactionsWindow">
     <Grid>
         <GroupBox Header="Журнал транзакций" Grid.Column="0" Grid.Row="1" Width="Auto" Padding="5">
             <ListView x:Name="TransactionsHistory"   Width="Auto" Height="Auto" 
-                ItemsSource="{Binding TransactionHistory, Mode=OneWay}" >
+                ItemsSource="{Binding ElementName=transactionsWindow, Path=Statement, Mode=OneWay}" >
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

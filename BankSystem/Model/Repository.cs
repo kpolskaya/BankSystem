@@ -66,7 +66,7 @@ namespace BankSystem.Model
             StreamWriter streamWriter = new StreamWriter(fileStream);
                 await streamWriter.WriteAsync(text);
             streamWriter.Close();
-            fileStream.Dispose();
+            fileStream.Close();
             isBusy = false;
         }
 
@@ -86,7 +86,7 @@ namespace BankSystem.Model
             StreamReader streamReader = new StreamReader(fileStream);
                 text = await streamReader.ReadToEndAsync();
             streamReader.Close();
-            fileStream.Dispose();
+            fileStream.Close();
             try
             {
                 JsonSerializerSettings jss = new JsonSerializerSettings

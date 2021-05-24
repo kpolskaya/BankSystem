@@ -39,7 +39,7 @@ namespace BankSystem.View
         { 
             get 
             {
-                return (inputRestricted || repository.IsBusy); //а надо ли проверять флаг inputRestricted ?
+                return (repository.IsBusy); //а надо ли проверять флаг inputRestricted ?
             } 
         }
 
@@ -66,7 +66,7 @@ namespace BankSystem.View
         {
             if (Customers.SelectedItem != null && !inputRestricted)
             {
-                CustomerInfo newWindow = new CustomerInfo(bank.SelectedItem) //datacontext нужен для вывода транзакций
+                CustomerInfo newWindow = new CustomerInfo(DataContext)    //(bank.SelectedItem) //datacontext нужен для вывода транзакций
                 {
                     Owner = this
                 };
@@ -172,8 +172,8 @@ namespace BankSystem.View
         /// <param name="e"></param>
         private void Transactions_Click(object sender, RoutedEventArgs e) //Перенести в окно клиента
         {
-            Transactions tWindow = new Transactions(DataContext);
-            tWindow.ShowDialog();
+            //Transactions tWindow = new Transactions(DataContext);
+            //tWindow.ShowDialog();
         }
 
         /// <summary>
@@ -244,6 +244,7 @@ namespace BankSystem.View
         {
             if (NoClose)
             {
+                SetInputRestrictions(true);
                 MessageBoxResult result =
                 MessageBox.Show(
                        "Завершение программы. Выйти без сохранения?",
@@ -262,7 +263,6 @@ namespace BankSystem.View
 
         private void OnWindowClosing()
         {
-            SetInputRestrictions(true);
             this.Dispatcher.Invoke(() =>
             {
                 PBtext.Text = "Программа закрывается. Подождите. ";
@@ -278,6 +278,7 @@ namespace BankSystem.View
             
             this.Dispatcher.Invoke(() =>
             {
+                PBtext.Text = "";
                 Application.Current.Shutdown();
             });
         }
@@ -314,7 +315,7 @@ namespace BankSystem.View
             MessageBox.Show(
                 $"Журнал транзакций синхронизирован.\n" +
                 $"Было {count} записей, стало {bank.TransactionHistory.Count} записей.\n" +
-                $"Понадобилось {ts.Elapsed.Seconds} секунд.");
+                $"Понадобилось {ts.Elapsed.Minutes} минут {ts.Elapsed.Seconds} секунд.");
         }
     }
 }

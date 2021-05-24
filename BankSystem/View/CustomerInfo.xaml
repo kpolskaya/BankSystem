@@ -176,15 +176,19 @@
 
                 </StackPanel>
 
-                <StackPanel Orientation ="Horizontal" >
-                    <StatusBar Height="Auto"  DataContext="{Binding ElementName=AccountsList, Path=SelectedItem}">
+                <StackPanel Orientation ="Horizontal" HorizontalAlignment="Center"/>
+                <!--<StatusBar Height="Auto"  DataContext="{Binding ElementName=AccountsList, Path=SelectedItem}">
                         <WrapPanel>
                             <TextBlock  Text="SMS:       " />
                             <TextBlock  Text="{Binding Message}" HorizontalAlignment="Center" Width="800"/>
                             <TextBlock x:Name="StatusMessage"/>
                         </WrapPanel>
-                    </StatusBar>
-                </StackPanel>
+                    </StatusBar>-->
+
+                <Button x:Name="Statement" Content="Посмотреть выписку по выбранному счету" 
+                        HorizontalAlignment="Center" Padding="2"
+                        Click ="Statement_Click" />
+
 
             </StackPanel >
 

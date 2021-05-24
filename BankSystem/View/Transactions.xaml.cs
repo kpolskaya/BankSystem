@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using BankSystem.Model;
 using System.Windows.Shapes;
+using BankSystem.ViewModel;
+using BankSystemLib;
 
 namespace BankSystem.View
 {
@@ -20,10 +22,32 @@ namespace BankSystem.View
     /// </summary>
     public partial class Transactions : Window
     {
-       
-        public Transactions(object DataContext)
+        BankVM bank;
+        static readonly DependencyProperty statementProperty;
+        List<Transaction> Statement
         {
-            this.DataContext = DataContext;
+            get { return (List<Transaction>)GetValue(statementProperty); }
+            set { SetValue(statementProperty, value); }
+        }
+
+        static Transactions()
+        {
+            statementProperty = DependencyProperty.Register(
+                "Statement",
+                typeof(List<Transaction>),
+                typeof(Transactions));
+        }
+
+        public Transactions(object DataContext, AccountVM SelectedAccount)
+        {
+            this.bank = DataContext as BankVM;
+            this.Statement =(
+                    from t in bank.TransactionHistory
+                    where t.SenderBic == SelectedAccount.Bic
+                    || t.BeneficiaryBic == SelectedAccount.Bic
+                    select t
+                    ).ToList();
+
             InitializeComponent();
            
         }
