@@ -43,7 +43,7 @@ namespace BankSystemLib
         private ConcurrentBag<Transaction> transactionHistory;
 
         /// <summary>
-        /// Сортированный по времени журнал транзакций (есть заметная задержка)
+        /// Сортированный по времени журнал транзакций (есть заметная задержка при обращении)
         /// </summary>
         [JsonIgnore]
         public SortedSet<Transaction> TransactionHistoryByOrder => new SortedSet<Transaction>(transactionHistory, new ByOrder());
@@ -88,11 +88,7 @@ namespace BankSystemLib
         /// </summary>
         public event BankBalanceChanged BankBalanceChanged;
 
-        /// <summary>
-        /// Делегат для запуска автосохранения
-        /// </summary>
-        //public Action Autosave; //TODO!!!
-
+ 
         /// <summary>
         /// Обрабатывает транзакцию, инициированную департаментом
         /// </summary>
@@ -177,7 +173,7 @@ namespace BankSystemLib
         /// <summary>
         /// Начисляет месячные платежи и проценты по счетам клиентов
         /// </summary>
-        public void MonthlyCharge() // сделать ёё awaitable и на три потока?
+        public void MonthlyCharge() 
         {
           
             for (int i = 0; i < Departments.Count; i++)
@@ -213,18 +209,36 @@ namespace BankSystemLib
 
         private async Task LoadTransactionsAsync(string path)
         {
-            var fileStream =
+            FileStream fileStream;
+            try                                                 //на будущее, если нужно будет что-то обрабатывать внутри
+            {
+                fileStream =
                 new FileStream(path,
                 FileMode.Open,
                 FileAccess.Read, FileShare.Read,
                 bufferSize: 102400, useAsync: true);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
             var stream = new StreamReader(fileStream);
             string js;
             Debug.WriteLine("Reading file...");
-            js = await stream.ReadToEndAsync();
-            stream.Close();
-            fileStream.Close();
+            try
+            {
+                js = await stream.ReadToEndAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                stream.Close();
+                fileStream.Close();
+            }
 
             IEnumerable<Transaction> savedTs;
             SortedSet<Transaction> sortedTs;
@@ -252,11 +266,19 @@ namespace BankSystemLib
 
         private async Task SaveTransactionsAsync(string path)
         {
-            var fileStream =
+            FileStream fileStream;
+            try                                                 //на будущее, если нужно будет что-то обрабатывать внутри
+            {
+                fileStream =
                 new FileStream(path,
                 FileMode.Create,
                 FileAccess.Write, FileShare.Read,
                 bufferSize: 102400, useAsync: true);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
             string js;
             Debug.WriteLine("Creating JSON string...");
@@ -265,9 +287,19 @@ namespace BankSystemLib
 
             Debug.WriteLine("Writing file...");
             var stream = new StreamWriter(fileStream);
-            await stream.WriteAsync(js);
-            stream.Close();
-            fileStream.Close();
+            try
+            {
+                await stream.WriteAsync(js);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                stream.Close();
+                fileStream.Close();
+            }
         }
 
         /// <summary>
@@ -277,20 +309,27 @@ namespace BankSystemLib
         /// <returns></returns>
         public async Task UniteTransactionsAsync(string path)
         {
-            IsBusy = true;
             string folder = Path.GetDirectoryName(path);
-
-            if (!Directory.Exists(folder))
+            IsBusy = true;
+            try
             {
-                Directory.CreateDirectory(folder);
-            }
-            else if (File.Exists(path))
-            {
-                await LoadTransactionsAsync(path);
-            }
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                else if (File.Exists(path))
+                {
+                    await LoadTransactionsAsync(path);
+                }
 
-            await SaveTransactionsAsync(path);
-            IsBusy = false;
+                await SaveTransactionsAsync(path);
+                IsBusy = false;
+            }
+            catch (Exception ex)
+            {
+                IsBusy = false;
+                throw ex;
+            }
         }
     }
 }

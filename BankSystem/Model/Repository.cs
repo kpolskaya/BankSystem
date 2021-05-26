@@ -56,19 +56,28 @@ namespace BankSystem.Model
                 Formatting = Formatting.Indented
             };
 
-            isBusy = true;
             var text = JsonConvert.SerializeObject(Bank, settings);
             var fileStream =
                 new FileStream(BankDataPath,
                 FileMode.Create,
                 FileAccess.Write, FileShare.Read,
                 bufferSize: 4096, useAsync: true);
-
+            isBusy = true;
             StreamWriter streamWriter = new StreamWriter(fileStream);
+            try
+            {
                 await streamWriter.WriteAsync(text);
-            streamWriter.Close();
-            fileStream.Close();
-            isBusy = false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                streamWriter.Close();
+                fileStream.Close();
+                isBusy = false;
+            }
         }
 
         /// <summary>
@@ -85,9 +94,21 @@ namespace BankSystem.Model
                 bufferSize: 4096, useAsync: true);
             isBusy = true;
             StreamReader streamReader = new StreamReader(fileStream);
+            try
+            {
                 text = await streamReader.ReadToEndAsync();
-            streamReader.Close();
-            fileStream.Close();
+            }
+            catch (Exception ex)
+            {
+                isBusy = false;
+                throw ex;
+            }
+            finally 
+            {
+                streamReader.Close();
+                fileStream.Close();
+            }
+            
             try
             {
                 JsonSerializerSettings jss = new JsonSerializerSettings

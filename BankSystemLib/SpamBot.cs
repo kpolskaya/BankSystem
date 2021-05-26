@@ -58,7 +58,8 @@ namespace BankSystemLib
             }
             catch (Exception ex)
             {
-                throw new Exception("Рассылка невозможна, процесс остановлен, все пропало, бегите из города - " + ex.Message);
+                throw new Exception("Рассылка сообщений остановлена, устраните проблему и перезапустите программу. " +
+                    "Было вызвано следующее внутреннее исключение: " + ex.Message);
             }
         }
 
@@ -142,14 +143,18 @@ namespace BankSystemLib
                         Debug.WriteLine("File write error");
                         Error = true;
                         OnLine = false;
+                        logStream.Close();
                         throw ex;
                     }
-                    logWriter.Close();
+                    finally
+                    {
+                        logWriter.Close();
+                    }
                 }
 
                 logStream.Close();
                 OnLine = false;
-                Debug.WriteLine("SpamBot stopped");
+                Debug.WriteLine("SpamBot finished");
             }
         }
 

@@ -29,7 +29,7 @@ namespace BankSystem
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show("Что-то пошло не так. Возможно, эта информация чем-то поможет: " 
+            MessageBox.Show("Что-то пошло не так: " 
                 + e.Exception.Message, "Банк - исключения", MessageBoxButton.OK, MessageBoxImage.Warning);
             e.Handled = true;
         }
