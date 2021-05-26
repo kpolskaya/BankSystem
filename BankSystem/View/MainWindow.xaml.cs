@@ -113,10 +113,7 @@ namespace BankSystem.View
             try
             {
                 await repository.LoadBankAsync();
-                bank = new BankVM(repository.Bank);
-                DataContext = bank;
-                MessageBox.Show("Файл прочитан");
-            }
+             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
@@ -127,6 +124,9 @@ namespace BankSystem.View
                 pbCalculationProgress.Value = 0;
                 SetInputRestrictions(false);
             }
+            bank = new BankVM(repository.Bank);
+            DataContext = bank;
+            MessageBox.Show("Файл прочитан");
         }
 
 
@@ -192,7 +192,7 @@ namespace BankSystem.View
             }
         }
 
-        private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e) // долго работает. Изменение коллекций в это время повлечёт крах (наверное) блокировка? оптимизация?
+        private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e) // долго работает. 
         {
             SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
@@ -210,7 +210,7 @@ namespace BankSystem.View
         }
 
 
-        private void InitialFilling_Button_Click(object sender, RoutedEventArgs e)
+        private void InitialFilling_Button_Click(object sender, RoutedEventArgs e) //Запретим заполнение если база не пустая? (или решать с задвоением айди как-то)
         {
             SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
