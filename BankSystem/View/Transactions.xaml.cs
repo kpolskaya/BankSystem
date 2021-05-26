@@ -45,6 +45,7 @@ namespace BankSystem.View
                     from t in bank.TransactionHistory
                     where t.SenderBic == SelectedAccount.Bic
                     || t.BeneficiaryBic == SelectedAccount.Bic
+                    orderby t.TimeStamp ascending
                     select t
                     ).ToList();
 

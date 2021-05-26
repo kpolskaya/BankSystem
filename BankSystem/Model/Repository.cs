@@ -12,6 +12,7 @@ namespace BankSystem.Model
 {
     public class Repository
     {
+        
         public Bank Bank { get; private set; }
 
         private bool isBusy;
@@ -24,7 +25,7 @@ namespace BankSystem.Model
             get
             {
                 return isBusy || SpamBot.OnLine
-                    || !SpamBot.MessageQueue.IsEmpty
+                    || (!SpamBot.MessageQueue.IsEmpty && !SpamBot.Error)
                     || Processing.IsActive
                     || !Processing.TransactionsQueue.IsEmpty
                     || Bank.IsBusy;

@@ -39,7 +39,7 @@ namespace BankSystem.View
         { 
             get 
             {
-                return (repository.IsBusy); //а надо ли проверять флаг inputRestricted ?
+                return (repository.IsBusy); 
             } 
         }
 

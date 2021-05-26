@@ -37,29 +37,29 @@ namespace BankSystemLib
         [DataMember]
         public string Name { get; private set; }
 
+        [JsonIgnore]
         public bool IsBusy { get; private set; }
+       
+        private ConcurrentBag<Transaction> transactionHistory;
 
-        private object historyLocker = new object(); //кажется, что lock в данном случае оптимальное решение, чтобы не терять эффективный sortedset
-        
-        private SortedSet<Transaction> transactionHistory;
+        /// <summary>
+        /// Сортированный по времени журнал транзакций (есть заметная задержка)
+        /// </summary>
+        [JsonIgnore]
+        public SortedSet<Transaction> TransactionHistoryByOrder => new SortedSet<Transaction>(transactionHistory, new ByOrder());
 
-        public SortedSet<Transaction> TransactionHistory
-        {
-            get
-            {
-                lock(historyLocker)
-                {
-                    return transactionHistory;
-                }
-            }
-        }
+        /// <summary>
+        /// Несортированный журнал транзакций
+        /// </summary>
+        [JsonIgnore]
+        public List<Transaction> TransactionHistory => transactionHistory.ToList();
 
         [JsonConstructor]
         public Bank(string Name, ObservableCollection<Division> Departments, decimal Cash, decimal Profit)
         {
             this.Name = Name;
             this.Departments = Departments;
-            this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
+            this.transactionHistory = new ConcurrentBag<Transaction>();
             this.Cash = Cash;
             this.Profit = Profit;
             IsBusy = false;
@@ -70,7 +70,7 @@ namespace BankSystemLib
         public Bank(string Name)
         {
             this.Name = Name;
-            this.transactionHistory = new SortedSet<Transaction>(new ByOrder());
+            this.transactionHistory = new ConcurrentBag<Transaction>();
             this.Departments = new ObservableCollection<Division>
             {
                 new Department<Entity>("01", "Отдел по работе с юридическими лицами"),
@@ -149,12 +149,7 @@ namespace BankSystemLib
                     }
                 }
             }
-            lock (historyLocker)
-            {
                 this.transactionHistory.Add(t);
-            }
-
-            //Autosave?.Invoke();
         }
         //
         /// <summary>
@@ -231,22 +226,28 @@ namespace BankSystemLib
             stream.Close();
             fileStream.Close();
 
-            IEnumerable<Transaction> ts;
+            IEnumerable<Transaction> savedTs;
+            SortedSet<Transaction> sortedTs;
             Debug.WriteLine("Parsing JSON string...");
             try
             {
-                ts = JsonConvert.DeserializeObject<List<Transaction>>(js));
-
-                Debug.WriteLine("Uniting Records...");
-                lock (historyLocker)
-                {
-                    this.transactionHistory.UnionWith(ts);
-                }
+                savedTs = await Task.Run(() => JsonConvert.DeserializeObject<List<Transaction>>(js));
             }
             catch (Exception)
             {
                 throw new FileErrorException();
             }
+            Debug.WriteLine("Uniting Records...");
+
+            await Task.Run(() =>
+            {
+                sortedTs = new SortedSet<Transaction>(savedTs, new ByOrder());
+                sortedTs.ExceptWith(transactionHistory);
+                foreach (var item in sortedTs)
+                {
+                    transactionHistory.Add(item);
+                }
+            });
         }
 
         private async Task SaveTransactionsAsync(string path)
@@ -259,11 +260,8 @@ namespace BankSystemLib
 
             string js;
             Debug.WriteLine("Creating JSON string...");
-
-            lock (historyLocker)
-            {
-                js = JsonConvert.SerializeObject(this.transactionHistory);
-            }
+          
+            js = await Task.Run(() => JsonConvert.SerializeObject(this.transactionHistory));
 
             Debug.WriteLine("Writing file...");
             var stream = new StreamWriter(fileStream);

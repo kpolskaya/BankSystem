@@ -14,7 +14,7 @@ namespace BankSystem.ViewModel
     {
         public ObservableCollection<DivisionVM> Departments { get; set; }
 
-        public List<Transaction> TransactionHistory { get { return bank.TransactionHistory.ToList(); } }  
+        public List<Transaction> TransactionHistory { get { return bank.TransactionHistory; } }  
 
         private readonly Bank bank;
         /// <summary>

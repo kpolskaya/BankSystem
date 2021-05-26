@@ -40,7 +40,7 @@ namespace BankSystemLib
         {
             while (true)
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(10000); //!!!!!!!!!!
                 if (!IsActive && !TransactionsQueue.IsEmpty)                      
                 {
                     IsActive = true;
