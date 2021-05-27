@@ -32,10 +32,12 @@ namespace BankSystem.Model
         /// </summary>
         /// <typeparam name="TCustomer"></typeparam>
         /// <param name="dept">Департамент</param>
-        /// <param name="amt">количество создаваемых клиентов</param>
+        /// <param name="amt">количество генерируемых клиентов</param>
         public static void FillWithRandom<TCustomer>(this Department<TCustomer> dept, int amt) where TCustomer : Customer, new()
         {
-           
+            if (dept.Customers.Count > 0)
+                throw new Exception("Невозможно автоматически заполнить непустой департамент");
+            
             for (int i = 0; i < amt; i++)
             {
                 string Name =$"N{dept.Id}{i}";
@@ -44,10 +46,6 @@ namespace BankSystem.Model
                 string LegalId = dept.Id.ToString() + (1000000 + i).ToString();
                 string Phone = dept.Id.ToString() + (20000000000 + i*3).ToString();
 
-                //string LegalId = RandomNumString(8);
-                //Thread.Sleep(10);
-                //string Phone = RandomNumString(12);
-                //Thread.Sleep(10);
                 dept.CreateCustomer(Name, OtherName, LegalId, Phone);
             }
 
@@ -64,17 +62,6 @@ namespace BankSystem.Model
                 dept.Put(dept.Accounts[i].Bic, rnd.Next(100, 10001)*100);
             }
         }
-
-        //private static string RandomNumString(int l)
-        //{
-        //    int length = l;
-        //    var rString = "";
-        //    for (var i = 0; i < length; i++)
-        //    {
-        //        rString += rnd.Next(0, 10).ToString();
-        //    }
-        //    return rString;
-        //}
 
     }
 }

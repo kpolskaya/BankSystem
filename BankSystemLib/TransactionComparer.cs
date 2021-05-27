@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankSystemLib
 {
-    internal class TransactionComparer : IEqualityComparer<Transaction>
+    internal class TransactionComparer : IEqualityComparer<Transaction> //пока не пригодился
     {
         public bool Equals(Transaction x, Transaction y)
         {

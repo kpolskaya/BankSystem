@@ -74,7 +74,6 @@ namespace BankSystem.ViewModel
             OnPropertyChanged("Capital");
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
         
         protected void OnPropertyChanged(string propertyName)

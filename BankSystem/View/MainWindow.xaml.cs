@@ -44,9 +44,8 @@ namespace BankSystem.View
         }
 
         bool inputRestricted = false;
-        int qEntity = 1000;
-        int qPerson = 1000;
-        int qVip = 1000;
+        int qClients = 1000;
+
 
         public MainWindow()
         {
@@ -66,7 +65,7 @@ namespace BankSystem.View
         {
             if (Customers.SelectedItem != null && !inputRestricted)
             {
-                CustomerInfo newWindow = new CustomerInfo(DataContext)    //(bank.SelectedItem) //datacontext нужен для вывода транзакций
+                CustomerInfo newWindow = new CustomerInfo(DataContext)    //datacontext нужен для вывода транзакций
                 {
                     Owner = this
                 };
@@ -164,42 +163,33 @@ namespace BankSystem.View
             SetInputRestrictions(false);
             MessageBox.Show("Закрытие месяца выполнено");
         }
-
-        /// <summary>
-        /// Открытие окна истории транзакций
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Transactions_Click(object sender, RoutedEventArgs e) //Перенести в окно клиента
-        {
-            //Transactions tWindow = new Transactions(DataContext);
-            //tWindow.ShowDialog();
-        }
-
+ 
         /// <summary>
         /// Проверка поля на корректное значение - только цифры
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e) //Где наш замечательный метод????
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e) 
         {
             {
                 string s = Regex.Replace(((TextBox)sender).Text, @"[^\d]", "");
                 ((TextBox)sender).Text = s;
 
                 ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
-
             }
         }
 
-        private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e) // долго работает. 
+         private void LoyalityProgram_Button_Click(object sender, RoutedEventArgs e) 
         {
             SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
-            Task[] tasks = new Task[3];
-            tasks[0] = Task.Run(() => (repository.Bank.Departments[0] as Department<Entity>).LoyalityProgramExtension());
-            tasks[1] = Task.Run(() => (repository.Bank.Departments[1] as Department<Person>).LoyalityProgramExtension());
-            tasks[2] = Task.Run(() => (repository.Bank.Departments[2] as Department<Vip>).LoyalityProgramExtension());
+            Task[] tasks = new Task[bank.Departments.Count];
+            for (int i = 0; i < bank.Departments.Count; i++)
+            {
+                int n = i;
+                tasks[n] = Task.Run(() => bank.Departments[n].LoyalityProgram());
+            }
+
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 pbCalculationProgress.IsIndeterminate = false;
@@ -209,16 +199,33 @@ namespace BankSystem.View
             }));
         }
 
-
-        private void InitialFilling_Button_Click(object sender, RoutedEventArgs e) //Запретим заполнение если база не пустая? (или решать с задвоением айди как-то)
+        private void InitialFilling_Button_Click(object sender, RoutedEventArgs e) 
         {
+            bool NotEmpty = false;
+            foreach (var item in bank.Departments)
+            {
+                if (item.Customers.Count > 0)
+                {
+                    NotEmpty = true;
+                    break;
+                }
+            }
+            if (NotEmpty)
+            {
+                MessageBox.Show("База не пустая. Автоматическое заполнение невозможно");
+                return;
+            }
+
             SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
-            Task[] tasks = new Task[3];
-            tasks[0] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.Bank.Departments[0] as Department<Entity>, qEntity));
-            tasks[1] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.Bank.Departments[1] as Department<Person>, qPerson));
-            tasks[2] = Task.Run(() => InitialFillingExtention.FillWithRandom(repository.Bank.Departments[2] as Department<Vip>, qVip));
-          
+            Task[] tasks = new Task[bank.Departments.Count];
+
+            for (int i = 0; i < bank.Departments.Count; i++)
+            {
+                int n = i;
+                tasks[n] = Task.Run(() => bank.Departments[n].InitialFilling(qClients));
+            }
+
             Task.Factory.ContinueWhenAll(tasks, completedTasks => this.Dispatcher.Invoke(() =>
             {
                 pbCalculationProgress.IsIndeterminate = false;
@@ -293,8 +300,8 @@ namespace BankSystem.View
             pbCalculationProgress.IsIndeterminate = true;
             int count = bank.TransactionHistory.Count;
             SyncHistory.IsEnabled = false;
-            var ts = new Stopwatch();
-            ts.Start();
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             try
             {
                 var t = repository.UniteTransactionsAsync();
@@ -311,11 +318,11 @@ namespace BankSystem.View
                 SyncHistory.IsEnabled = true;
             }
 
-            ts.Stop();
+            stopWatch.Stop();
             MessageBox.Show(
                 $"Журнал транзакций синхронизирован.\n" +
                 $"Было {count} записей, стало {bank.TransactionHistory.Count} записей.\n" +
-                $"Понадобилось {ts.Elapsed.Minutes} минут {ts.Elapsed.Seconds} секунд.");
+                $"Понадобилось {stopWatch.Elapsed.Minutes} минут {stopWatch.Elapsed.Seconds} секунд.");
         }
     }
 }

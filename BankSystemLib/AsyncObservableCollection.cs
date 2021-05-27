@@ -14,7 +14,7 @@ namespace BankSystemLib
     /// Асинхронная версия OservableCollection, которая не приводит к исключению, если коллекция изменяется
     /// не в том потоке, который ее создал.
     /// </summary>
-    internal class AsyncObservableCollection<T> : ObservableCollection<T> //не нужен т.к. не помогает тут!!!
+    internal class AsyncObservableCollection<T> : ObservableCollection<T> //не пригодился тут но пусть полежит
     {
         private SynchronizationContext synchronizationContext = SynchronizationContext.Current;
 

@@ -40,17 +40,14 @@
                         
                     </MenuItem>
                     
-                    <MenuItem Header="Журнал транзакций" Click="Transactions_Click" >
-                    </MenuItem>
+                    <!--<MenuItem Header="Журнал транзакций" Click="Transactions_Click" >
+                    </MenuItem>-->
                 <MenuItem Header="Начальное заполнение">
                     <MenuItem x:Name="InitialFilling" Header="Заполнить" Click="InitialFilling_Button_Click" />
-                    
                 </MenuItem>
-
 
             </Menu>
             </DockPanel>
-       
         
         <GroupBox Header="Структура банка" Grid.Column="0" Grid.Row="1" Width="Auto" Padding="5" >
             <StackPanel Orientation="Vertical" Width="Auto" >
@@ -129,7 +126,7 @@
                 <StackPanel Orientation="Vertical" Width="Auto" Height="Auto" VerticalAlignment="Bottom">
 
                     <ListView x:Name="Customers" Grid.Column="1" 
-                              Width="Auto" Height="500" BorderBrush="Transparent" 
+                              Width="Auto" Height="470" BorderBrush="Transparent" 
                               BorderThickness="0"
                               DataContext ="{Binding ElementName=Divisions, Path=SelectedItem}" 
                               ItemsSource="{Binding Customers}"  MouseLeftButtonUp="CustomerLeftBtnClick" >
@@ -201,10 +198,10 @@
                     <StackPanel Orientation="Horizontal" Width="Auto" 
                                 DataContext="{Binding ElementName=Divisions, Path=SelectedItem}" >
 
-                        <TextBox Text="{Binding Header1, Mode=OneWay}" Width="125" TextAlignment="Center"  />
-                        <TextBox Text="{Binding Header2, Mode=OneWay}" Width="125" TextAlignment="Center"  />
-                        <TextBox Text="{Binding Header3, Mode=OneWay}" Width="125" TextAlignment="Center" />
-                        <TextBox Text="{Binding Header4, Mode=OneWay}" Width="160" TextAlignment="Center" />
+                        <TextBox Text="{Binding Header1, Mode=OneWay}" Width="125" TextAlignment="Center" IsReadOnly="True"/>
+                        <TextBox Text="{Binding Header2, Mode=OneWay}" Width="125" TextAlignment="Center" IsReadOnly="True" />
+                        <TextBox Text="{Binding Header3, Mode=OneWay}" Width="125" TextAlignment="Center" IsReadOnly="True"/>
+                        <TextBox Text="{Binding Header4, Mode=OneWay}" Width="160" TextAlignment="Center" IsReadOnly="True" />
 
                     </StackPanel>
                     

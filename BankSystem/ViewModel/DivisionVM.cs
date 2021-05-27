@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using BankSystemLib;
 using System.Diagnostics;
 using System.Collections.Specialized;
+using BankSystem.Model;
 
 namespace BankSystem.ViewModel
 {
@@ -37,7 +38,7 @@ namespace BankSystem.ViewModel
             }
         }
 
-        private Type typeOfCustomer; 
+        private Type typeOfCustomer; // тип этого департамента
 
         public DivisionVM(Division Department)
         {
@@ -131,30 +132,12 @@ namespace BankSystem.ViewModel
         /// <summary>
         /// Выбранный пользователем клиент
         /// </summary>
-        public CustomerVM SelectedCustomer 
-        {
-            get; private set;
-
-            //get
-            //{
-            //    return
-            //        Customers.Where(c => c.IsSelected).FirstOrDefault();
-
-            //        //Customers.FirstOrDefault(e => e.IsSelected);
-            //}
-
-        }
+        public CustomerVM SelectedCustomer { get; private set; }
 
         /// <summary>
         /// Выбранный пользователем счет
         /// </summary>
-        public AccountVM SelectedAccount
-        {
-            get
-            {
-                return SelectedCustomerAccounts.FirstOrDefault(e => e.IsSelected); 
-            }
-        }
+        public AccountVM SelectedAccount { get { return SelectedCustomerAccounts.FirstOrDefault(e => e.IsSelected); } }
 
         /// <summary>
         /// Формирует список счетов конкретного клиента
@@ -216,6 +199,49 @@ namespace BankSystem.ViewModel
                     this.isSelected = value;
                     this.OnPropertyChanged("IsSelected");
                 }
+            }
+        }
+
+        /// <summary>
+        ///  Заполняет департамент указанным количеством случайных клиентов
+        /// </summary>
+        /// <param name="amt">количество генерируемых клиентов</param>
+        public void InitialFilling(int amt)
+        {
+            switch (typeOfCustomer.Name)
+            {
+                case "Entity":
+                    (this.division as Department<Entity>).FillWithRandom(amt);
+                    break;
+
+                case "Person":
+                    (this.division as Department<Person>).FillWithRandom(amt);
+                    break;
+
+                case "Vip":
+                    (this.division as Department<Vip>).FillWithRandom(amt);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Выбирает клиентов с максимальным остатком на счетах в каждом департаменте и вручает подарок.
+        /// </summary>
+        public void LoyalityProgram()
+        {
+            switch (typeOfCustomer.Name)
+            {
+                case "Entity":
+                    (this.division as Department<Entity>).LoyalityProgramExtension();
+                    break;
+
+                case "Person":
+                    (this.division as Department<Person>).LoyalityProgramExtension();
+                    break;
+
+                case "Vip":
+                    (this.division as Department<Vip>).LoyalityProgramExtension();
+                    break;
             }
         }
 

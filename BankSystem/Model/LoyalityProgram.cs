@@ -41,7 +41,7 @@ namespace BankSystem.Model
             }
         }
 
-        internal static void SendInvitation(string phone) //TODO Переделать с учетом спамбота
+        internal static void SendInvitation(string phone) 
         {
             SpamBot.MessageQueue.Enqueue($"SMS to: {phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
         }
