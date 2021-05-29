@@ -87,7 +87,6 @@ namespace BankSystemLib
         /// публичное событие изменения статей банковского баланса
         /// </summary>
         public event BankBalanceChanged BankBalanceChanged;
-
  
         /// <summary>
         /// Обрабатывает транзакцию, инициированную департаментом
@@ -147,7 +146,7 @@ namespace BankSystemLib
             }
                 this.transactionHistory.Add(t);
         }
-        //
+  
         /// <summary>
         /// Вызов кода при изменении статей баланса
         /// </summary>
@@ -210,18 +209,11 @@ namespace BankSystemLib
         private async Task LoadTransactionsAsync(string path)
         {
             FileStream fileStream;
-            try                                                 //на будущее, если нужно будет что-то обрабатывать внутри
-            {
-                fileStream =
+            fileStream =
                 new FileStream(path,
                 FileMode.Open,
                 FileAccess.Read, FileShare.Read,
                 bufferSize: 102400, useAsync: true);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
 
             var stream = new StreamReader(fileStream);
             string js;
@@ -267,18 +259,12 @@ namespace BankSystemLib
         private async Task SaveTransactionsAsync(string path)
         {
             FileStream fileStream;
-            try                                                 //на будущее, если нужно будет что-то обрабатывать внутри
-            {
-                fileStream =
+ 
+            fileStream =
                 new FileStream(path,
                 FileMode.Create,
                 FileAccess.Write, FileShare.Read,
                 bufferSize: 102400, useAsync: true);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
 
             string js;
             Debug.WriteLine("Creating JSON string...");
@@ -323,12 +309,10 @@ namespace BankSystemLib
                 }
 
                 await SaveTransactionsAsync(path);
-                IsBusy = false;
             }
-            catch (Exception ex)
+            finally                                               // по идее Exception пробросится автоматом?
             {
                 IsBusy = false;
-                throw ex;
             }
         }
     }

@@ -49,11 +49,10 @@ namespace BankSystem.View
 
         public MainWindow()
         {
-            InitializeComponent();
             repository = new Repository();
- 
             bank = new BankVM(repository.Bank);
             DataContext = bank;
+            InitializeComponent();
         }
  
         /// <summary>
@@ -90,7 +89,8 @@ namespace BankSystem.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Ошибка сохранения базы: "
+                    + ex.Message, "Банк - исключения", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             finally
             {
@@ -115,7 +115,8 @@ namespace BankSystem.View
              }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Ошибка загрузки базы: "
+                    + ex.Message, "Банк - исключения", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             finally
             {
@@ -127,7 +128,6 @@ namespace BankSystem.View
             DataContext = bank;
             MessageBox.Show("Файл прочитан");
         }
-
 
         private void New_Client_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -143,13 +143,13 @@ namespace BankSystem.View
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show("Возникла ошибка: "
+                        + ex.Message, "Банк - исключения", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             else
             {
                 MessageBox.Show("Выберите отдел и заполните все данные клиента");
-                return;
             }
         }
 
@@ -309,7 +309,8 @@ namespace BankSystem.View
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message); 
+                MessageBox.Show("Ошибка при синхронизации журнала операций: "
+                + ex.Message, "Банк - исключения", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             finally
             {
@@ -324,5 +325,6 @@ namespace BankSystem.View
                 $"Было {count} записей, стало {bank.TransactionHistory.Count} записей.\n" +
                 $"Понадобилось {stopWatch.Elapsed.Minutes} минут {stopWatch.Elapsed.Seconds} секунд.");
         }
+
     }
 }

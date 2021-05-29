@@ -41,11 +41,21 @@ namespace BankSystem.Model
             }
         }
 
-        internal static void SendInvitation(string phone) 
+        /// <summary>
+        /// Отправляет сообщение о подарке выигравшему клиенту
+        /// </summary>
+        /// <param name="phone"></param>
+        private static void SendInvitation(string phone) 
         {
             SpamBot.MessageQueue.Enqueue($"SMS to: {phone} subj: Поздравляем! Вы являетесь одним из наших лучших клиентов! Ваш ценный подарок ждет Вас в головном офисе банка.");
         }
 
+
+        /// <summary>
+        /// Находит в департаменте самого денежного клиента
+        /// </summary>
+        /// <typeparam name="TCustomer">тип департамента</typeparam>
+        /// <param name="d">экземпляр департамента для обработки</param>
         public static void LoyalityProgramExtension<TCustomer>(this Department<TCustomer> d) where TCustomer : Customer, new()
         {
             List<CustomersFunds> CustomersFundsList = new List<CustomersFunds>();

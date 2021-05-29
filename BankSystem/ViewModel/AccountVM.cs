@@ -24,10 +24,14 @@ namespace BankSystem.ViewModel
         public AccountVM(Account Account)
         {
             this.account = Account;
-            //if (View.MainWindow.InitFilling == false)  // все запутано нужно разбираться
             Subscribe(true); 
         }
 
+        /// <summary>
+        /// Обработчик события движения по счету
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="message"></param>
         private void AccountMovement(Account sender, string message)
         {
             {
@@ -53,11 +57,16 @@ namespace BankSystem.ViewModel
             }
         }
 
-        public void Subscribe( bool f) // не лучшее решение (временно)
+        /// <summary>
+        /// Подписывает или отписывает представление счета на события(движение) его оригинала
+        /// </summary>
+        /// <param name="f">флаг подписки</param>
+        public void Subscribe( bool f) 
         {
            if (f) this.account.Movement += AccountMovement;
            else this.account.Movement -= AccountMovement;
         }
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         void OnPropertyChanged(string propertyName)

@@ -108,13 +108,11 @@ namespace BankSystemLib
                 {
                     decimal interest = account.ChargeInterest(this.Rate);
                     if (interest > 0)
-                        //OnTransactionRaised(new Transaction("99", account.Bic, interest, "Начисление процентов"));
                         Processing.TransactionsQueue.Enqueue(new Transaction("99", account.Bic, interest, "Начисление процентов"));
                 }
 
                 else
                     if (account.Debit(Fee, "Плата за обслуживание"))
-                    //OnTransactionRaised(new Transaction(account.Bic, "99", this.Fee, "Плата за обслуживание"));
                     Processing.TransactionsQueue.Enqueue(new Transaction(account.Bic, "99", this.Fee, "Плата за обслуживание"));
             }
         }

@@ -24,6 +24,10 @@ namespace BankSystem.View
     {
         BankVM bank;
         static readonly DependencyProperty statementProperty;
+        
+        /// <summary>
+        /// Список операций по выбранному в родительском окне счету
+        /// </summary>
         List<Transaction> Statement
         {
             get { return (List<Transaction>)GetValue(statementProperty); }
@@ -50,7 +54,6 @@ namespace BankSystem.View
                     ).ToList();
 
             InitializeComponent();
-           
         }
 
 

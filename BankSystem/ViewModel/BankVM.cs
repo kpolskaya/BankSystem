@@ -54,16 +54,7 @@ namespace BankSystem.ViewModel
                 return this.Departments.FirstOrDefault(e => e.IsSelected);
             }
         }
-
-        /// <summary>
-        /// Сброс значения выбранного пользователем клиента
-        /// </summary>
-        public void ClearSelectedCustomer()                                         //зачем нужна???
-        {
-            if (SelectedItem != null && SelectedItem.SelectedCustomer != null)
-                SelectedItem.SelectedCustomer.IsSelected = false;
-        }
-
+         
         /// <summary>
         ///  Начисляет ежемесячные платежи и проценты по клиентским счетам
         /// </summary>

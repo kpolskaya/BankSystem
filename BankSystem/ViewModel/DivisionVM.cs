@@ -34,7 +34,7 @@ namespace BankSystem.ViewModel
         {
             get
             {
-                return Enum.GetValues(typeof(AccountType)).Cast<AccountType>().ToList<AccountType>();
+                return Enum.GetValues(typeof(AccountType)).Cast<AccountType>().ToList();
             }
         }
 
@@ -124,6 +124,11 @@ namespace BankSystem.ViewModel
             }
         }
 
+        /// <summary>
+        /// Отслеживает изменение выбора клиента в пользовательском окне
+        /// </summary>
+        /// <param name="customer"></param>
+        /// <param name="e"></param>
         private void SetSelectedCustomer(object customer, EventArgs e)
         {
             this.SelectedCustomer = customer as CustomerVM;
@@ -140,7 +145,7 @@ namespace BankSystem.ViewModel
         public AccountVM SelectedAccount { get { return SelectedCustomerAccounts.FirstOrDefault(e => e.IsSelected); } }
 
         /// <summary>
-        /// Формирует список счетов конкретного клиента
+        /// Формирует список счетов выбранного пользователем клиента
         /// </summary>
         public ObservableCollection<AccountVM> SelectedCustomerAccounts 
         {

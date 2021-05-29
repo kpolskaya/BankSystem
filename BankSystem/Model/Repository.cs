@@ -5,8 +5,6 @@ using System.IO;
 using BankSystemLib;
 using System.Threading.Tasks;
 using System.Text;
-using System.Windows.Controls;
-using System.Threading;
 
 namespace BankSystem.Model
 {
@@ -67,10 +65,6 @@ namespace BankSystem.Model
             try
             {
                 await streamWriter.WriteAsync(text);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
             finally
             {

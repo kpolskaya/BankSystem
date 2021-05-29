@@ -26,10 +26,10 @@ namespace BankSystemLib
         Internal,
         Transfer
     }
+
     /// <summary>
     /// Запись в журнале банковских операций
     /// </summary>
-    
     public class Transaction
     {
         
@@ -74,7 +74,7 @@ namespace BankSystemLib
             this.Type = Type;
         }
 
-        public Transaction() //добавить сравнение кредит-дебит-время
+        public Transaction() 
         { }
         public Transaction(string SenderBic, string BeneficiaryBic, decimal Sum, string Detailes, TransactionType Type = TransactionType.Internal)
             : this(Guid.NewGuid().ToString().Substring(0, 8), SenderBic, BeneficiaryBic, Sum, Detailes, Type)

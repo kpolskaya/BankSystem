@@ -9,13 +9,7 @@ using System.Threading.Tasks;
 
 namespace BankSystemLib
 {
-    /// <summary>
-    /// Делегат для события, инициирующего проводки по банковским счетам
-    /// </summary>
-    /// <param name="sender">Департамен, инициирующий транзакцию</param>
-    /// <param name="t">Параметры транзакции</param>
-    public delegate void TransactionHandler(Division sender, Transaction t); //не нужен!!!
-
+  
     /// <summary>
     /// Абстрактный класс для департаментов банка
     /// </summary>
@@ -86,7 +80,6 @@ namespace BankSystemLib
             }
         }
 
-
         /// <summary>
         /// В случае успеха зачисляет средства на указанный счет
         /// </summary>
@@ -132,7 +125,6 @@ namespace BankSystemLib
             if (account == null)
                 throw new NonexistantAccountExeption();
             account.Credit(sum, "Пополнение через кассу");
-            //OnTransactionRaised(new Transaction("00", bic, sum, "Пополнение через кассу"));
             Processing.TransactionsQueue.Enqueue(new Transaction("00", bic, sum, "Пополнение через кассу"));
         }
 
@@ -148,7 +140,6 @@ namespace BankSystemLib
             Account account = GetAccountByBic(bic);
             bool executed = (account != null && account.Debit(sum, detailes));
             if (executed)
-                //OnTransactionRaised(new Transaction(bic, "00", sum, detailes));
                 Processing.TransactionsQueue.Enqueue(new Transaction(bic, "00", sum, detailes));
             return executed;
         }
@@ -193,22 +184,6 @@ namespace BankSystemLib
         }
 
         /// <summary>
-        /// Событие при инициации транзакции
-        /// </summary>
-        public event TransactionHandler TransactionRaised; //не нужен
-
-        /// <summary>
-        /// Вызов кода обработчика события транзакции
-        /// </summary>
-        /// <param name="sender">Инициатор транзакции</param>
-        /// <param name="t">параметры транзакции</param>
-        protected virtual void OnTransactionRaised(Transaction t) //не нужна!!!
-        {
-            var transaction = t;
-            TransactionRaised?.Invoke(this, transaction);
-        }
-
-        /// <summary>
         /// Создает клиента с типом, соответствующим типу департамента
         /// </summary>
         /// <param name="name">Имя / Наименование </param>
@@ -221,26 +196,15 @@ namespace BankSystemLib
         /// Средства на счетах клиентов департамента
         /// </summary>
         /// <returns>Сумму остатков по всем клиентским счетам</returns>
-        public decimal ClientsFunds() //что-то как-то непонятно про исключение тут - переделать (исключение - в цикл - и зачем оно вообще тут?)
+        public decimal ClientsFunds() 
         {
-            try
-            {
                 decimal total = 0;
                 foreach (var item in this.accounts)
                 {
                     total += (decimal)item;
-
                 }
                 return total;
-            }
-            catch (System.InvalidOperationException)
-            {
-
-                return 0;
-            }
-           
         }
-
 
         /// <summary>
         /// Обновляет подписки клиентов на сообщения об операциях по счетам

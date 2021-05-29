@@ -14,18 +14,18 @@ namespace BankSystem
     /// </summary>
     public partial class App : Application
     {
-        //private void Application_Startup(object sender, StartupEventArgs e)
-        //{
-        //    AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-        //    MainWindow = new MainWindow();
-        //    MainWindow.Show();
-        //}
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+            MainWindow = new MainWindow();
+            MainWindow.Show();
+        }
 
-        //private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        //{
-        //    Exception ex = e.ExceptionObject as Exception;
-        //    MessageBox.Show(ex.Message, "Банк - необработанные внутренние исключения", MessageBoxButton.OK, MessageBoxImage.Error);
-        //}
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = e.ExceptionObject as Exception;
+            MessageBox.Show(ex.Message, "Банк - необработанные внутренние исключения", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {

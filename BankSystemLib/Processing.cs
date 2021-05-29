@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Timers;
 
 namespace BankSystemLib
 {
@@ -19,53 +20,43 @@ namespace BankSystemLib
         /// </summary>
         public static ConcurrentQueue<Transaction> TransactionsQueue { get; set; }
 
+        /// <summary>
+        ///  Получение метода обработки транзакций
+        /// </summary>
         public static Action<Transaction> Pay;
-
-        private static Task process;
-
+ 
         /// <summary>
         /// Показывает, происходит ли в данный момент обработка платежей
         /// </summary>
         public static bool IsActive { get; private set; }
 
+        private static System.Timers.Timer timer;
+
         static Processing()
         {
             TransactionsQueue = new ConcurrentQueue<Transaction>();
             IsActive = false;
-            process = new Task(Schedule);
-            process.Start();
-        }
-
-        private static void Schedule()
-        {
-            while (true)
-            {
-                Thread.Sleep(10000); //!!!!!!!!!!
-                if (!IsActive && !TransactionsQueue.IsEmpty)                      
-                {
-                    IsActive = true;
-                    _ = DoProcessingAsync(); 
-                }
-            }
+            timer = new System.Timers.Timer(5000);
+            timer.Elapsed += async (sender, e) => await DoProcessingAsync();
+            timer.Start();
         }
 
         private static async Task DoProcessingAsync()
         {
-            if (IsActive)
+            if (!IsActive && !TransactionsQueue.IsEmpty)
             {
+                IsActive = true;
                 Debug.WriteLine("Processing started");
-                await Task.Run(() => ProsessQueue());
+                Transaction t;
+                await Task.Run(() =>
+                {
+                    while (!TransactionsQueue.IsEmpty)
+                    {
+                        if (TransactionsQueue.TryDequeue(out t)) Pay(t);
+                    }
+                });
                 IsActive = false;
                 Debug.WriteLine("Processing stopped");
-            }
-        }
-
-        private static void ProsessQueue()
-        {
-            Transaction t;
-            while (!TransactionsQueue.IsEmpty)
-            {
-                if (TransactionsQueue.TryDequeue(out t)) Pay(t);
             }
         }
     }

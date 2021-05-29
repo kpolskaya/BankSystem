@@ -29,8 +29,8 @@ namespace BankSystem.View
         {
             this.bank = (MainDataContext as BankVM);
             this.DataContext = bank.SelectedItem;
-            InitializeComponent();
             department = this.DataContext as DivisionVM;
+            InitializeComponent();
         }
 
         /// <summary>
@@ -60,14 +60,7 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null && PutSum.Text != "")
             {
-                try
-                {
-                    department.Put(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
-                }
-                catch (Exception ex) // ошибка при автосохранении
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                department.Put(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(PutSum.Text));
             }
             else
             {
@@ -85,16 +78,8 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null && WithdrawSum.Text != "")
             {
-
-                try
-                {
-                    department.Withdraw(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
+                department.Withdraw(((AccountVM)AccountsList.SelectedItem).Bic, Convert.ToDecimal(WithdrawSum.Text));
+ 
             }
             else
             {
@@ -112,14 +97,7 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null)
             {
-                try
-                {
-                    department.CloseAccount(((AccountVM)AccountsList.SelectedItem).Bic);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                department.CloseAccount(((AccountVM)AccountsList.SelectedItem).Bic);
             }
             else
             {
@@ -138,15 +116,7 @@ namespace BankSystem.View
         {
             if (AccountsList.SelectedItem != null)
             {
-                try
-                {
-                    department.Transfer(((AccountVM)AccountsList.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));
-                }
-                catch (Exception ex)  
-                {
-                    MessageBox.Show(ex.Message);
-                    return;
-                }
+                department.Transfer(((AccountVM)AccountsList.SelectedItem).Bic, TransferAccount.Text, Convert.ToDecimal(TransferSum.Text));
             }
             else
             {
@@ -203,6 +173,11 @@ namespace BankSystem.View
             }
         }
 
+        /// <summary>
+        /// Вывод виписки по счету
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Statement_Click(object sender, RoutedEventArgs e)
         {
             if (AccountsList.SelectedItem != null)

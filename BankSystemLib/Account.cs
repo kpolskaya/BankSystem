@@ -56,7 +56,6 @@ namespace BankSystemLib
         [DataMember]
         public decimal AccruedInterest { get; protected set; }
 
-
         public Account(AccountType Type, string DepartmentId, Customer Customer)
         {
             this.Type = Type;
@@ -77,7 +76,6 @@ namespace BankSystemLib
         {
             return a.FullBalance();
         }
-
         
         /// <summary>
         /// Операция списания средств
