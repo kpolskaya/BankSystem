@@ -44,7 +44,7 @@ namespace BankSystem.View
         }
 
         bool inputRestricted = false;
-        int qClients = 1000;
+        int qClients = 10000;                                    //количество клиентов в департаменте для автогенерации
 
 
         public MainWindow()
@@ -201,20 +201,21 @@ namespace BankSystem.View
 
         private void InitialFilling_Button_Click(object sender, RoutedEventArgs e) 
         {
-            bool NotEmpty = false;
+            //bool NotEmpty = false;
             foreach (var item in bank.Departments)
             {
                 if (item.Customers.Count > 0)
                 {
-                    NotEmpty = true;
-                    break;
+                    MessageBox.Show("База не пустая. Автоматическое заполнение невозможно");
+                    //NotEmpty = true;
+                    return;
                 }
             }
-            if (NotEmpty)
-            {
-                MessageBox.Show("База не пустая. Автоматическое заполнение невозможно");
-                return;
-            }
+            //if (NotEmpty)
+            //{
+            //    MessageBox.Show("База не пустая. Автоматическое заполнение невозможно");
+            //    return;
+            //}
 
             SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
@@ -234,6 +235,24 @@ namespace BankSystem.View
                 MessageBox.Show("Начальное заполнение закончено");
             }));
         }
+        private async void SimOperation_Click(object sender, RoutedEventArgs e)
+        {
+            int count = 1000000 / (qClients * 9);            // количество закрытых месяцев = 1 000 000 /(клиентов * 3 счета * 3 департамента)
+            SetInputRestrictions(true);
+            pbCalculationProgress.IsIndeterminate = true;
+
+            await Task.Run(() =>
+            {
+                for (int i = 0; i < count; i++)
+                    bank.MonthlyCharge();
+            }
+            );
+
+            pbCalculationProgress.IsIndeterminate = false;
+            SetInputRestrictions(false);
+            pbCalculationProgress.Value = 0;
+            MessageBox.Show($"Операции сгенерированы. Синхронизируйте журнал транзакций.");
+        }
 
         private void SetInputRestrictions(bool flag)
         {
@@ -244,6 +263,7 @@ namespace BankSystem.View
             SaveFile.IsEnabled = !flag;
             SyncHistory.IsEnabled = !flag;
             InitialFilling.IsEnabled = !flag;
+            SimOperation.IsEnabled = !flag;
             inputRestricted = flag;
         }
 
@@ -325,6 +345,6 @@ namespace BankSystem.View
                 $"Было {count} записей, стало {bank.TransactionHistory.Count} записей.\n" +
                 $"Понадобилось {stopWatch.Elapsed.Minutes} минут {stopWatch.Elapsed.Seconds} секунд.");
         }
-
+ 
     }
 }

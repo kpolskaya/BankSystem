@@ -141,13 +141,13 @@ namespace BankSystem.View
                 w.ShowDialog();                                                             //а нужно ли выводить окно по поводу 3-го символа после запятой?
 
             }
-            string s = Regex.Replace(((TextBox)sender).Text, @"[^\d,]", "");                // вот этот блок всегда выполняется, джаже если нет ошибок
-            s = Regex.Replace((s), @"(\d*,\d{2})\d+", @"$1");
-            s = Regex.Replace((s), @"(\d*[,]\d*)[,].*", @"$1");
+                string s = Regex.Replace(((TextBox)sender).Text, @"[^\d,]", "");            // вот этот блок всегда выполняется, джаже если нет ошибок
+                s = Regex.Replace((s), @"(\d*,\d{2})\d+", @"$1");
+                s = Regex.Replace((s), @"(\d*[,]\d*)[,].*", @"$1");
 
-            ((TextBox)sender).Text = s;
+                ((TextBox)sender).Text = s;
 
-            ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
+                ((TextBox)sender).SelectionStart = ((TextBox)sender).Text.Length;
         }
 
         /// <summary>

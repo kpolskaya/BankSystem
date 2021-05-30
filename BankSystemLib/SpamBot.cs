@@ -51,7 +51,7 @@ namespace BankSystemLib
             fileName = $@"{Guid.NewGuid()}.log";
             OnLine = false;
             Error = false;
-            timer = new System.Timers.Timer(5000);
+            timer = new System.Timers.Timer(3000);
             timer.Elapsed +=  Start;
             timer.Start();
         }
@@ -100,9 +100,9 @@ namespace BankSystemLib
         {
             OnLine = true;
             Debug.WriteLine("SpamBot started");
-            int blockSize = 10000;
+            int blockSize = 20000;
             int count = 0;
-            StringBuilder block = new StringBuilder("", 100000); 
+            StringBuilder block = new StringBuilder("", 200000); 
 
             if (File.Exists(folder + fileName) && (new FileInfo(folder + fileName)).Length > 10000000)
                 fileName = $@"{Guid.NewGuid()}.log";

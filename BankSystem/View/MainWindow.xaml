@@ -43,7 +43,8 @@
                     <!--<MenuItem Header="Журнал транзакций" Click="Transactions_Click" >
                     </MenuItem>-->
                 <MenuItem Header="Начальное заполнение">
-                    <MenuItem x:Name="InitialFilling" Header="Заполнить" Click="InitialFilling_Button_Click" />
+                    <MenuItem x:Name="InitialFilling" Header="Заполнить клиентами" Click="InitialFilling_Button_Click" />
+                    <MenuItem x:Name="SimOperation" Header="Нагенерить проводок" Click="SimOperation_Click" />
                 </MenuItem>
 
             </Menu>
