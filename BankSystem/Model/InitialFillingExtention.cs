@@ -47,19 +47,25 @@ namespace BankSystem.Model
                 string Phone = dept.Id.ToString() + (20000000000 + i*3).ToString();
 
                 dept.CreateCustomer(Name, OtherName, LegalId, Phone);
-            }
 
-            for (int i = 0; i < amt; i++)
-            {
                 foreach (var accountType in GetEnumValues<AccountType>())
                 {
                     dept.OpenAccount(accountType, dept.Customers[i]);
+                    //dept.Put(dept.Accounts.Last().Bic, rnd.Next(100, 10001) * 100);
                 }
             }
 
-            for (int i = 0; i < amt*3; i++)
+            //for (int i = 0; i < amt; i++)
+            //{
+            //    foreach (var accountType in GetEnumValues<AccountType>())
+            //    {
+            //        dept.OpenAccount(accountType, dept.Customers[i]);
+            //    }
+            //}
+
+            for (int i = 0; i < amt * 3; i++)
             {
-                dept.Put(dept.Accounts[i].Bic, rnd.Next(100, 10001)*100);
+                dept.Put(dept.Accounts[i].Bic, rnd.Next(100, 10001) * 100);
             }
         }
 

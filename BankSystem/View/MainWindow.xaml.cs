@@ -44,7 +44,7 @@ namespace BankSystem.View
         }
 
         bool inputRestricted = false;
-        int qClients = 10000;                                    //количество клиентов в департаменте для автогенерации
+        int qClients = 4000;                                    //количество клиентов в департаменте для автогенерации
 
 
         public MainWindow()
@@ -265,6 +265,7 @@ namespace BankSystem.View
             InitialFilling.IsEnabled = !flag;
             SimOperation.IsEnabled = !flag;
             inputRestricted = flag;
+
         }
 
         private void DataWindow_Closing(object sender, CancelEventArgs e)

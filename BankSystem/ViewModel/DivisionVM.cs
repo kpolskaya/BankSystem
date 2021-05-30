@@ -149,6 +149,7 @@ namespace BankSystem.ViewModel
         /// </summary>
         public ObservableCollection<AccountVM> SelectedCustomerAccounts 
         {
+            
             get
             {
                 return new ObservableCollection<AccountVM>(

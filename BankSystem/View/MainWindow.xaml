@@ -92,11 +92,11 @@
                     <TextBlock Text="Собственные средства банка:" Margin="5" />
                     <TextBox Text="{Binding Capital, Mode=OneWay}" Width="200" TextAlignment="Center"  />
                     <TextBlock Text="Средства на счетах клиентов:" Margin="5"/>
-                    <TextBox Text="{Binding ClientsFunds, Mode=OneWay}" Width="200" TextAlignment="Center"  />
+                    <TextBox x:Name="ClientsFunds" Text="{Binding ClientsFunds, Mode=OneWay}" Width="200" TextAlignment="Center"  />
                     <TextBlock Text="Прибыль (убыток) банка:" Margin="5"/>
                     <TextBox Text="{Binding Profit, Mode=OneWay}" Width="200" TextAlignment="Center" />
                     <TextBlock Text="Денег в банке:" Margin="5" />
-                    <TextBox Text="{Binding Cash, Mode=OneWay}" Width="200" TextAlignment="Center"  />
+                    <TextBox x:Name ="Cash"  Text="{Binding Cash, Mode=OneWay}" Width="200" TextAlignment="Center"  />
 
                     <Button Name="LoyalityProgram" Content="Программа лояльности" Width="140" Height="20" Margin="10" 
                             HorizontalAlignment="Center" Click="LoyalityProgram_Button_Click" 
