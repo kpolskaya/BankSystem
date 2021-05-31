@@ -35,17 +35,10 @@ namespace BankSystem.View
         Repository repository;
         BankVM bank;
 
-        bool NoClose 
-        { 
-            get 
-            {
-                return (repository.IsBusy); 
-            } 
-        }
+        bool NoClose { get { return repository.IsBusy; } }
 
         bool inputRestricted = false;
         int qClients = 4000;                                    //количество клиентов в департаменте для автогенерации
-
 
         public MainWindow()
         {
@@ -62,7 +55,7 @@ namespace BankSystem.View
         /// <param name="e"></param>
         private void CustomerLeftBtnClick(object sender, RoutedEventArgs e)
         {
-            if (Customers.SelectedItem != null && !inputRestricted)
+            if (!inputRestricted)
             {
                 CustomerInfo newWindow = new CustomerInfo(DataContext)    //datacontext нужен для вывода транзакций
                 {
@@ -70,7 +63,6 @@ namespace BankSystem.View
                 };
                 newWindow.ShowDialog();
             }
-            return;
         }
 
         /// <summary>
@@ -126,6 +118,7 @@ namespace BankSystem.View
             }
             bank = new BankVM(repository.Bank);
             DataContext = bank;
+            Divisions.SelectedItem = bank.Departments[0];
             MessageBox.Show("Файл прочитан");
         }
 
@@ -199,24 +192,24 @@ namespace BankSystem.View
             }));
         }
 
+        /// <summary>
+        /// Автоматическое заполнение клиентами
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void InitialFilling_Button_Click(object sender, RoutedEventArgs e) 
         {
-            //bool NotEmpty = false;
             foreach (var item in bank.Departments)
             {
                 if (item.Customers.Count > 0)
                 {
                     MessageBox.Show("База не пустая. Автоматическое заполнение невозможно");
-                    //NotEmpty = true;
                     return;
                 }
             }
-            //if (NotEmpty)
-            //{
-            //    MessageBox.Show("База не пустая. Автоматическое заполнение невозможно");
-            //    return;
-            //}
 
+            PBtext.Text = "Идет первоначальное заполнение базы. Этот процесс может занять несколько минут.";
+            bank.SafeMode = true;
             SetInputRestrictions(true);
             pbCalculationProgress.IsIndeterminate = true;
             Task[] tasks = new Task[bank.Departments.Count];
@@ -232,9 +225,18 @@ namespace BankSystem.View
                 pbCalculationProgress.IsIndeterminate = false;
                 SetInputRestrictions(false);
                 pbCalculationProgress.Value = 0;
+                bank.SafeMode = false;
+                PBtext.Text = "";
+                Divisions.SelectedItem = bank.Departments[0];
                 MessageBox.Show("Начальное заполнение закончено");
             }));
         }
+
+        /// <summary>
+        /// Генерирует миллион транзакций по счетам клиентов
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void SimOperation_Click(object sender, RoutedEventArgs e)
         {
             int count = 1000000 / (qClients * 9);            // количество закрытых месяцев = 1 000 000 /(клиентов * 3 счета * 3 департамента)
@@ -254,6 +256,10 @@ namespace BankSystem.View
             MessageBox.Show($"Операции сгенерированы. Синхронизируйте журнал транзакций.");
         }
 
+        /// <summary>
+        /// Запрещающие флаги на время критических операций
+        /// </summary>
+        /// <param name="flag"></param>
         private void SetInputRestrictions(bool flag)
         {
             MonthlyCharge.IsEnabled = !flag;
@@ -265,7 +271,6 @@ namespace BankSystem.View
             InitialFilling.IsEnabled = !flag;
             SimOperation.IsEnabled = !flag;
             inputRestricted = flag;
-
         }
 
         private void DataWindow_Closing(object sender, CancelEventArgs e)

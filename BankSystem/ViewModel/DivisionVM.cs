@@ -149,14 +149,16 @@ namespace BankSystem.ViewModel
         /// </summary>
         public ObservableCollection<AccountVM> SelectedCustomerAccounts 
         {
-            
+           
             get
             {
-                return new ObservableCollection<AccountVM>(
-                    from a in Accounts
-                    where a.Bic.Substring(2, 8) == SelectedCustomer.Id
-                    select a
-                    );
+                if (SelectedCustomer != null)
+                    return new ObservableCollection<AccountVM>(
+                        from a in Accounts
+                        where a.Bic.Substring(2, 8) == SelectedCustomer.Id
+                        select a
+                        );
+                else return new ObservableCollection<AccountVM>();
             }
         }
      

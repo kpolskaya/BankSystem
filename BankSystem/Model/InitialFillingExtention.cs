@@ -51,7 +51,7 @@ namespace BankSystem.Model
                 foreach (var accountType in GetEnumValues<AccountType>())
                 {
                     dept.OpenAccount(accountType, dept.Customers[i]);
-                    //dept.Put(dept.Accounts.Last().Bic, rnd.Next(100, 10001) * 100);
+                    dept.Put(dept.Accounts.Last().Bic, rnd.Next(100, 10001) * 100);
                 }
             }
 
@@ -63,10 +63,10 @@ namespace BankSystem.Model
             //    }
             //}
 
-            for (int i = 0; i < amt * 3; i++)
-            {
-                dept.Put(dept.Accounts[i].Bic, rnd.Next(100, 10001) * 100);
-            }
+            //for (int i = 0; i < amt * 3; i++)
+            //{
+            //    dept.Put(dept.Accounts[i].Bic, rnd.Next(100, 10001) * 100);
+            //}
         }
 
     }

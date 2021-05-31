@@ -17,6 +17,8 @@ namespace BankSystem.ViewModel
         public List<Transaction> TransactionHistory { get { return bank.TransactionHistory; } }  
 
         private readonly Bank bank;
+        private bool safeMode;
+
         /// <summary>
         /// Прибыль банка
         /// </summary>
@@ -25,23 +27,44 @@ namespace BankSystem.ViewModel
         /// Собственный капитал банка
         /// </summary>
         public decimal Capital { get { return this.bank.Cash - ClientsFunds; } }
+
         /// <summary>
         /// Деньги на клиентских счетах (обязательства)
         /// </summary>
-        public decimal ClientsFunds { get { return this.bank.ClientsFunds(); } }
+        public decimal ClientsFunds 
+        { 
+            get 
+            {
+                if (SafeMode)                                         //патч для многопоточного автоматического заполнения базы
+                {
+                    return 0;
+                }
+                else 
+                {
+                    return this.bank.ClientsFunds();
+                }
+            } 
+        }
         /// <summary>
         /// Всего денег в банке
         /// </summary>
         public decimal Cash { get { return this.bank.Cash; } }
-        public BankVM(Bank Bank)
+
+        /// <summary>
+        /// Ограничивает обновление некоторых отображаемых в UI полей в целях потокобезопасности
+        /// </summary>
+        public bool SafeMode
         {
-            bank = Bank;
-            this.Departments = new ObservableCollection<DivisionVM>();
-            foreach (var item in bank.Departments)
+            get { return this.safeMode; }
+            set
             {
-                this.Departments.Add(new DivisionVM(item));
+                if (this.safeMode != value)
+                {
+                    this.safeMode = value;
+                    if (!safeMode)
+                        OnPropertyChanged("ClientsFunds");
+                }
             }
-            bank.BankBalanceChanged += UpdateBalanceView;  //подписка на изменения статей баланса
         }
 
         /// <summary>
@@ -54,7 +77,19 @@ namespace BankSystem.ViewModel
                 return this.Departments.FirstOrDefault(e => e.IsSelected);
             }
         }
-         
+
+        public BankVM(Bank Bank)
+        {
+            this.SafeMode = false;
+            bank = Bank;
+            this.Departments = new ObservableCollection<DivisionVM>();
+            foreach (var item in bank.Departments)
+            {
+                this.Departments.Add(new DivisionVM(item));
+            }
+            bank.BankBalanceChanged += UpdateBalanceView;  //подписка на изменения статей баланса
+        }
+
         /// <summary>
         ///  Начисляет ежемесячные платежи и проценты по клиентским счетам
         /// </summary>

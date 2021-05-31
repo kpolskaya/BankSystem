@@ -97,10 +97,9 @@ namespace BankSystem.ViewModel
                 {
                     this.isSelected = value;
                     this.OnPropertyChanged("IsSelected");
-                    
-                    if (isSelected)
-                        this.OnSelectionChanged();
-                }
+                }    
+                    if (isSelected)                                 // это событие нужно поднять, даже если значение не изменилось,
+                        this.OnSelectionChanged();                  // потому что могла измениться коллекция клиентов и департамент потерял клиента
             }
         }
 

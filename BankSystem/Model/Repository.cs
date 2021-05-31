@@ -129,5 +129,6 @@ namespace BankSystem.Model
         {
                 await this.Bank.UniteTransactionsAsync(HistoryFolder + HistoryFileName);
         }
+
     }
 }
