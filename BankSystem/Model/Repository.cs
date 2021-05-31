@@ -54,7 +54,9 @@ namespace BankSystem.Model
                 Formatting = Formatting.Indented
             };
 
-            var text = JsonConvert.SerializeObject(Bank, settings);
+            var text = await Task.Run(() =>
+                JsonConvert.SerializeObject(Bank, settings));
+            
             var fileStream =
                 new FileStream(BankDataPath,
                 FileMode.Create,
@@ -105,11 +107,14 @@ namespace BankSystem.Model
             
             try
             {
-                JsonSerializerSettings jss = new JsonSerializerSettings
+                await Task.Run(() =>
                 {
-                    TypeNameHandling = TypeNameHandling.All
-                };
-                this.Bank = JsonConvert.DeserializeObject<Bank>(text, jss);
+                    JsonSerializerSettings jss = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    this.Bank = JsonConvert.DeserializeObject<Bank>(text, jss);
+                });
             }
             catch (Exception)
             {

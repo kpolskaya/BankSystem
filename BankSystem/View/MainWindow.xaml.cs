@@ -324,6 +324,7 @@ namespace BankSystem.View
         private async void SyncHistory_Click(object sender, RoutedEventArgs e)
         {
             pbCalculationProgress.IsIndeterminate = true;
+            PBtext.Text = "Вы можете продолжать работу, однако некоторые транзакции могут не войти в эту файловую копию";
             int count = bank.TransactionHistory.Count;
             SyncHistory.IsEnabled = false;
             var stopWatch = new Stopwatch();
@@ -332,6 +333,12 @@ namespace BankSystem.View
             {
                 var t = repository.UniteTransactionsAsync();
                 await t;
+                PBtext.Text = "";
+                stopWatch.Stop();
+                MessageBox.Show(
+                    $"Журнал транзакций синхронизирован.\n" +
+                    $"Было {count} записей, стало {bank.TransactionHistory.Count} записей.\n" +
+                    $"Понадобилось {stopWatch.Elapsed.Minutes} минут {stopWatch.Elapsed.Seconds} секунд.");
             }
             catch (Exception ex)
             {
@@ -342,15 +349,8 @@ namespace BankSystem.View
             {
                 pbCalculationProgress.IsIndeterminate = false;
                 pbCalculationProgress.Value = 0;
-                SyncHistory.IsEnabled = true;
+                SyncHistory.IsEnabled = true; 
             }
-
-            stopWatch.Stop();
-            MessageBox.Show(
-                $"Журнал транзакций синхронизирован.\n" +
-                $"Было {count} записей, стало {bank.TransactionHistory.Count} записей.\n" +
-                $"Понадобилось {stopWatch.Elapsed.Minutes} минут {stopWatch.Elapsed.Seconds} секунд.");
         }
- 
     }
 }
