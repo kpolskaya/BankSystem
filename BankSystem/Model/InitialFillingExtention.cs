@@ -55,18 +55,6 @@ namespace BankSystem.Model
                 }
             }
 
-            //for (int i = 0; i < amt; i++)
-            //{
-            //    foreach (var accountType in GetEnumValues<AccountType>())
-            //    {
-            //        dept.OpenAccount(accountType, dept.Customers[i]);
-            //    }
-            //}
-
-            //for (int i = 0; i < amt * 3; i++)
-            //{
-            //    dept.Put(dept.Accounts[i].Bic, rnd.Next(100, 10001) * 100);
-            //}
         }
 
     }

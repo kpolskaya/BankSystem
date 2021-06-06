@@ -352,5 +352,14 @@ namespace BankSystem.View
                 SyncHistory.IsEnabled = true; 
             }
         }
+
+        private void Create_Click(object sender, RoutedEventArgs e)
+        {
+            repository = new Repository();
+            bank = new BankVM(repository.Bank);
+            DataContext = bank;
+            Divisions.SelectedItem = bank.Departments[0];
+            MessageBox.Show("База очищена");
+        }
     }
 }

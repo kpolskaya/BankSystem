@@ -34,14 +34,14 @@
             <DockPanel Grid.Row="0" Grid.ColumnSpan="5" Height="Auto">
                 <Menu DockPanel.Dock="Left">
                     <MenuItem Header="Файл">
+                        <MenuItem x:Name="Create" Header="Очистить базу" Click="Create_Click" />
                         <MenuItem x:Name="OpenFile" Header="Открыть" Click="Deserialize_Button_Click" />
                         <MenuItem x:Name="SaveFile" Header="Сохранить..." Click ="Serialize_Button_Click" />
                         <MenuItem x:Name="SyncHistory" Header="Синхронизировать журнал операций" Click="SyncHistory_Click" />
-                        
+                       
                     </MenuItem>
                     
-                    <!--<MenuItem Header="Журнал транзакций" Click="Transactions_Click" >
-                    </MenuItem>-->
+                    
                 <MenuItem Header="Начальное заполнение">
                     <MenuItem x:Name="InitialFilling" Header="Заполнить клиентами" Click="InitialFilling_Button_Click" />
                     <MenuItem x:Name="SimOperation" Header="Нагенерить проводок" Click="SimOperation_Click" />
@@ -227,43 +227,7 @@
         <GridSplitter Grid.Column="3" ShowsPreview="True" Width="3"
                       HorizontalAlignment="Center"  VerticalAlignment="Stretch"/>
         
-        <!--<GroupBox Header="Список счетов" Grid.Column="4"  Grid.Row="1" Width="Auto" Padding="5">
-            
-            <StackPanel Orientation="Vertical" Width="Auto" >
-
-                <StackPanel Orientation="Vertical" Width="Auto" Height="Auto" VerticalAlignment="Bottom">
-
-                    <ListView x:Name="Accounts"   Grid.Column="1"   Width="Auto" Height="Auto" 
-                              BorderBrush="Transparent" BorderThickness="0" 
-                              DataContext ="{Binding ElementName=Divisions, 
-                              Path=SelectedItem}" ItemsSource="{Binding Accounts}"  >
-
-                        <ListView.View >
-
-                            <GridView>
-                                <GridViewColumn Width="163">
-                                    <GridViewColumnHeader HorizontalAlignment="Right" 
-                                                          Width="170">Номер счета</GridViewColumnHeader>
-                                    
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock x:Name="Acc" Text="{Binding Path=Bic}" 
-                                                       HorizontalAlignment="Right" ></TextBlock>
-                                        </DataTemplate>
-                                        
-                                    </GridViewColumn.CellTemplate>
-
-                                </GridViewColumn>
-   
-                            </GridView>
-                        </ListView.View>
-
-                    </ListView>
-
-                </StackPanel>
-            </StackPanel >
-
-        </GroupBox >-->
+       
 
     </Grid>
 </Window>
