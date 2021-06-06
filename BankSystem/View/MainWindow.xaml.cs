@@ -270,6 +270,7 @@ namespace BankSystem.View
             SyncHistory.IsEnabled = !flag;
             InitialFilling.IsEnabled = !flag;
             SimOperation.IsEnabled = !flag;
+            Create.IsEnabled = !flag;
             inputRestricted = flag;
         }
 
